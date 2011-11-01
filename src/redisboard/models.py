@@ -7,6 +7,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from .utils import cached_property
 
 class RedisServer(models.Model):
+    class Meta:
+        unique_together = ('hostname', 'port')
+        
     hostname = models.CharField(_("Hostname"), max_length=250)
     port = models.IntegerField(_("Port"), validators=[
         MaxValueValidator(65535), MinValueValidator(1)
