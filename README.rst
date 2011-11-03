@@ -23,7 +23,13 @@ Or if you use south you can migrate this app::
 
 Then you can add redis servers in the admin. You will see the stats in the changelist.
 
-Screenshot
-==========
+Screenshots
+===========
+
+Changelist:
 
 .. image:: https://github.com/downloads/ionelmc/django-redisboard/screenshot.png
+
+Inspect page:
+
+.. image:: https://github.com/downloads/ionelmc/django-redisboard/redisboard-inspect.png
