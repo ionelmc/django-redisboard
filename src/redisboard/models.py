@@ -9,7 +9,7 @@ from .utils import cached_property
 class RedisServer(models.Model):
     class Meta:
         unique_together = ('hostname', 'port')
-        
+
     hostname = models.CharField(_("Hostname"), max_length=250)
     port = models.IntegerField(_("Port"), validators=[
         MaxValueValidator(65535), MinValueValidator(1)
@@ -39,7 +39,7 @@ class RedisServer(models.Model):
                 'details': info,
                 'memory': "%s (peak: %s)" % (
                     info['used_memory_human'],
-                    info['used_memory_peak_human']
+                    info.get('used_memory_peak_human', 'n/a')
                 ),
                 'clients': info['connected_clients'],
             }
