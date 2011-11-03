@@ -42,6 +42,7 @@
                 </tr>
                 <tr>
                     <th>{% trans "Type" %}</th>
+                    <th>{% trans "TTL" %}</th>
                     <th>{% trans "Encoding" %}</th>
                     <th>{% trans "Length" %}</th>
                     <th>{% trans "LRU" %}</th>
@@ -53,6 +54,7 @@
                 <tr>
                     <td>{{ key }}</td>
                     <td>{{ key_detail.type }}</td>
+                    <td>{{ key_detail.ttl }}</td>
                     <td>{{ key_detail.details.encoding }}</td>
                     <td>{{ key_detail.details.serializedlength }}</td>
                     <td>{{ key_detail.details.lru|default:"n/a" }} (idle: {{ key_detail.details.lru_seconds_idle|default:"n/a" }})</td>

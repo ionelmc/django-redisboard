@@ -11,7 +11,8 @@ def _get_key_details(conn, db):
             'type': conn.type(key),
             'details': dict(
                 i.split(':') for i in details.split() if ':' in i
-            )
+            ),
+            'ttl': conn.ttl(key),
         }
     return key_details
 
