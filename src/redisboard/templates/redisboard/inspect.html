@@ -55,7 +55,7 @@
                     <td>{{ key_detail.type }}</td>
                     <td>{{ key_detail.details.encoding }}</td>
                     <td>{{ key_detail.details.serializedlength }}</td>
-                    <td>{{ key_detail.details.lru }} (idle: {{ key_detail.details.lru_seconds_idle }})</td>
+                    <td>{{ key_detail.details.lru|default:"n/a" }} (idle: {{ key_detail.details.lru_seconds_idle|default:"n/a" }})</td>
                     <td>{{ key_detail.details.refcount }}</td>
                     <td>At: {{ key_detail.details.at }}</td>
                 </tr>
