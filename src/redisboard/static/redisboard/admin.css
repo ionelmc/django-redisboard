@@ -1,0 +1,10 @@
+.inspect-form th {
+    vertical-align: middle;
+    text-align: center;
+}
+.inspect-form table {
+    min-width: 960px;
+}
+.inspect-form td:nth-child(n+2) {
+    text-align: center;
+}

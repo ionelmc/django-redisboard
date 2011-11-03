@@ -9,6 +9,11 @@ from .utils import cached_property
 class RedisServer(models.Model):
     class Meta:
         unique_together = ('hostname', 'port')
+        verbose_name = _("Redis Server")
+        verbose_name_plural = _("Redis Servers")
+        permissions = (
+            ("can_inspect", "Can inspect redis servers"),
+        )
 
     hostname = models.CharField(_("Hostname"), max_length=250)
     port = models.IntegerField(_("Port"), validators=[

@@ -1,0 +1,68 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_modify %}
+{% load url from future %}
+{% load admin_urls %}
+
+{% block extrahead %}{{ block.super }}
+{% url 'admin:jsi18n' as jsi18nurl %}
+<script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+{{ media }}
+{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "redisboard/admin.css" %}" />
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} inspect-form{% endblock %}
+
+{% if is_popup %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label='redisboard' %}">{{ 'redisboard'|capfirst|escape }}</a>
+&rsaquo; <a href="{% url 'admin:redisboard_redisserver_changelist' %}">{{ 'redisserver'|capfirst }}</a>
+&rsaquo; {% trans 'Inspect' %} {{ original|truncatewords:"18" }}
+</div>
+{% endblock %}
+{% endif %}
+
+{% block content %}
+<div id="content-main">
+
+    {% for db, db_detail in databases.items %}
+        <fieldset class="module aligned ">
+            <h2>{% trans "Database" %} {{ db }}</h2>
+            <table>
+                <tr>
+                    <th rowspan="2">{% trans "Key" %}</th>
+                    <th colspan="6">{% trans "Details" %}</th>
+                </tr>
+                <tr>
+                    <th>{% trans "Type" %}</th>
+                    <th>{% trans "Encoding" %}</th>
+                    <th>{% trans "Length" %}</th>
+                    <th>{% trans "LRU" %}</th>
+                    <th>{% trans "Refs" %}</th>
+                    <th>{% trans "Other" %}</th>
+                </tr>
+
+                {% for key, key_detail in db_detail.items %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ key_detail.type }}</td>
+                    <td>{{ key_detail.details.encoding }}</td>
+                    <td>{{ key_detail.details.serializedlength }}</td>
+                    <td>{{ key_detail.details.lru }} (idle: {{ key_detail.details.lru_seconds_idle }})</td>
+                    <td>{{ key_detail.details.refcount }}</td>
+                    <td>At: {{ key_detail.details.at }}</td>
+                </tr>
+                {% endfor %}
+
+            </table>
+        </fieldset>
+    {% endfor %}
+</div>
+{% endblock %}
