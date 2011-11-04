@@ -1,10 +1,36 @@
+import re
+from datetime import datetime, timedelta
 import redis
 
+from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.conf import settings
 
 from .utils import cached_property
+
+REDISBOARD_DETAIL_FILTERS = [re.compile(name) for name in getattr(settings, 'REDISBOARD_DETAIL_FILTERS', (
+    'aof_enabled', 'bgrewriteaof_in_progress', 'bgsave_in_progress',
+    'changes_since_last_save', 'db.*', 'db1', 'last_save_time',
+    'multiplexing_api', 'total_commands_processed',
+    'total_connections_received', 'uptime_in_days', 'uptime_in_seconds',
+    'vm_enabled'
+))]
+REDISBOARD_DETAIL_TIMESTAMP_KEYS = getattr(settings, 'REDISBOARD_DETAIL_TIMESTAMP_KEYS', (
+    'last_save_time',
+))
+REDISBOARD_DETAIL_SECONDS_KEYS = getattr(settings, 'REDISBOARD_DETAIL_SECONDS_KEYS', (
+    'uptime_in_seconds',
+))
+
+def prettify(key, value):
+    if key in REDISBOARD_DETAIL_SECONDS_KEYS:
+        return key, timedelta(seconds=value)
+    elif key in REDISBOARD_DETAIL_TIMESTAMP_KEYS:
+        return key, datetime.fromtimestamp(value)
+    else:
+        return key, value
 
 class RedisServer(models.Model):
     class Meta:
@@ -47,6 +73,11 @@ class RedisServer(models.Model):
                     info.get('used_memory_peak_human', 'n/a')
                 ),
                 'clients': info['connected_clients'],
+                'brief_details': SortedDict(
+                    prettify(k, v)
+                    for k, v in sorted(info.items(), key=lambda (k,v): k)
+                    if any(name.match(k) for name in REDISBOARD_DETAIL_FILTERS)
+                )
             }
         except redis.exceptions.ConnectionError:
             return {
@@ -54,6 +85,7 @@ class RedisServer(models.Model):
                 'clients': 'n/a',
                 'memory': 'n/a',
                 'details': {},
+                'brief_details': {},
             }
 
     def __unicode__(self):

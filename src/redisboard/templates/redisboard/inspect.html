@@ -31,6 +31,28 @@
 
 {% block content %}
 <div id="content-main">
+    <table>
+        <tr>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Memory" %}</th>
+            <th>{% trans "Clients" %}</th>
+            <th>{% trans "Details" %}</th>
+        </tr>
+        <tr>
+            <td>{{ stats.status }}</td>
+            <td>{{ stats.memory }}</td>
+            <td>{{ stats.clients }}</td>
+            <td>
+                <table>
+                {% for key, value in stats.brief_details.items %}
+                    <tr><td>{{ key }}</td><td>{{ value }}</td></tr>
+                {% endfor %}
+                </table>
+            </td>
+        </tr>
+    </table>
+
+
 
     {% for db, db_detail in databases.items %}
         <fieldset class="module aligned ">

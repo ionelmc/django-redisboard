@@ -18,14 +18,19 @@ def _get_key_details(conn, db):
 
 
 def inspect(request, server):
-    conn = server.connection
-    databases = [name[2:] for name in conn.info() if name.startswith('db')]
-    database_details = {}
-    for db in databases:
-        database_details[db] = _get_key_details(conn, db)
+    stats = server.stats
+    if stats['status'] == 'UP':
+        conn = server.connection
+        databases = [name[2:] for name in conn.info() if name.startswith('db')]
+        database_details = {}
+        for db in databases:
+            database_details[db] = _get_key_details(conn, db)
+    else:
+        database_details = {}
 
     return render(request, "redisboard/inspect.html", {
         'databases': database_details,
         'original': server,
+        'stats': stats,
         'app_label': 'redisboard',
     })

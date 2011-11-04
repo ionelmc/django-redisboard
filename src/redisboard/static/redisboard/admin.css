@@ -2,8 +2,14 @@
     vertical-align: middle;
     text-align: center;
 }
+
+.inspect-form #content-main {
+    width: 980px;
+    margin: 0 auto;
+    float: none;
+}
 .inspect-form table {
-    min-width: 960px;
+    width: 100%;
 }
 .inspect-form td:nth-child(n+2) {
     text-align: center;
