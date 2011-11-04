@@ -87,6 +87,15 @@ class RedisServer(models.Model):
                 'details': {},
                 'brief_details': {},
             }
+        except redis.exceptions.ResponseError, e:
+            return {
+                'status': 'ERROR: %s' % e.args,
+                'clients': 'n/a',
+                'memory': 'n/a',
+                'details': {},
+                'brief_details': {},
+            }
+
 
     def __unicode__(self):
         return "%s:%s" % (self.hostname, self.port)
