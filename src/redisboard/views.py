@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.utils.datastructures import SortedDict
 
 def _get_key_details(conn, db):
     conn.execute_command('SELECT', db)
@@ -21,8 +22,8 @@ def inspect(request, server):
     stats = server.stats
     if stats['status'] == 'UP':
         conn = server.connection
-        databases = [name[2:] for name in conn.info() if name.startswith('db')]
-        database_details = {}
+        databases = sorted(name[2:] for name in conn.info() if name.startswith('db'))
+        database_details = SortedDict()
         for db in databases:
             database_details[db] = _get_key_details(conn, db)
     else:
