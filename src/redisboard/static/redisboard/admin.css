@@ -14,3 +14,9 @@
 .inspect-form td:nth-child(n+2) {
     text-align: center;
 }
+.inspect-form td:nth-child(n+2) {
+    text-align: center;
+}
+.details td {
+    width: 50%;
+}

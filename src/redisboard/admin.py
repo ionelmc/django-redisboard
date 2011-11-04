@@ -10,6 +10,10 @@ from .models import RedisServer
 from .views import inspect
 
 class RedisServerAdmin(admin.ModelAdmin):
+    class Media:
+        css = {
+            'all': ('redisboard/admin.css',)
+        }
     list_display = (
         '__unicode__', 'status', 'memory', 'clients', 'details', 'tools'
     )
@@ -34,7 +38,7 @@ class RedisServerAdmin(admin.ModelAdmin):
     tools.long_description = _("Tools")
 
     def details(self, obj):
-        return "<table>%s</table>" % ''.join(
+        return '<table class="details">%s</table>' % ''.join(
             "<tr><td>%s</td><td>%s</td></tr>" % i for i in
                 obj.stats['brief_details'].items()
         )
