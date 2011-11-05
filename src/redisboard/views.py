@@ -1,20 +1,32 @@
+from logging import getLogger
+logger = getLogger(__name__)
+
 from django.shortcuts import render
 from django.utils.datastructures import SortedDict
+from redis.exceptions import ResponseError
 
 def _get_key_details(conn, db):
     conn.execute_command('SELECT', db)
     keys = conn.keys()
     key_details = {}
     for key in keys:
-        details = conn.execute_command('DEBUG', 'OBJECT', key)
-
-        key_details[key] = {
-            'type': conn.type(key),
-            'details': dict(
-                i.split(':') for i in details.split() if ':' in i
-            ),
-            'ttl': conn.ttl(key),
-        }
+        try:
+            details = conn.execute_command('DEBUG', 'OBJECT', key)
+            key_details[key] = {
+                'type': conn.type(key),
+                'details': dict(
+                    i.split(':') for i in details.split() if ':' in i
+                ),
+                'ttl': conn.ttl(key),
+            }
+        except ResponseError, e:
+            logger.exception("Failed to get details for key %r", key)
+            key_details[key] = {
+                'type': "n/a",
+                'details': {},
+                'error': e,
+                'ttl': "n/a",
+            }
     return key_details
 
 
