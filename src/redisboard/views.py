@@ -5,6 +5,15 @@ from django.shortcuts import render
 from django.utils.datastructures import SortedDict
 from redis.exceptions import ResponseError
 
+def safeint(value):
+    try:
+        return int(value)
+    except ValueError:
+        return value
+
+def _fixup_pair((a, b)):
+    return a, safeint(b)
+
 def _get_key_details(conn, db):
     conn.execute_command('SELECT', db)
     keys = conn.keys()
@@ -15,7 +24,7 @@ def _get_key_details(conn, db):
             key_details[key] = {
                 'type': conn.type(key),
                 'details': dict(
-                    i.split(':') for i in details.split() if ':' in i
+                    _fixup_pair(i.split(':')) for i in details.split() if ':' in i
                 ),
                 'ttl': conn.ttl(key),
             }
