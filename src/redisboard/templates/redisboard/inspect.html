@@ -60,7 +60,7 @@
             <table>
                 <tr>
                     <th rowspan="2">{% trans "Keys" %} ({{ db_detail|length }})</th>
-                    <th colspan="6">{% trans "Details" %}</th>
+                    <th colspan="7">{% trans "Details" %}</th>
                 </tr>
                 <tr>
                     <th>{% trans "Type" %}</th>
@@ -75,6 +75,9 @@
                 {% for key, key_detail in db_detail.items %}
                 <tr>
                     <td>{{ key }}</td>
+                    {% if key_detail.error %}
+                    <td class="error" colspan="7">{% trans "ERROR:" %} {{ key_detail.error }}</td>
+                    {% else %}
                     <td>{{ key_detail.type }}</td>
                     <td>{{ key_detail.ttl }}</td>
                     <td>{{ key_detail.details.encoding }}</td>
@@ -82,6 +85,7 @@
                     <td>{{ key_detail.details.lru|default:"n/a" }} (idle: {{ key_detail.details.lru_seconds_idle|default:"n/a" }})</td>
                     <td>{{ key_detail.details.refcount }}</td>
                     <td>At: {{ key_detail.details.at }}</td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
 

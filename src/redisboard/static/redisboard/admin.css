@@ -20,3 +20,7 @@
 .details td {
     width: 50%;
 }
+td.error {
+    font-weight: bold;
+    color: #B22222;
+}
