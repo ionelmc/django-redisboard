@@ -3,6 +3,8 @@
 {% load url from future %}
 {% load admin_urls %}
 
+{% block title %}Inspect {{ original }}{% endblock %}
+
 {% block extrahead %}{{ block.super }}
 {% url 'admin:jsi18n' as jsi18nurl %}
 <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
