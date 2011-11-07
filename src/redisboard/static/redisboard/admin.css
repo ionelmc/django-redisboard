@@ -4,21 +4,43 @@
 }
 
 .inspect-form #content-main {
-    width: 980px;
+    min-width: 980px;
     margin: 0 auto;
     float: none;
 }
 .inspect-form table {
     width: 100%;
 }
-.inspect-form td:nth-child(n+2) {
+.inspect-form .database-details td:first-child {
+    width: 60%;
+}
+.inspect-form .server-status td {
     text-align: center;
 }
-.inspect-form td:nth-child(n+2) {
+.inspect-form .database-details td:nth-child(n+2) {
     text-align: center;
 }
-.details td {
+.inspect-form .key-details td {
+    text-align: center;
+}
+.inspect-form .key-data td {
+    text-align: left;
+}
+.inspect-form .key-details tr:hover td,
+.inspect-form .key-data tr:hover td,
+.inspect-form .database-details tr:hover td {
+    background: #FFFF80;
+}
+.inspect-form .key-data td:nth-child(2) {
+    font-family: monospace;
+    width: 99%;
+}
+.inspect-form .details td {
     width: 50%;
+    word-break: break-all;
+}
+.inspect-form .key-data td:nth-child(2) {
+    word-break: break-all;
 }
 td.error {
     font-weight: bold;

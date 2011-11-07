@@ -32,8 +32,9 @@
 {% endif %}
 
 {% block content %}
+{% spaceless %}
 <div id="content-main">
-    <table>
+    <table class="server-status">
         <tr>
             <th>{% trans "Status" %}</th>
             <th>{% trans "Memory" %}</th>
@@ -57,7 +58,7 @@
 
 
     {% for db, db_detail in databases.items %}
-        <fieldset class="module aligned ">
+        <fieldset class="module aligned database-details">
             <h2>{% trans "Database" %} {{ db }}</h2>
             <table>
                 <tr>
@@ -69,6 +70,7 @@
                     <th>{% trans "TTL" %}</th>
                     <th>{% trans "Encoding" %}</th>
                     <th>{% trans "Length" %}</th>
+                    <th>{% trans "Items" %}</th>
                     <th>{% trans "LRU" %}</th>
                     <th>{% trans "Refs" %}</th>
                     <th>{% trans "Other" %}</th>
@@ -76,7 +78,7 @@
 
                 {% for key, key_detail in db_detail.items %}
                 <tr>
-                    <td>{{ key }}</td>
+                    <td><a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}?key={{ key|escape }}&db={{ db }}">{{ key }}</td>
                     {% if key_detail.error %}
                     <td class="error" colspan="7">{% trans "ERROR:" %} {{ key_detail.error }}</td>
                     {% else %}
@@ -84,6 +86,7 @@
                     <td>{{ key_detail.ttl }}</td>
                     <td>{{ key_detail.details.encoding }}</td>
                     <td>{{ key_detail.details.serializedlength }}</td>
+                    <td>{{ key_detail.length }}</td>
                     <td>{{ key_detail.details.lru|default:"n/a" }} (idle: {{ key_detail.details.lru_seconds_idle|default:"n/a" }})</td>
                     <td>{{ key_detail.details.refcount }}</td>
                     <td>At: {{ key_detail.details.at }}</td>
@@ -94,5 +97,45 @@
             </table>
         </fieldset>
     {% endfor %}
+    {% if key_details %}
+        <fieldset class="module aligned key-details">
+            <h2>{% trans "Key details" %}: {{ key_details.name }}</h2>
+            <table>
+                <tr>
+                    <th>{% trans "Type" %}</th>
+                    <th>{% trans "TTL" %}</th>
+                    <th>{% trans "Encoding" %}</th>
+                    <th>{% trans "Length" %}</th>
+                    <th>{% trans "Items" %}</th>
+                    <th>{% trans "LRU" %}</th>
+                    <th>{% trans "Refs" %}</th>
+                    <th>{% trans "Other" %}</th>
+                </tr>
+                <tr>
+                    {% if key_details.error %}
+                    <td class="error" colspan="7">{% trans "ERROR:" %} {{ key_detail.error }}</td>
+                    {% else %}
+                    <td>{{ key_details.type }}</td>
+                    <td>{{ key_details.ttl }}</td>
+                    <td>{{ key_details.details.encoding }}</td>
+                    <td>{{ key_details.details.serializedlength }}</td>
+                    <td>{{ key_details.length }}</td>
+                    <td>{{ key_details.details.lru|default:"n/a" }} (idle: {{ key_details.details.lru_seconds_idle|default:"n/a" }})</td>
+                    <td>{{ key_details.details.refcount }}</td>
+                    <td>At: {{ key_details.details.at }}</td>
+                    {% endif %}
+                </tr>
+            </table>
+        </fieldset>
+        <fieldset class="module aligned key-data">
+            <h2>{% trans "Key data" %}: {{ key_details.name }}</h2>
+            <table>
+                {% for key, value in key_details.data %}
+                <tr><td>{{ key }}</td><td>{{ value }}</td></tr>
+                {% endfor %}
+            </table>
+        </fieldset>
+    {% endif %}
 </div>
+{% endspaceless %}
 {% endblock %}
