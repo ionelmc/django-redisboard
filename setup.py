@@ -5,7 +5,7 @@ import os
 
 setup(
     name = "django-redisboard",
-    version = "0.2",
+    version = "0.2.1",
     url = 'https://github.com/ionelmc/django-redisboard',
     download_url = '',
     license = 'BSD',

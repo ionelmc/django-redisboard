@@ -1,0 +1,5 @@
+graft src/redisboard/static
+graft src/redisboard/templates
+include README.rst
+include LICENSE
+include README
