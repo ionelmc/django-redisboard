@@ -41,6 +41,9 @@ Then you can add redis servers in the admin. You will see the stats in the chang
 Optional django settings
 ========================
 
+REDISBOARD_DETAIL_FILTERS
+-------------------------
+
 REDISBOARD_DETAIL_FILTERS - a list of regular expressions to match against the keys in the server 
 details colum. Eg, to only show uptime and list of active databases::
 
@@ -49,6 +52,9 @@ details colum. Eg, to only show uptime and list of active databases::
 To show all the details just use:: 
     
     REDISBOARD_DETAIL_FILTERS = ['.*']
+
+REDISBOARD_ITEMS_PER_PAGE
+-------------------------
 
 REDISBOARD_ITEMS_PER_PAGE - default 1000. Used for paginating the items from a list or a sorted set.
 
