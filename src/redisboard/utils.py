@@ -1,5 +1,23 @@
 # shamelessly taken from kombu.utils
 
+class LazySlicingIterable(object):
+    def __init__(self, length_getter, items_getter):
+        self.length_getter = length_getter
+        self.items_getter = items_getter
+
+    def __len__(self):
+        return self.length_getter()
+
+    def __getitem__(self, k):
+        if isinstance(k, int):
+            return self.items_getter(k, k)
+        elif isinstance(k, slice):
+            if k.step:
+                raise RuntimeError("Can't use steps for slicing.")
+            return self.items_getter(k.start, k.stop)
+        else:
+            raise TypeError("Must be int or slice.")
+
 class cached_property(object):
     """Property descriptor that caches the return value
     of the get function.

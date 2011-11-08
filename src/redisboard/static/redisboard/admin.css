@@ -46,3 +46,10 @@ td.error {
     font-weight: bold;
     color: #B22222;
 }
+.inspect-form .paginator a,
+.inspect-form .paginator span {
+    display: inline-block;
+    padding: 5px;
+    border: 1px solid gray;
+    margin: 5px;
+}

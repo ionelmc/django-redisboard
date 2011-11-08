@@ -134,6 +134,18 @@
                 <tr><td>{{ key }}</td><td>{{ value }}</td></tr>
                 {% endfor %}
             </table>
+            {% if key_details.data.paginator %}
+            <p class="paginator">
+                {% for nr in key_details.data.paginator.page_range %}
+                {% if key_details.data.number == nr %}
+                    <span class="this-page">{{ nr }}</span>
+                {% else %}
+                    <a href="?key={{ key_details.name|escape }}&db={{ key_details.db }}&page={{ nr }}">{{ nr }}</a>
+                {% endif %}
+                {% endfor %}
+                {{ key_details.data.paginator.count }} items
+            </p>
+            {% endif %}
         </fieldset>
     {% endif %}
 </div>

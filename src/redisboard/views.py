@@ -1,11 +1,17 @@
 from logging import getLogger
 logger = getLogger(__name__)
 
+from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.utils.datastructures import SortedDict
 from django.conf import settings
+from django.utils.functional import curry
 
 from redis.exceptions import ResponseError
+
+from .utils import LazySlicingIterable
+
+REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE', 1000)
 
 def safeint(value):
     try:
@@ -50,17 +56,29 @@ def _get_key_info(conn, key):
         }
 
 VALUE_GETTERS = {
-    'list': lambda conn, key, start=0, end=-1: enumerate(conn.lrange(key, start, end)),
+    'list': lambda conn, key, start=0, end=-1: [(pos+start, val) for pos, val in enumerate(conn.lrange(key, start, end))],
     'string': lambda conn, key, *args: [('string', conn.get(key))],
-    'set': lambda conn, key, *args: enumerate(conn.smembers(key)),
-    'zset': lambda conn, key, start=0, end=-1: enumerate(conn.zrange(key, start, end)),
-    'hash': lambda conn, key, *args: conn.hgetall(key).iteritems(),
+    'set': lambda conn, key, *args: list(enumerate(conn.smembers(key))),
+    'zset': lambda conn, key, start=0, end=-1: [(pos+start, val) for pos, val in enumerate(conn.zrange(key, start, end))],
+    'hash': lambda conn, key, *args: conn.hgetall(key).items(),
 }
 
-def _get_key_details(conn, db, key):
+def _get_key_details(conn, db, key, page):
     conn.execute_command('SELECT', db)
     details = _get_key_info(conn, key)
-    details['data'] = VALUE_GETTERS[details['type']](conn, key)
+    details['db'] = db
+    if details['type'] in ('list', 'zset'):
+        details['data'] = Paginator(
+            LazySlicingIterable(
+                lambda: details['length'],
+                curry(VALUE_GETTERS[details['type']], conn, key)
+            ),
+            REDISBOARD_ITEMS_PER_PAGE
+        ).page(page)
+    else:
+        details['data'] = VALUE_GETTERS[details['type']](conn, key)
+
+
     return details
 
 
@@ -83,7 +101,8 @@ def inspect(request, server):
         if 'key' in request.GET:
             key = request.GET['key']
             db = request.GET.get('db', 0)
-            key_details = _get_key_details(conn, db, key)
+            page = request.GET.get('page', 1)
+            key_details = _get_key_details(conn, db, key, page)
         else:
             databases = sorted(name[2:] for name in conn.info() if name.startswith('db'))
 
