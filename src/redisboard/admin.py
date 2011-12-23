@@ -47,7 +47,7 @@ class RedisServerAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         urlpatterns = super(RedisServerAdmin, self).get_urls()
-        from django.conf.urls import patterns, url
+        from django.conf.urls.defaults import patterns, url
 
         def wrap(view):
             def wrapper(*args, **kwargs):
