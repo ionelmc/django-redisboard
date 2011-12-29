@@ -12,7 +12,10 @@
 
 {% block extrastyle %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% get_static_prefix %}redisboard/admin.css" />
+    {% get_static_prefix as STATIC_PREFIX %}
+    {% get_media_prefix as MEDIA_PREFIX %}
+
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_PREFIX|default:MEDIA_PREFIX }}redisboard/admin.css" />
 {% endblock %}
 
 {% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}

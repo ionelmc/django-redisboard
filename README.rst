@@ -44,6 +44,13 @@ Or if you use south you can migrate this app::
 
 Then you can add redis servers in the admin. You will see the stats in the changelist.
 
+Redisboard has few css tweaks for the pages (they are optional). If you use staticfiles just run::
+
+    manage.py collectstatic
+
+If you do not use django.contrib.staticfiles you must manually symlink the 
+site-packages/redisboard/static/redisboard dir to <your media root>/redisboard.
+
 Optional django settings
 ========================
 
