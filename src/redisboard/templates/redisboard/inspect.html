@@ -1,7 +1,6 @@
 {% extends "admin/base_site.html" %}
-{% load i18n admin_static admin_modify %}
+{% load i18n static admin_modify %}
 {% load url from future %}
-{% load admin_urls %}
 
 {% block title %}Inspect {{ original }}{% endblock %}
 
@@ -13,7 +12,7 @@
 
 {% block extrastyle %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static "redisboard/admin.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% get_static_prefix %}redisboard/admin.css" />
 {% endblock %}
 
 {% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
