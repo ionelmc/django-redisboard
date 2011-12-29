@@ -38,7 +38,7 @@ def _get_key_info(conn, key):
         return {
             'type': conn.type(key),
             'name': key,
-            'details': dict(
+            'details': details if isinstance(details, dict) else dict(
                 _fixup_pair(i.split(':')) for i in details.split() if ':' in i
             ),
             'length': obj_length,
