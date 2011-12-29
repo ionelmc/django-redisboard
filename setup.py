@@ -5,7 +5,7 @@ import os
 
 setup(
     name = "django-redisboard",
-    version = "0.2.1",
+    version = "0.2.2",
     url = 'https://github.com/ionelmc/django-redisboard',
     download_url = '',
     license = 'BSD',
@@ -16,6 +16,10 @@ setup(
     packages = find_packages('src'),
     package_dir = {'':'src'},
     include_package_data = True,
+    install_requires = [
+        'redis',
+        'Django>=1.3',
+    ],
     zip_safe = False,
     classifiers = [
         'Development Status :: 4 - Beta',

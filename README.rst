@@ -12,6 +12,12 @@ Features
 * Key summary in the inspect view
 * Value introspection with pagination for lists and sorted sets
 
+Requirements
+============
+
+* Django 1.3
+* py-redis
+
 
 Installation guide
 ==================
