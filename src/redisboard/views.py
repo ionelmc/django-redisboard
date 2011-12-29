@@ -11,7 +11,7 @@ from redis.exceptions import ResponseError
 
 from .utils import LazySlicingIterable
 
-REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE', 1000)
+REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE', 200)
 
 def safeint(value):
     try:
@@ -75,7 +75,7 @@ def _get_key_details(conn, db, key, page):
                 curry(VALUE_GETTERS[details['type']], conn, key)
             ),
             REDISBOARD_ITEMS_PER_PAGE
-        ).page(page)
+        ).page(page).object_list
     else:
         details['data'] = VALUE_GETTERS[details['type']](conn, key)
 
