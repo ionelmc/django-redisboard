@@ -51,7 +51,7 @@ def _get_key_info(conn, key):
             'length': "n/a",
             'name': key,
             'details': {},
-            'error': e,
+            'error': str(e),
             'ttl': "n/a",
         }
 
@@ -61,6 +61,7 @@ VALUE_GETTERS = {
     'set': lambda conn, key, *args: list(enumerate(conn.smembers(key))),
     'zset': lambda conn, key, start=0, end=-1: [(pos+start, val) for pos, val in enumerate(conn.zrange(key, start, end))],
     'hash': lambda conn, key, *args: conn.hgetall(key).items(),
+    'n/a': lambda conn, key, *args: (),
 }
 
 def _get_key_details(conn, db, key, page):
