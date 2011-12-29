@@ -69,7 +69,7 @@ To show all the details just use::
 REDISBOARD_ITEMS_PER_PAGE
 -------------------------
 
-REDISBOARD_ITEMS_PER_PAGE - default 200. Used for paginating the items from a list or a sorted set.
+REDISBOARD_ITEMS_PER_PAGE - default 100. Used for paginating the items from a list or a sorted set.
 
 Screenshots
 ===========

@@ -28,7 +28,12 @@
 <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
 &rsaquo; <a href="{% url 'admin:app_list' app_label='redisboard' %}">{{ 'redisboard'|capfirst|escape }}</a>
 &rsaquo; <a href="{% url 'admin:redisboard_redisserver_changelist' %}">{{ 'redisserver'|capfirst }}</a>
-&rsaquo; {% trans 'Inspect' %} {{ original|truncatewords:"18" }}
+{% if key_details %}
+    &rsaquo; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}">{% trans 'Inspect' %} {{ original|truncatewords:"18" }}</a>
+    &rsaquo; {% trans "Key details" %}: {{ key_details.name }}
+{% else %}
+    &rsaquo; {% trans 'Inspect' %} {{ original|truncatewords:"18" }}
+{% endif %}
 </div>
 {% endblock %}
 {% endif %}
@@ -132,11 +137,11 @@
         <fieldset class="module aligned key-data">
             <h2>{% trans "Key data" %}: {{ key_details.name }}</h2>
             <table>
-                {% for key, value in key_details.data %}
+                {% for key, value in key_details.data.object_list|default:key_details.data %}
                 <tr><td>{{ key }}</td><td>{{ value }}</td></tr>
                 {% endfor %}
             </table>
-            {% if key_details.data.paginator %}
+            {% if key_details.data.paginator and key_details.data.paginator.num_pages > 1 %}
             <p class="paginator">
                 {% for nr in key_details.data.paginator.page_range %}
                 {% if key_details.data.number == nr %}
