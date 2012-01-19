@@ -6,6 +6,7 @@ from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.exceptions import ValidationError
 from django.conf import settings
 
 from .utils import cached_property
@@ -41,20 +42,31 @@ class RedisServer(models.Model):
             ("can_inspect", "Can inspect redis servers"),
         )
 
-    hostname = models.CharField(_("Hostname"), max_length=250)
+    hostname = models.CharField(_("Hostname"), max_length=250, help_text=_('this can also be the absolute path to a redis socket'))
     port = models.IntegerField(_("Port"), validators=[
         MaxValueValidator(65535), MinValueValidator(1)
-    ], default=6379)
+    ], default=6379, blank=True, null=True)
     password = models.CharField(_("Password"), max_length=250,
                                 null=True, blank=True)
+
+    def clean(self):
+        if not self.hostname.startswith('/') and not self.port:
+            raise ValidationError(_('Please provide either a hostname AND a port or the path to a redis socket'))
 
 
     @cached_property
     def connection(self):
+        if self.hostname.startswith('/'):
+            unix_socket_path = self.hostname
+            hostname = None
+        else:
+            hostname = self.hostname
+            unix_socket_path = None
         return redis.Redis(
-            host = self.hostname,
+            host = hostname,
             port = self.port,
-            password = self.password
+            password = self.password,
+            unix_socket_path=unix_socket_path,
         )
 
     @connection.deleter
@@ -98,4 +110,6 @@ class RedisServer(models.Model):
 
 
     def __unicode__(self):
-        return "%s:%s" % (self.hostname, self.port)
+        if self.port:
+            return "%s:%s" % (self.hostname, self.port)
+        return self.hostname
