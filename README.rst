@@ -17,6 +17,7 @@ Requirements
 
 * Django 1.3
 * py-redis
+* Redis 2.2 or later (wich you should be using anyway)
 
 
 Installation guide
