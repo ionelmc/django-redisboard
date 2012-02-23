@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.utils.datastructures import SortedDict
 from django.conf import settings
 from django.utils.functional import curry
+from django.http import HttpResponseNotFound
 
 from redis.exceptions import ResponseError
 
@@ -82,14 +83,31 @@ def _get_key_details(conn, db, key, page):
 
     return details
 
-
-def _get_db_details(conn, db):
+def _get_db_summary(server, db):
+    conn = server.connection
     conn.execute_command('SELECT', db)
+    return dict(size=conn.dbsize())
+
+def _get_db_details(server, db):
+    conn = server.connection
+    conn.execute_command('SELECT', db)
+    size = conn.dbsize()
     keys = conn.keys()
     key_details = {}
-    for key in keys:
-        key_details[key] = _get_key_info(conn, key)
-    return key_details
+    if size > server.sampling_threshold:
+        sampling = True
+        for _ in xrange(server.sampling_size):
+            key = conn.randomkey()
+            key_details[key] = _get_key_info(conn, key)
+    else:
+        sampling = False
+        for key in keys:
+            key_details[key] = _get_key_info(conn, key)
+    return dict(
+        keys = key_details,
+        sampling = sampling,
+    )
+
 
 
 def inspect(request, server):
@@ -106,11 +124,26 @@ def inspect(request, server):
             key_details = _get_key_details(conn, db, key, page)
         else:
             databases = sorted(name[2:] for name in conn.info() if name.startswith('db'))
-
+            total_size = 0
             for db in databases:
-                database_details[db] = _get_db_details(conn, db)
-
-
+                database_details[db] = summary = _get_db_summary(server, db)
+                total_size += summary['size']
+            if total_size < server.sampling_threshold:
+                for db in databases:
+                    database_details[db].update(
+                        _get_db_details(server, db),
+                        active = True,
+                    )
+            else:
+                if 'db' in request.GET:
+                    db = request.GET['db']
+                    if db in database_details:
+                        database_details[db].update(
+                            _get_db_details(server, db),
+                            active = True,
+                        )
+                    else:
+                        return HttpResponseNotFound("Unknown database.")
     return render(request, "redisboard/inspect.html", {
         'databases': database_details,
         'key_details': key_details,

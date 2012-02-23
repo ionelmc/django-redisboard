@@ -66,10 +66,34 @@
 
     {% for db, db_detail in databases.items %}
         <fieldset class="module aligned database-details">
-            <h2>{% trans "Database" %} {{ db }}</h2>
+            <h2>
+                {% trans "Database" %} {{ db }}:
+                {% if db_detail.sampling %}
+                    {% with db_detail.size as total %}
+                        {% blocktrans count original.sampling_threshold as size %}
+                            {{ size }} random key our of {{ total }}
+                        {% plural %}
+                            {{ size }} random keys our of {{ total }}
+                        {% endblocktrans %}
+                    {% endwith %}
+                {% else %}
+                    {% blocktrans count db_detail.size as size %}
+                        {{ size }} key
+                    {% plural %}
+                        {{ size }} keys
+                    {% endblocktrans %}
+                {% endif %}
+
+                {% if db_detail.active %}
+                    &larr;
+                {% else %}
+                    &ndash; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}?db={{ db }}">{% trans "Show details" %}</a>
+                {% endif %}
+            </h2>
+            {% if db_detail.active %}
             <table>
                 <tr>
-                    <th rowspan="2">{% trans "Keys" %} ({{ db_detail|length }})</th>
+                    <th rowspan="2">{% trans "Keys" %} ({{ db_detail.keys|length }})</th>
                     <th colspan="7">{% trans "Details" %}</th>
                 </tr>
                 <tr>
@@ -83,7 +107,7 @@
                     <th>{% trans "Other" %}</th>
                 </tr>
 
-                {% for key, key_detail in db_detail.items %}
+                {% for key, key_detail in db_detail.keys.items %}
                 <tr>
                     <td><a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}?key={{ key|escape }}&db={{ db }}">{{ key }}</td>
                     {% if key_detail.error %}
@@ -102,6 +126,7 @@
                 {% endfor %}
 
             </table>
+            {% endif %}
         </fieldset>
     {% endfor %}
     {% if key_details %}

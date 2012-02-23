@@ -42,12 +42,28 @@ class RedisServer(models.Model):
             ("can_inspect", "Can inspect redis servers"),
         )
 
-    hostname = models.CharField(_("Hostname"), max_length=250, help_text=_('this can also be the absolute path to a redis socket'))
+    hostname = models.CharField(
+        _("Hostname"),
+        max_length = 250,
+        help_text = _('This can also be the absolute path to a redis socket')
+    )
+
     port = models.IntegerField(_("Port"), validators=[
         MaxValueValidator(65535), MinValueValidator(1)
     ], default=6379, blank=True, null=True)
     password = models.CharField(_("Password"), max_length=250,
                                 null=True, blank=True)
+
+    sampling_threshold = models.IntegerField(
+        _("Sampling threshold"),
+        default = 1000,
+        help_text = _("Number of keys after which only a sample (of random keys) is shown on the inspect page.")
+    )
+    sampling_size = models.IntegerField(
+        _("Sampling size"),
+        default = 200,
+        help_text = _("Number of random keys shown when sampling is used. Note that each key translates to a RANDOMKEY call in redis.")
+    )
 
     def clean(self):
         if not self.hostname.startswith('/') and not self.port:
