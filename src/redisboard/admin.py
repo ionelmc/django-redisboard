@@ -17,6 +17,7 @@ class RedisServerAdmin(admin.ModelAdmin):
     list_display = (
         '__unicode__', 'status', 'memory', 'clients', 'details', 'tools'
     )
+    ordering = ('hostname', 'port')
     def status(self, obj):
         return obj.stats['status']
     status.long_description = _("Status")
