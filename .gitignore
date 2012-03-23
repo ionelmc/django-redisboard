@@ -7,3 +7,5 @@ dist/
 build/
 .build/
 pip-log.txt
+.ve
+src/redisboard_sample_project/database.sqlite
