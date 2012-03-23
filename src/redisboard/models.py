@@ -44,9 +44,9 @@ class RedisServer(models.Model):
 
     label = models.CharField(
         _('Label'),
-        max_length=50,
-        default='',
-        blank=True,
+        max_length = 50,
+        blank = True,
+        null = True,
     )
 
     hostname = models.CharField(
