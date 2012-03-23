@@ -42,6 +42,13 @@ class RedisServer(models.Model):
             ("can_inspect", "Can inspect redis servers"),
         )
 
+    label = models.CharField(
+        _('Label'),
+        max_length=50,
+        default='',
+        blank=True,
+    )
+
     hostname = models.CharField(
         _("Hostname"),
         max_length = 250,
@@ -126,6 +133,14 @@ class RedisServer(models.Model):
 
 
     def __unicode__(self):
+        if self.label:
+            label = '%s (%%s)' % self.label
+        else:
+            label = '%s'
+
         if self.port:
-            return "%s:%s" % (self.hostname, self.port)
-        return self.hostname
+            label = label % ('%s:%s' % (self.hostname, self.port))
+        else:
+            label = label % self.hostname
+
+        return label
