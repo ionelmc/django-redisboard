@@ -14,11 +14,13 @@ class RedisServerAdmin(admin.ModelAdmin):
         css = {
             'all': ('redisboard/admin.css',)
         }
+
     list_display = (
         '__unicode__', 'status', 'memory', 'clients', 'details', 'tools'
     )
     list_filter = 'label', 'hostname'
     ordering = ('hostname', 'port')
+
     def status(self, obj):
         return obj.stats['status']
     status.long_description = _("Status")
@@ -53,7 +55,7 @@ class RedisServerAdmin(admin.ModelAdmin):
             from django.conf.urls import patterns, url
         except ImportError:
             from django.conf.urls.defaults import patterns, url
-    
+
         def wrap(view):
             def wrapper(*args, **kwargs):
                 return self.admin_site.admin_view(view)(*args, **kwargs)
