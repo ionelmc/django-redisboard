@@ -13,10 +13,9 @@ from .utils import cached_property
 
 REDISBOARD_DETAIL_FILTERS = [re.compile(name) for name in getattr(settings, 'REDISBOARD_DETAIL_FILTERS', (
     'aof_enabled', 'bgrewriteaof_in_progress', 'bgsave_in_progress',
-    'changes_since_last_save', 'db.*', 'db1', 'last_save_time',
-    'multiplexing_api', 'total_commands_processed',
-    'total_connections_received', 'uptime_in_days', 'uptime_in_seconds',
-    'vm_enabled', 'redis_version'
+    'changes_since_last_save', 'db.*', 'last_save_time', 'multiplexing_api',
+    'total_commands_processed', 'total_connections_received', 'uptime_in_days',
+    'uptime_in_seconds', 'vm_enabled', 'redis_version'
 ))]
 REDISBOARD_DETAIL_TIMESTAMP_KEYS = getattr(settings, 'REDISBOARD_DETAIL_TIMESTAMP_KEYS', (
     'last_save_time',
@@ -41,6 +40,13 @@ class RedisServer(models.Model):
         permissions = (
             ("can_inspect", "Can inspect redis servers"),
         )
+
+    label = models.CharField(
+        _('Label'),
+        max_length = 50,
+        blank = True,
+        null = True,
+    )
 
     hostname = models.CharField(
         _("Hostname"),
@@ -126,6 +132,14 @@ class RedisServer(models.Model):
 
 
     def __unicode__(self):
+        if self.label:
+            label = '%s (%%s)' % self.label
+        else:
+            label = '%s'
+
         if self.port:
-            return "%s:%s" % (self.hostname, self.port)
-        return self.hostname
+            label = label % ('%s:%s' % (self.hostname, self.port))
+        else:
+            label = label % self.hostname
+
+        return label
