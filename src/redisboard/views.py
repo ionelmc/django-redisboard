@@ -12,13 +12,16 @@ from redis.exceptions import ResponseError
 
 from .utils import LazySlicingIterable
 
-REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE', 100)
+REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE',
+    100)
+
 
 def safeint(value):
     try:
         return int(value)
     except ValueError:
         return value
+
 
 def _fixup_pair((a, b)):
     return a, safeint(b)
@@ -30,6 +33,7 @@ LENGTH_GETTERS = {
     'zset': lambda conn, key: conn.zcount(key, '-inf', '+inf'),
     'hash': lambda conn, key: conn.hlen(key),
 }
+
 
 def _get_key_info(conn, key):
     try:
@@ -57,13 +61,16 @@ def _get_key_info(conn, key):
         }
 
 VALUE_GETTERS = {
-    'list': lambda conn, key, start=0, end=-1: [(pos+start, val) for pos, val in enumerate(conn.lrange(key, start, end))],
+    'list': lambda conn, key, start=0, end=-1: [(pos + start, val)
+        for (pos, val) in enumerate(conn.lrange(key, start, end))],
     'string': lambda conn, key, *args: [('string', conn.get(key))],
     'set': lambda conn, key, *args: list(enumerate(conn.smembers(key))),
-    'zset': lambda conn, key, start=0, end=-1: [(pos+start, val) for pos, val in enumerate(conn.zrange(key, start, end))],
+    'zset': lambda conn, key, start=0, end=-1: [(pos + start, val)
+        for (pos, val) in enumerate(conn.zrange(key, start, end))],
     'hash': lambda conn, key, *args: conn.hgetall(key).items(),
     'n/a': lambda conn, key, *args: (),
 }
+
 
 def _get_key_details(conn, db, key, page):
     conn.execute_command('SELECT', db)
@@ -80,13 +87,14 @@ def _get_key_details(conn, db, key, page):
     else:
         details['data'] = VALUE_GETTERS[details['type']](conn, key)
 
-
     return details
+
 
 def _get_db_summary(server, db):
     conn = server.connection
     conn.execute_command('SELECT', db)
     return dict(size=conn.dbsize())
+
 
 def _get_db_details(server, db):
     conn = server.connection
@@ -104,10 +112,9 @@ def _get_db_details(server, db):
         for key in keys:
             key_details[key] = _get_key_info(conn, key)
     return dict(
-        keys = key_details,
-        sampling = sampling,
+        keys=key_details,
+        sampling=sampling,
     )
-
 
 
 def inspect(request, server):
@@ -123,7 +130,8 @@ def inspect(request, server):
             page = request.GET.get('page', 1)
             key_details = _get_key_details(conn, db, key, page)
         else:
-            databases = sorted(name[2:] for name in conn.info() if name.startswith('db'))
+            databases = sorted(name[2:] for name in conn.info()
+                if name.startswith('db'))
             total_size = 0
             for db in databases:
                 database_details[db] = summary = _get_db_summary(server, db)
@@ -132,7 +140,7 @@ def inspect(request, server):
                 for db in databases:
                     database_details[db].update(
                         _get_db_details(server, db),
-                        active = True,
+                        active=True,
                     )
             else:
                 if 'db' in request.GET:
@@ -140,7 +148,7 @@ def inspect(request, server):
                     if db in database_details:
                         database_details[db].update(
                             _get_db_details(server, db),
-                            active = True,
+                            active=True,
                         )
                     else:
                         return HttpResponseNotFound("Unknown database.")
@@ -151,3 +159,4 @@ def inspect(request, server):
         'stats': stats,
         'app_label': 'redisboard',
     })
+
