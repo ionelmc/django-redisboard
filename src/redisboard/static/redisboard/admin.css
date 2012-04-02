@@ -53,3 +53,15 @@ td.error {
     border: 1px solid gray;
     margin: 5px;
 }
+dl.details dt{
+    margin: 0px;
+    float: left;
+    clear: left;
+    width: 160px;
+    text-align: right;
+    font-weight: normal;
+}
+dl.details dd{
+    margin: 0px;
+    margin-left: 170px;
+}
