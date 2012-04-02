@@ -17,8 +17,8 @@ setup(
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=[
-        'redis',
-        'Django>=1.3',
+        'redis>=2.10.0',
+        'Django>=1.4',
     ],
     zip_safe=False,
     classifiers=[

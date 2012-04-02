@@ -16,10 +16,34 @@ class RedisServerAdmin(admin.ModelAdmin):
         }
 
     list_display = (
-        '__unicode__', 'status', 'memory', 'clients', 'details', 'tools'
+        '__unicode__',
+        'status',
+        'memory',
+        'clients',
+        'details',
+        'cpu_utilization',
+        'slowlog',
+        'tools',
     )
+
     list_filter = 'label', 'hostname'
     ordering = ('hostname', 'port')
+
+    def slowlog(self, obj):
+        output = [(float('inf'), 'Total: %d items' % obj.slowlog_len())]
+        for log in obj.slowlog_get():
+            command = ' '.join(log['command'])
+            if command[100:]:
+                command = command[:97] + '...'
+
+            output.append((
+                log['duration'],
+                '%dms: %s' % (log['duration'], command),
+            ))
+
+        return '<br>'.join(l for _, l in sorted(output, reverse=True))
+    slowlog.allow_tags = True
+    slowlog.long_description = _('Slowlog')
 
     def status(self, obj):
         return obj.stats['status']
@@ -42,12 +66,37 @@ class RedisServerAdmin(admin.ModelAdmin):
     tools.long_description = _("Tools")
 
     def details(self, obj):
-        return '<table class="details">%s</table>' % ''.join(
-            "<tr><td>%s</td><td>%s</td></tr>" % i for i in
-                obj.stats['brief_details'].items()
-        )
+        output = []
+        for k, v in obj.stats['brief_details'].iteritems():
+            output.append('<dt>%s</dt><dd>%s</dd>' % (k, v))
+
+        return '<dl class="details">%s</dl>' % ''.join(output)
     details.allow_tags = True
     details.long_description = _("Details")
+
+    def cpu_utilization(self, obj):
+        data = (
+            'used_cpu_sys',
+            'used_cpu_sys_children',
+            'used_cpu_user',
+            'used_cpu_user_children',
+        )
+        data = dict((k, obj.stats['details'][k]) for k in data)
+        total_cpu = sum(data.itervalues())
+        data['cpu_utilization'] = '%.3f%%' % (total_cpu
+            / obj.stats['details']['uptime_in_seconds'])
+
+        data = sorted(data.items())
+
+        output = []
+        for k, v in data:
+            k = k.replace('_', ' ')
+            output.append('<dt>%s</dt><dd>%s</dd>' % (k, v))
+
+        return '<dl class="details">%s</dl>' % ''.join(output)
+    cpu_utilization.allow_tags = True
+    cpu_utilization.long_description = _('CPU Utilization')
+
 
     def get_urls(self):
         urlpatterns = super(RedisServerAdmin, self).get_urls()
@@ -69,9 +118,11 @@ class RedisServerAdmin(admin.ModelAdmin):
 
     def inspect_view(self, request, server_id):
         server = get_object_or_404(RedisServer, id=server_id)
-        if self.has_change_permission(request, server) and request.user.has_perm('redisboard.can_inspect'):
+        if(self.has_change_permission(request, server)
+                and request.user.has_perm('redisboard.can_inspect')):
             return inspect(request, server)
         else:
             return HttpResponseForbidden("You can't inspect this server.")
 
 admin.site.register(RedisServer, RedisServerAdmin)
+

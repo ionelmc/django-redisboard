@@ -24,6 +24,8 @@ REDISBOARD_DETAIL_SECONDS_KEYS = getattr(settings, 'REDISBOARD_DETAIL_SECONDS_KE
     'uptime_in_seconds',
 ))
 
+REDISBOARD_SLOWLOG_LEN = getattr(settings, 'REDISBOARD_SLOWLOG_LEN', 10)
+
 def prettify(key, value):
     if key in REDISBOARD_DETAIL_SECONDS_KEYS:
         return key, timedelta(seconds=value)
@@ -109,8 +111,9 @@ class RedisServer(models.Model):
                 'clients': info['connected_clients'],
                 'brief_details': SortedDict(
                     prettify(k, v)
-                    for k, v in sorted(info.items(), key=lambda (k,v): k)
-                    if any(name.match(k) for name in REDISBOARD_DETAIL_FILTERS)
+                    for name in REDISBOARD_DETAIL_FILTERS
+                    for k, v in info.iteritems()
+                    if name.match(k)
                 )
             }
         except redis.exceptions.ConnectionError:
@@ -143,3 +146,24 @@ class RedisServer(models.Model):
             label = label % self.hostname
 
         return label
+
+    def slowlog_len(self):
+        try:
+            return self.connection.slowlog_len()
+        except redis.exceptions.ConnectionError:
+            return 0
+
+    def slowlog_get(self, limit=REDISBOARD_SLOWLOG_LEN):
+        try:
+            slowlog_get = self.connection.slowlog_get(REDISBOARD_SLOWLOG_LEN)
+            for i, (id, ts, duration, command) in enumerate(slowlog_get):
+                yield dict(
+                    id=id,
+                    ts=datetime.fromtimestamp(ts),
+                    duration=duration,
+                    command=command,
+                )
+
+        except redis.exceptions.ConnectionError:
+            pass
+
