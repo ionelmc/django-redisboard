@@ -142,16 +142,15 @@ def inspect(request, server):
                         _get_db_details(server, db),
                         active=True,
                     )
-            else:
-                if 'db' in request.GET:
-                    db = request.GET['db']
-                    if db in database_details:
-                        database_details[db].update(
-                            _get_db_details(server, db),
-                            active=True,
-                        )
-                    else:
-                        return HttpResponseNotFound("Unknown database.")
+            elif 'db' in request.GET:
+                db = request.GET['db']
+                if db in database_details:
+                    database_details[db].update(
+                        _get_db_details(server, db),
+                        active=True,
+                    )
+                else:
+                    return HttpResponseNotFound("Unknown database.")
     return render(request, "redisboard/inspect.html", {
         'databases': database_details,
         'key_details': key_details,
