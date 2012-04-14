@@ -18,7 +18,9 @@ setup(
     include_package_data=True,
     install_requires=[
         'redis>=2.10.0',
-        'Django>=1.4',
+        # Requiring Django makes it harder to run a custom version and users
+        # will have it installed anyway :)
+        #'Django>=1.3',
     ],
     zip_safe=False,
     classifiers=[
