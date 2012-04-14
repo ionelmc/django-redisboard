@@ -74,10 +74,14 @@
                     {% endwith %}
                 {% else %}
                     {% blocktrans count db_detail.size as size %}
-                        {{ size }} key
+                        {{ size }} key,
                     {% plural %}
-                        {{ size }} keys
+                        {{ size }} keys,
                     {% endblocktrans %}
+                    {% trans "memory:" %}
+                    ~{{ db_detail.total_memory|filesizeformat }} total,
+                    ~{{ db_detail.volatile_memory|filesizeformat }} volatile,
+                    ~{{ db_detail.persistent_memory|filesizeformat }} persistent
                 {% endif %}
 
                 {% if db_detail.active %}
@@ -96,7 +100,7 @@
                     <th>{% trans "Type" %}</th>
                     <th>{% trans "TTL" %}</th>
                     <th>{% trans "Encoding" %}</th>
-                    <th>{% trans "Length" %}</th>
+                    <th>{% trans "Size" %}</th>
                     <th>{% trans "Items" %}</th>
                     <th>{% trans "LRU" %}</th>
                     <th>{% trans "Refs" %}</th>
@@ -112,7 +116,7 @@
                     <td>{{ key_detail.type }}</td>
                     <td>{{ key_detail.ttl }}</td>
                     <td>{{ key_detail.details.encoding }}</td>
-                    <td>{{ key_detail.details.serializedlength }}</td>
+                    <td>{{ key_detail.details.serializedlength|filesizeformat }}</td>
                     <td>{{ key_detail.length }}</td>
                     <td>{{ key_detail.details.lru|default:"n/a" }} (idle: {{ key_detail.details.lru_seconds_idle|default:"n/a" }})</td>
                     <td>{{ key_detail.details.refcount }}</td>
