@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8 :
 from functools import update_wrapper
 
 from django.utils.translation import ugettext_lazy as _
@@ -33,12 +34,13 @@ class RedisServerAdmin(admin.ModelAdmin):
         for log in obj.slowlog_get():
             command = ' '.join(l.decode('utf-8', 'replace')
                  for l in log['command'])
+
             if command[100:]:
                 command = command[:97] + '...'
 
             output.append((
                 log['duration'],
-                '%dms: %s' % (log['duration'], command),
+                u'%.1fms: %s' % (log['duration'] / 1000., command),
             ))
         return '<br>'.join(l for _, l in sorted(output, reverse=True))
     slowlog.allow_tags = True
@@ -74,16 +76,20 @@ class RedisServerAdmin(admin.ModelAdmin):
     details.long_description = _("Details")
 
     def cpu_utilization(self, obj):
+        stats = obj.stats
+        if stats['status'] == 'DOWN':
+            return ''
+
         data = (
             'used_cpu_sys',
             'used_cpu_sys_children',
             'used_cpu_user',
             'used_cpu_user_children',
         )
-        data = dict((k, obj.stats['details'][k]) for k in data)
+        data = dict((k, stats['details'][k]) for k in data)
         total_cpu = sum(data.itervalues())
         data['cpu_utilization'] = '%.3f%%' % (total_cpu
-            / obj.stats['details']['uptime_in_seconds'])
+            / stats['details']['uptime_in_seconds'])
 
         data = sorted(data.items())
 
