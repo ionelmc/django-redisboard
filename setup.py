@@ -19,7 +19,9 @@ setup(
     include_package_data = True,
     install_requires = [
         'redis==2.4.12',
-        'Django>=1.3',
+        # Requiring Django makes it harder to run a custom version and users
+        # will have it installed anyway :)
+        #'Django>=1.3',
     ],
     dependency_links = [
         'https://github.com/WoLpH/redis-py/zipball/2.4.12#egg=redis-2.4.12',
