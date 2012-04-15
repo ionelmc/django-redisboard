@@ -37,17 +37,21 @@ LENGTH_GETTERS = {
 
 def _get_key_info(conn, key):
     try:
-        details = conn.execute_command('DEBUG', 'OBJECT', key)
-        obj_type = conn.type(key)
-        obj_length = LENGTH_GETTERS[obj_type](conn, key)
+        obj_type = conn.type(key) 
+        pipe = conn.pipeline()
+        pipe.execute_command('DEBUG', 'OBJECT', key)
+        LENGTH_GETTERS[obj_type](pipe, key)
+        pipe.ttl(key)
+        details, obj_length, obj_ttl = pipe.execute()
+        pass
         return {
-            'type': conn.type(key),
+            'type': obj_type,
             'name': key,
             'details': details if isinstance(details, dict) else dict(
                 _fixup_pair(i.split(':')) for i in details.split() if ':' in i
             ),
             'length': obj_length,
-            'ttl': conn.ttl(key),
+            'ttl': obj_ttl,
         }
     except ResponseError, e:
         logger.exception("Failed to get details for key %r", key)
@@ -157,17 +161,22 @@ def _get_db_details(server, db):
     conn = server.connection
     conn.execute_command('SELECT', db)
     size = conn.dbsize()
-    keys = conn.keys()
+
     key_details = {}
     if size > server.sampling_threshold:
         sampling = True
+        pipe = conn.pipeline()
         for _ in xrange(server.sampling_size):
-            key = conn.randomkey()
+            pipe.randomkey()
+
+        for key in set(pipe.execute()):
             key_details[key] = _get_key_info(conn, key)
+
     else:
         sampling = False
-        for key in keys:
+        for key in conn.keys():
             key_details[key] = _get_key_info(conn, key)
+
     return dict(
         keys=key_details,
         sampling=sampling,
