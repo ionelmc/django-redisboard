@@ -60,7 +60,7 @@ VALUE_GETTERS = {
     'list': lambda conn, key, start=0, end=-1: [(pos+start, val) for pos, val in enumerate(conn.lrange(key, start, end))],
     'string': lambda conn, key, *args: [('string', conn.get(key))],
     'set': lambda conn, key, *args: list(enumerate(conn.smembers(key))),
-    'zset': lambda conn, key, start=0, end=-1: [(pos+start, val) for pos, val in enumerate(conn.zrange(key, start, end))],
+    'zset': lambda conn, key, start=0, end=-1: [(pos+start, val) for pos, val in enumerate(conn.zrevrange(key, start, end, withscores=True))],
     'hash': lambda conn, key, *args: conn.hgetall(key).items(),
     'n/a': lambda conn, key, *args: (),
 }
