@@ -31,7 +31,9 @@ Or with setuptools::
 
     easy_install django-redisboard
 
-Add ``redisboard`` to ``INSTALLED_APPS``::
+Add ``redisboard`` to ``INSTALLED_APPS``:
+
+.. code-block:: python
 
     INSTALLED_APPS += ("redisboard", )
 
@@ -59,11 +61,15 @@ REDISBOARD_DETAIL_FILTERS
 -------------------------
 
 REDISBOARD_DETAIL_FILTERS - a list of regular expressions to match against the keys in the server 
-details colum. Eg, to only show uptime and list of active databases::
+details colum. Eg, to only show uptime and list of active databases:
+
+.. code-block:: python
 
     REDISBOARD_DETAIL_FILTERS = ['uptime.*', 'db.*']
 
-To show all the details just use:: 
+To show all the details just use::
+
+.. code-block:: python
     
     REDISBOARD_DETAIL_FILTERS = ['.*']
 
