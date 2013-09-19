@@ -88,3 +88,9 @@ Changelist:
 Inspect page:
 
 .. image:: https://github.com/downloads/ionelmc/django-redisboard/redisboard-inspect.png
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/ionelmc/django-redisboard/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
