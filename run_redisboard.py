@@ -36,7 +36,6 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    #'django.contrib.sites',
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'redisboard',
@@ -48,15 +47,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
-#from django.contrib.auth.middleware import AuthenticationMiddleware
-#from django.contrib.sessions.middleware import SessionMiddleware
-#from django.contrib.sessions.backends import db
 SECRET_KEY = open('.redisboard.secret').read().strip()
 ROOT_URLCONF = 'run_redisboard'
-DEBUG = True
-#TEMPLATE_DEBUG = True
 STATIC_URL = '/static/'
-#SITE_ID = 1
 ALLOWED_HOSTS = ['*']
 LOGGING = {
     'version': 1,
@@ -116,5 +109,4 @@ if __name__ == '__main__':
         print "="*80
         from redisboard.models import RedisServer
         RedisServer.objects.create(label="localhost", hostname="127.0.0.1")
-    #execute_from_command_line(['run_redisboard', 'diffsettings', '--traceback'])
     execute_from_command_line(['run_redisboard', 'runserver'] + (sys.argv[1:] if len(sys.argv) > 1 else ['0:8000']))
