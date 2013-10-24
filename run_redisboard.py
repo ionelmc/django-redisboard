@@ -1,11 +1,11 @@
-#!/bin/sh -eE
+#!/bin/sh -ex
 bogus=''' '
 export PYTHONPATH=.
 export DJANGO_SETTINGS_MODULE=run_redisboard
 secret() {
     tr -cd "[:alnum:]" < /dev/urandom | head -c ${1:-8}
 }
-
+chmod +x run_redisboard.py
 if [ ! -e .redisboard.venv ]; then
     virtualenv .redisboard.venv
     .redisboard.venv/bin/pip install Django django-redisboard
@@ -109,4 +109,4 @@ if __name__ == '__main__':
         print "="*80
         from redisboard.models import RedisServer
         RedisServer.objects.create(label="localhost", hostname="127.0.0.1")
-    execute_from_command_line(['run_redisboard', 'runserver'] + (sys.argv[1:] if len(sys.argv) > 1 else ['0:8000']))
+    execute_from_command_line(['run_redisboard', 'runserver', '--noreload'] + (sys.argv[1:] if len(sys.argv) > 1 else ['0:8000']))

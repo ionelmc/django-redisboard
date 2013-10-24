@@ -19,6 +19,22 @@ Requirements
 * py-redis
 * Redis 2.2 or later (wich you should be using anyway)
 
+Don't have a django project ?
+=============================
+
+Use the quick start script ! It will run a django project on 0.0.0.0:8000 with just the redisboard installed.
+
+With curl::
+
+    curl -L https://raw.github.com/ionelmc/django-redisboard/master/run_redisboard.py | tee run_redisboard.py | sh -e
+
+With wget::
+
+    wget --no-check-certificate https://raw.github.com/ionelmc/django-redisboard/master/run_redisboard.py -O - | tee run_redisboard.py | sh -e
+
+Don't want to run on 0.0.0.0:8000 ? Run::
+
+    ./run_redisboard.py ip:port
 
 Installation guide
 ==================
@@ -26,7 +42,7 @@ Installation guide
 Install from pypi, with pip::
 
     pip install django-redisboard
-    
+
 Or with setuptools::
 
     easy_install django-redisboard
@@ -51,7 +67,7 @@ Redisboard has few css tweaks for the pages (they are optional). If you use stat
 
     manage.py collectstatic
 
-If you do not use django.contrib.staticfiles you must manually symlink the 
+If you do not use django.contrib.staticfiles you must manually symlink the
 site-packages/redisboard/static/redisboard dir to <your media root>/redisboard.
 
 Optional django settings
@@ -60,7 +76,7 @@ Optional django settings
 REDISBOARD_DETAIL_FILTERS
 -------------------------
 
-REDISBOARD_DETAIL_FILTERS - a list of regular expressions to match against the keys in the server 
+REDISBOARD_DETAIL_FILTERS - a list of regular expressions to match against the keys in the server
 details colum. Eg, to only show uptime and list of active databases:
 
 .. code-block:: python
@@ -70,7 +86,7 @@ details colum. Eg, to only show uptime and list of active databases:
 To show all the details just use::
 
 .. code-block:: python
-    
+
     REDISBOARD_DETAIL_FILTERS = ['.*']
 
 REDISBOARD_ITEMS_PER_PAGE
@@ -93,4 +109,3 @@ Inspect page:
 .. image:: https://d2weczhvl823v0.cloudfront.net/ionelmc/django-redisboard/trend.png
    :alt: Bitdeli badge
    :target: https://bitdeli.com/free
-
