@@ -163,7 +163,7 @@
             <h2>{% trans "Key data" %}: {{ key_details.name }}</h2>
             <table>
                 {% for key, value in key_details.data.object_list|default:key_details.data %}
-                <tr><td>{{ key }}</td><td>{{ value }}</td></tr>
+                <tr><td>{{ key }}</td><td>{{ value|pprint }}</td></tr>
                 {% endfor %}
             </table>
             {% if key_details.data.paginator and key_details.data.paginator.num_pages > 1 %}
