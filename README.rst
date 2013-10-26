@@ -3,7 +3,7 @@
 =============================
 
 
-Redis monitoring drop-in application using django admin.
+Redis monitoring and inspection drop-in application using django admin.
 
 Features
 ========
@@ -22,7 +22,7 @@ Requirements
 Don't have a django project ?
 =============================
 
-Use the quick start script ! It will run a django project on 0.0.0.0:8000 with just the redisboard installed.
+Use the quick start script ! It will create and run a django project on 0.0.0.0:8000 with just the redisboard installed.
 
 With curl::
 
