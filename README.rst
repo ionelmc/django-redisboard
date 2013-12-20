@@ -2,6 +2,9 @@
     django-redisboard
 =============================
 
+.. image:: https://badge.fury.io/py/django-redisboard.png
+    :alt: PYPI Package
+    :target: https://pypi.python.org/pypi/django-redisboard
 
 Redis monitoring and inspection drop-in application using django admin.
 
