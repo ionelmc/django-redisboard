@@ -1,21 +1,17 @@
 {% extends "admin/base_site.html" %}
-{% load i18n static admin_modify %}
-{% load url from future %}
+{% load i18n admin_modify %}
 
 {% block title %}Inspect {{ original }}{% endblock %}
 
 {% block extrahead %}{{ block.super }}
-{% url 'admin:jsi18n' as jsi18nurl %}
+{% url admin:jsi18n as jsi18nurl %}
 <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
 {{ media }}
 {% endblock %}
 
 {% block extrastyle %}
     {{ block.super }}
-    {% get_static_prefix as STATIC_PREFIX %}
-    {% get_media_prefix as MEDIA_PREFIX %}
-
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_PREFIX|default:MEDIA_PREFIX }}redisboard/admin.css" />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}redisboard/admin.css" />
 {% endblock %}
 
 {% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
@@ -25,11 +21,11 @@
 {% if is_popup %}
 {% block breadcrumbs %}
 <div class="breadcrumbs">
-<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-&rsaquo; <a href="{% url 'admin:app_list' app_label='redisboard' %}">{{ 'redisboard'|capfirst|escape }}</a>
-&rsaquo; <a href="{% url 'admin:redisboard_redisserver_changelist' %}">{{ 'redisserver'|capfirst }}</a>
+<a href="{% url admin:index %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url admin:app_list app_label='redisboard' %}">{{ 'redisboard'|capfirst|escape }}</a>
+&rsaquo; <a href="{% url admin:redisboard_redisserver_changelist %}">{{ 'redisserver'|capfirst }}</a>
 {% if key_details %}
-    &rsaquo; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}">{% trans 'Inspect' %} {{ original|truncatewords:"18" }}</a>
+    &rsaquo; <a href="{% url admin:redisboard_redisserver_inspect original.id %}">{% trans 'Inspect' %} {{ original|truncatewords:"18" }}</a>
     &rsaquo; {% trans "Key details" %}: {{ key_details.name }}
 {% else %}
     &rsaquo; {% trans 'Inspect' %} {{ original|truncatewords:"18" }}
@@ -78,16 +74,20 @@
                     {% endwith %}
                 {% else %}
                     {% blocktrans count db_detail.size as size %}
-                        {{ size }} key
+                        {{ size }} key,
                     {% plural %}
-                        {{ size }} keys
+                        {{ size }} keys,
                     {% endblocktrans %}
+                    {% trans "memory:" %}
+                    ~{{ db_detail.total_memory|filesizeformat }} total,
+                    ~{{ db_detail.volatile_memory|filesizeformat }} volatile,
+                    ~{{ db_detail.persistent_memory|filesizeformat }} persistent
                 {% endif %}
 
                 {% if db_detail.active %}
                     &larr;
                 {% else %}
-                    &ndash; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}?db={{ db }}">{% trans "Show details" %}</a>
+                    &ndash; <a href="{% url admin:redisboard_redisserver_inspect original.id %}?db={{ db }}">{% trans "Show details" %}</a>
                 {% endif %}
             </h2>
             {% if db_detail.active %}
@@ -100,7 +100,7 @@
                     <th>{% trans "Type" %}</th>
                     <th>{% trans "TTL" %}</th>
                     <th>{% trans "Encoding" %}</th>
-                    <th>{% trans "Length" %}</th>
+                    <th>{% trans "Size" %}</th>
                     <th>{% trans "Items" %}</th>
                     <th>{% trans "LRU" %}</th>
                     <th>{% trans "Refs" %}</th>
@@ -109,14 +109,14 @@
 
                 {% for key, key_detail in db_detail.keys.items %}
                 <tr>
-                    <td><a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}?key={{ key|escape }}&db={{ db }}">{{ key }}</td>
+                    <td><a href="{% url admin:redisboard_redisserver_inspect original.id %}?key={{ key|escape }}&db={{ db }}">{{ key }}</td>
                     {% if key_detail.error %}
                     <td class="error" colspan="7">{% trans "ERROR:" %} {{ key_detail.error }}</td>
                     {% else %}
                     <td>{{ key_detail.type }}</td>
                     <td>{{ key_detail.ttl }}</td>
                     <td>{{ key_detail.details.encoding }}</td>
-                    <td>{{ key_detail.details.serializedlength }}</td>
+                    <td>{{ key_detail.details.serializedlength|filesizeformat }}</td>
                     <td>{{ key_detail.length }}</td>
                     <td>{{ key_detail.details.lru|default:"n/a" }} (idle: {{ key_detail.details.lru_seconds_idle|default:"n/a" }})</td>
                     <td>{{ key_detail.details.refcount }}</td>
