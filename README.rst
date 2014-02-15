@@ -18,9 +18,10 @@ Features
 Requirements
 ============
 
-* Django 1.3
-* py-redis
-* Redis 2.2 or later (wich you should be using anyway)
+:OS: Any
+:Runtime: Python 2.6, 2.7 or PyPy
+:Services: Redis 2.2 or later.
+:Packages: Django>=1.3, py-redis
 
 Don't have a django project ?
 =============================
@@ -107,8 +108,3 @@ Changelist:
 Inspect page:
 
 .. image:: https://github.com/downloads/ionelmc/django-redisboard/redisboard-inspect.png
-
-
-.. image:: https://d2weczhvl823v0.cloudfront.net/ionelmc/django-redisboard/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
