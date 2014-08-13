@@ -87,7 +87,7 @@ details colum. Eg, to only show uptime and list of active databases:
 
     REDISBOARD_DETAIL_FILTERS = ['uptime.*', 'db.*']
 
-To show all the details just use::
+To show all the details just use:
 
 .. code-block:: python
 
