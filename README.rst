@@ -103,8 +103,8 @@ Screenshots
 
 Changelist:
 
-.. image:: https://github.com/downloads/ionelmc/django-redisboard/screenshot.png
+.. image:: https://cloud.github.com/downloads/ionelmc/django-redisboard/screenshot.png
 
 Inspect page:
 
-.. image:: https://github.com/downloads/ionelmc/django-redisboard/redisboard-inspect.png
+.. image:: https://cloud.github.com/downloads/ionelmc/django-redisboard/redisboard-inspect.png
