@@ -12,8 +12,7 @@ from redis.exceptions import ResponseError
 
 from .utils import LazySlicingIterable
 
-REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE',
-    100)
+REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE', 100)
 
 
 def safeint(value):
@@ -26,6 +25,7 @@ def safeint(value):
 def _fixup_pair((a, b)):
     return a, safeint(b)
 
+
 LENGTH_GETTERS = {
     'list': lambda conn, key: conn.llen(key),
     'string': lambda conn, key: conn.strlen(key),
@@ -37,13 +37,12 @@ LENGTH_GETTERS = {
 
 def _get_key_info(conn, key):
     try:
-        obj_type = conn.type(key) 
+        obj_type = conn.type(key)
         pipe = conn.pipeline()
         pipe.execute_command('DEBUG', 'OBJECT', key)
         LENGTH_GETTERS[obj_type](pipe, key)
         pipe.ttl(key)
         details, obj_length, obj_ttl = pipe.execute()
-        pass
         return {
             'type': obj_type,
             'name': key,
@@ -64,13 +63,14 @@ def _get_key_info(conn, key):
             'ttl': "n/a",
         }
 
+
 VALUE_GETTERS = {
     'list': lambda conn, key, start=0, end=-1: [(pos + start, val)
-        for (pos, val) in enumerate(conn.lrange(key, start, end))],
+                                                for (pos, val) in enumerate(conn.lrange(key, start, end))],
     'string': lambda conn, key, *args: [('string', conn.get(key))],
     'set': lambda conn, key, *args: list(enumerate(conn.smembers(key))),
     'zset': lambda conn, key, start=0, end=-1: [(pos + start, val)
-        for (pos, val) in enumerate(conn.zrange(key, start, end))],
+                                                for (pos, val) in enumerate(conn.zrange(key, start, end))],
     'hash': lambda conn, key, *args: conn.hgetall(key).items(),
     'n/a': lambda conn, key, *args: (),
 }
@@ -121,7 +121,7 @@ def _get_db_summary(server, db):
     for key, details, ttl in zip(keys, results[::2], results[1::2]):
         if not isinstance(details, dict):
             details = dict(_fixup_pair(i.split(':'))
-                for i in details.split() if ':' in i)
+                           for i in details.split() if ':' in i)
 
         length = details['serializedlength'] + len(key)
 
@@ -197,7 +197,7 @@ def inspect(request, server):
             key_details = _get_key_details(conn, db, key, page)
         else:
             databases = sorted(name[2:] for name in conn.info()
-                if name.startswith('db'))
+                               if name.startswith('db'))
             total_size = 0
             for db in databases:
                 database_details[db] = summary = _get_db_summary(server, db)
@@ -217,6 +217,7 @@ def inspect(request, server):
                     )
                 else:
                     return HttpResponseNotFound("Unknown database.")
+
     return render(request, "redisboard/inspect.html", {
         'databases': database_details,
         'key_details': key_details,
@@ -224,4 +225,3 @@ def inspect(request, server):
         'stats': stats,
         'app_label': 'redisboard',
     })
-

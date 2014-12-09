@@ -64,9 +64,9 @@ Requirements
 ============
 
 :OS: Any
-:Runtime: Python 2.6, 2.7 or PyPy
+:Runtime: Python 2.6, 2.7, 3.4, 3.4 or PyPy
 :Services: Redis 2.2 or later.
-:Packages: Django>=1.3, py-redis
+:Packages: Django>=1.3, py-redis>=2.10.0
 
 Don't have a django project ?
 =============================
@@ -98,7 +98,7 @@ Or with setuptools::
 
 Add ``redisboard`` to ``INSTALLED_APPS``:
 
-.. code-block:: python
+::
 
     INSTALLED_APPS += ("redisboard", )
 
@@ -126,15 +126,11 @@ REDISBOARD_DETAIL_FILTERS
 -------------------------
 
 REDISBOARD_DETAIL_FILTERS - a list of regular expressions to match against the keys in the server
-details colum. Eg, to only show uptime and list of active databases:
-
-.. code-block:: python
+details colum. Eg, to only show uptime and list of active databases::
 
     REDISBOARD_DETAIL_FILTERS = ['uptime.*', 'db.*']
 
-To show all the details just use:
-
-.. code-block:: python
+To show all the details just use::
 
     REDISBOARD_DETAIL_FILTERS = ['.*']
 

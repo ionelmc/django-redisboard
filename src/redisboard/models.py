@@ -1,13 +1,15 @@
 import re
-from datetime import datetime, timedelta
-import redis
+from datetime import datetime
+from datetime import timedelta
 
+import redis
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
+from django.db import models
 from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
-from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.core.exceptions import ValidationError
-from django.conf import settings
 
 from .utils import cached_property
 
@@ -26,6 +28,7 @@ REDISBOARD_DETAIL_SECONDS_KEYS = getattr(settings, 'REDISBOARD_DETAIL_SECONDS_KE
 
 REDISBOARD_SLOWLOG_LEN = getattr(settings, 'REDISBOARD_SLOWLOG_LEN', 10)
 
+
 def prettify(key, value):
     if key in REDISBOARD_DETAIL_SECONDS_KEYS:
         return key, timedelta(seconds=value)
@@ -33,6 +36,7 @@ def prettify(key, value):
         return key, datetime.fromtimestamp(value)
     else:
         return key, value
+
 
 class RedisServer(models.Model):
     class Meta:
@@ -52,8 +56,8 @@ class RedisServer(models.Model):
 
     hostname = models.CharField(
         _("Hostname"),
-        max_length = 250,
-        help_text = _('This can also be the absolute path to a redis socket')
+        max_length=250,
+        help_text=_('This can also be the absolute path to a redis socket')
     )
 
     port = models.IntegerField(_("Port"), validators=[
@@ -64,13 +68,13 @@ class RedisServer(models.Model):
 
     sampling_threshold = models.IntegerField(
         _("Sampling threshold"),
-        default = 1000,
-        help_text = _("Number of keys after which only a sample (of random keys) is shown on the inspect page.")
+        default=1000,
+        help_text=_("Number of keys after which only a sample (of random keys) is shown on the inspect page.")
     )
     sampling_size = models.IntegerField(
         _("Sampling size"),
-        default = 200,
-        help_text = _("Number of random keys shown when sampling is used. Note that each key translates to a RANDOMKEY call in redis.")
+        default=200,
+        help_text=_("Number of random keys shown when sampling is used. Note that each key translates to a RANDOMKEY call in redis.")
     )
 
     def clean(self):
@@ -131,7 +135,6 @@ class RedisServer(models.Model):
                 'details': {},
                 'brief_details': {},
             }
-
 
     def __unicode__(self):
         if self.label:

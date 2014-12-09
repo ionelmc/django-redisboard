@@ -35,7 +35,7 @@ class RedisServerAdmin(admin.ModelAdmin):
         output = [(float('inf'), 'Total: %d items' % obj.slowlog_len())]
         for log in obj.slowlog_get():
             command = ' '.join(l.decode('utf-8', 'replace')
-                 for l in log['command'])
+                               for l in log['command'])
 
             if command[100:]:
                 command = command[:97] + '...'
@@ -104,7 +104,6 @@ class RedisServerAdmin(admin.ModelAdmin):
     cpu_utilization.allow_tags = True
     cpu_utilization.long_description = _('CPU Utilization')
 
-
     def get_urls(self):
         urlpatterns = super(RedisServerAdmin, self).get_urls()
         try:
@@ -115,9 +114,11 @@ class RedisServerAdmin(admin.ModelAdmin):
         def wrap(view):
             def wrapper(*args, **kwargs):
                 return self.admin_site.admin_view(view)(*args, **kwargs)
+
             return update_wrapper(wrapper, view)
 
-        return patterns('',
+        return patterns(
+            '',
             url(r'^(\d+)/inspect/$',
                 wrap(self.inspect_view),
                 name='redisboard_redisserver_inspect'),
@@ -132,5 +133,6 @@ class RedisServerAdmin(admin.ModelAdmin):
             return inspect(request, server)
         else:
             return HttpResponseForbidden("You can't inspect this server.")
+
 
 admin.site.register(RedisServer, RedisServerAdmin)
