@@ -77,7 +77,6 @@ class RedisServer(models.Model):
         if not self.hostname.startswith('/') and not self.port:
             raise ValidationError(_('Please provide either a hostname AND a port or the path to a redis socket'))
 
-
     @cached_property
     def connection(self):
         if self.hostname.startswith('/'):
@@ -87,9 +86,9 @@ class RedisServer(models.Model):
             hostname = self.hostname
             unix_socket_path = None
         return redis.Redis(
-            host = hostname,
-            port = self.port,
-            password = self.password,
+            host=hostname,
+            port=self.port,
+            password=self.password,
             unix_socket_path=unix_socket_path,
         )
 
@@ -166,4 +165,3 @@ class RedisServer(models.Model):
 
         except redis.exceptions.ConnectionError:
             pass
-
