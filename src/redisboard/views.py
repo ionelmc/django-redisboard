@@ -22,7 +22,8 @@ def safeint(value):
         return value
 
 
-def _fixup_pair((a, b)):
+def _fixup_pair(pair):
+    a, b = pair
     return a, safeint(b)
 
 
@@ -52,14 +53,14 @@ def _get_key_info(conn, key):
             'length': obj_length,
             'ttl': obj_ttl,
         }
-    except ResponseError, e:
+    except ResponseError as exc:
         logger.exception("Failed to get details for key %r", key)
         return {
             'type': "n/a",
             'length': "n/a",
             'name': key,
             'details': {},
-            'error': str(e),
+            'error': str(exc),
             'ttl': "n/a",
         }
 
