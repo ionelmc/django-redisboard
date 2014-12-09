@@ -127,9 +127,9 @@ class RedisServer(models.Model):
                 'details': {},
                 'brief_details': {},
             }
-        except redis.exceptions.ResponseError, e:
+        except redis.exceptions.ResponseError as exc:
             return {
-                'status': 'ERROR: %s' % e.args,
+                'status': 'ERROR: %s' % exc.args,
                 'clients': 'n/a',
                 'memory': 'n/a',
                 'details': {},
