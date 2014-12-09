@@ -2,11 +2,56 @@
     django-redisboard
 =============================
 
-.. image:: https://badge.fury.io/py/django-redisboard.png
-    :alt: PYPI Package
+| |docs| |travis| |appveyor| |coveralls| |landscape| |scrutinizer|
+| |version| |downloads| |wheel| |supported-versions| |supported-implementations|
+
+.. |docs| image:: https://readthedocs.org/projects/django-redisboard/badge/?style=flat
+    :target: https://readthedocs.org/projects/django-redisboard
+    :alt: Documentation Status
+
+.. |travis| image:: http://img.shields.io/travis/ionelmc/django-redisboard/master.png?style=flat
+    :alt: Travis-CI Build Status
+    :target: https://travis-ci.org/ionelmc/django-redisboard
+
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/ionelmc/django-redisboard?branch=master
+    :alt: AppVeyor Build Status
+    :target: https://ci.appveyor.com/project/ionelmc/django-redisboard
+
+.. |coveralls| image:: http://img.shields.io/coveralls/ionelmc/django-redisboard/master.png?style=flat
+    :alt: Coverage Status
+    :target: https://coveralls.io/r/ionelmc/django-redisboard
+
+.. |landscape| image:: https://landscape.io/github/ionelmc/django-redisboard/master/landscape.svg?style=flat
+    :target: https://landscape.io/github/ionelmc/django-redisboard/master
+    :alt: Code Quality Status
+
+.. |version| image:: http://img.shields.io/pypi/v/django-redisboard.png?style=flat
+    :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/django-redisboard
 
+.. |downloads| image:: http://img.shields.io/pypi/dm/django-redisboard.png?style=flat
+    :alt: PyPI Package monthly downloads
+    :target: https://pypi.python.org/pypi/django-redisboard
+
+.. |wheel| image:: https://pypip.in/wheel/django-redisboard/badge.png?style=flat
+    :alt: PyPI Wheel
+    :target: https://pypi.python.org/pypi/django-redisboard
+
+.. |supported-versions| image:: https://pypip.in/py_versions/django-redisboard/badge.png?style=flat
+    :alt: Supported versions
+    :target: https://pypi.python.org/pypi/django-redisboard
+
+.. |supported-implementations| image:: https://pypip.in/implementation/django-redisboard/badge.png?style=flat
+    :alt: Supported imlementations
+    :target: https://pypi.python.org/pypi/django-redisboard
+
+.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/django-redisboard/master.png?style=flat
+    :alt: Scrtinizer Status
+    :target: https://scrutinizer-ci.com/g/ionelmc/django-redisboard/
+
 Redis monitoring and inspection drop-in application using django admin.
+
+* Free software: BSD license
 
 Features
 ========
@@ -108,3 +153,16 @@ Changelist:
 Inspect page:
 
 .. image:: https://github.com/downloads/ionelmc/django-redisboard/redisboard-inspect.png
+
+
+Documentation
+=============
+
+https://django-redisboard.readthedocs.org/
+
+Development
+===========
+
+To run the all tests run::
+
+    tox

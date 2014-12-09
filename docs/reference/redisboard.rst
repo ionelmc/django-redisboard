@@ -1,0 +1,5 @@
+redisboard
+=============================
+
+.. automodule:: redisboard
+    :members:
