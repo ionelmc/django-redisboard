@@ -113,7 +113,7 @@
 
                 {% for key, key_detail in db_detail.keys.items %}
                 <tr>
-                    <td><a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}?key={{ key|escape }}&db={{ db }}">{{ key }}</td>
+                    <td><a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}?key={{ key|escape }}&db={{ db }}">{{ key }}</a></td>
                     {% if key_detail.error %}
                     <td class="error" colspan="7">{% trans "ERROR:" %} {{ key_detail.error }}</td>
                     {% else %}
