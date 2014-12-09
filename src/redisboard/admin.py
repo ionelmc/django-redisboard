@@ -1,14 +1,15 @@
 # vim: set fileencoding=utf-8 :
 from functools import update_wrapper
 
-from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseForbidden
-from django.core.urlresolvers import reverse
 from django.contrib import admin
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext_lazy as _
 
 from .models import RedisServer
 from .views import inspect
+
 
 class RedisServerAdmin(admin.ModelAdmin):
     class Media:
@@ -89,8 +90,8 @@ class RedisServerAdmin(admin.ModelAdmin):
         )
         data = dict((k, stats['details'][k]) for k in data)
         total_cpu = sum(data.itervalues())
-        data['cpu_utilization'] = '%.3f%%' % (total_cpu
-            / stats['details']['uptime_in_seconds'])
+        uptime = stats['details']['uptime_in_seconds']
+        data['cpu_utilization'] = '%.3f%%' % (total_cpu / uptime if uptime else 0)
 
         data = sorted(data.items())
 
@@ -124,11 +125,12 @@ class RedisServerAdmin(admin.ModelAdmin):
 
     def inspect_view(self, request, server_id):
         server = get_object_or_404(RedisServer, id=server_id)
-        if(self.has_change_permission(request, server)
-                and request.user.has_perm('redisboard.can_inspect')):
+        if (
+            self.has_change_permission(request, server) and
+            request.user.has_perm('redisboard.can_inspect')
+        ):
             return inspect(request, server)
         else:
             return HttpResponseForbidden("You can't inspect this server.")
 
 admin.site.register(RedisServer, RedisServerAdmin)
-
