@@ -1,14 +1,21 @@
-#!/bin/sh -ex
-bogus=''' '
+#!/bin/sh -e
+'''echo'
 export PYTHONPATH=.
 export DJANGO_SETTINGS_MODULE=run_redisboard
 secret() {
     tr -cd "[:alnum:]" < /dev/urandom | head -c ${1:-8}
 }
-chmod +x run_redisboard.py
+chmod u+x run_redisboard.py
+if [ "$1" = "--develop" ]; then
+    shift
+    REDISBOARD="-e ."
+else
+    REDISBOARD="django-redisboard"
+fi
+
 if [ ! -e .redisboard.venv ]; then
     virtualenv .redisboard.venv
-    .redisboard.venv/bin/pip install Django django-redisboard
+    .redisboard.venv/bin/pip install --quiet Django $REDISBOARD
 fi
 . .redisboard.venv/bin/activate
 if [ ! -e .redisboard.secret ]; then
@@ -17,7 +24,7 @@ fi
 python run_redisboard.py $*
 exit
 '''
-
+from __future__ import print_function
 import os
 import sys
 CACHES = {
@@ -75,7 +82,7 @@ LOGGING = {
         },
         "": {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': False
         },
     }
@@ -86,7 +93,6 @@ if not settings.configured:
 
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-admin.autodiscover()
 urlpatterns = patterns("",
     url(r"^static/(?P<path>.*)$", 'django.contrib.staticfiles.views.serve', {'insecure': True}),
     url(r"^", include(admin.site.urls)),
@@ -94,6 +100,8 @@ urlpatterns = patterns("",
 
 
 if __name__ == '__main__':
+    import django
+    django.setup()
     from django.core.management import execute_from_command_line
     if not os.path.exists('.redisboard.sqlite'):
         execute_from_command_line(['run_redisboard', 'syncdb', '--noinput'])
@@ -102,11 +110,17 @@ if __name__ == '__main__':
         pwd = os.urandom(8).encode('hex')
         u.set_password(pwd)
         u.save()
-        print "="*80
-        print """   Credentials:
+        print()
+        print("="*80)
+        print("""
+        Credentials:
+
             USERNAME: redisboard
-            PASSWORD: %s""" % pwd
-        print "="*80
+            PASSWORD: %s
+
+        """ % pwd)
+        print("="*80)
+        print()
         from redisboard.models import RedisServer
         RedisServer.objects.create(label="localhost", hostname="127.0.0.1")
     execute_from_command_line(['run_redisboard', 'runserver', '--noreload'] + (sys.argv[1:] if len(sys.argv) > 1 else ['0:8000']))
