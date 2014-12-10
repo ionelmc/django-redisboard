@@ -9,6 +9,10 @@ from django.utils.translation import ugettext_lazy as _
 
 from .models import RedisServer
 from .views import inspect
+from .utils import PY3
+
+if PY3:
+    unicode = str
 
 
 class RedisServerAdmin(admin.ModelAdmin):
@@ -70,7 +74,8 @@ class RedisServerAdmin(admin.ModelAdmin):
 
     def details(self, obj):
         output = []
-        for k, v in obj.stats['brief_details'].iteritems():
+        brief_details = obj.stats['brief_details']
+        for k, v in (brief_details.items() if PY3 else brief_details.iteritems()):
             output.append('<dt>%s</dt><dd>%s</dd>' % (k, v))
 
         return '<dl class="details">%s</dl>' % ''.join(output)
@@ -89,7 +94,7 @@ class RedisServerAdmin(admin.ModelAdmin):
             'used_cpu_user_children',
         )
         data = dict((k, stats['details'][k]) for k in data)
-        total_cpu = sum(data.itervalues())
+        total_cpu = sum(data.values() if PY3 else data.itervalues())
         uptime = stats['details']['uptime_in_seconds']
         data['cpu_utilization'] = '%.3f%%' % (total_cpu / uptime if uptime else 0)
 

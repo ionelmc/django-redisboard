@@ -28,11 +28,11 @@ def _fixup_pair(pair):
 
 
 LENGTH_GETTERS = {
-    'list': lambda conn, key: conn.llen(key),
-    'string': lambda conn, key: conn.strlen(key),
-    'set': lambda conn, key: conn.scard(key),
-    'zset': lambda conn, key: conn.zcount(key, '-inf', '+inf'),
-    'hash': lambda conn, key: conn.hlen(key),
+    b'list': lambda conn, key: conn.llen(key),
+    b'string': lambda conn, key: conn.strlen(key),
+    b'set': lambda conn, key: conn.scard(key),
+    b'zset': lambda conn, key: conn.zcount(key, '-inf', '+inf'),
+    b'hash': lambda conn, key: conn.hlen(key),
 }
 
 
@@ -48,7 +48,7 @@ def _get_key_info(conn, key):
             'type': obj_type,
             'name': key,
             'details': details if isinstance(details, dict) else dict(
-                _fixup_pair(i.split(':')) for i in details.split() if ':' in i
+                _fixup_pair(i.split(b':')) for i in details.split() if b':' in i
             ),
             'length': obj_length,
             'ttl': obj_ttl,
@@ -64,16 +64,15 @@ def _get_key_info(conn, key):
             'ttl': "n/a",
         }
 
-
 VALUE_GETTERS = {
-    'list': lambda conn, key, start=0, end=-1: [(pos + start, val)
-                                                for (pos, val) in enumerate(conn.lrange(key, start, end))],
-    'string': lambda conn, key, *args: [('string', conn.get(key))],
-    'set': lambda conn, key, *args: list(enumerate(conn.smembers(key))),
-    'zset': lambda conn, key, start=0, end=-1: [(pos + start, val)
-                                                for (pos, val) in enumerate(conn.zrange(key, start, end))],
-    'hash': lambda conn, key, *args: conn.hgetall(key).items(),
-    'n/a': lambda conn, key, *args: (),
+    b'list': lambda conn, key, start=0, end=-1: [(pos + start, val)
+                                                 for (pos, val) in enumerate(conn.lrange(key, start, end))],
+    b'string': lambda conn, key, *args: [('string', conn.get(key))],
+    b'set': lambda conn, key, *args: list(enumerate(conn.smembers(key))),
+    b'zset': lambda conn, key, start=0, end=-1: [(pos + start, val)
+                                                 for (pos, val) in enumerate(conn.zrange(key, start, end))],
+    b'hash': lambda conn, key, *args: conn.hgetall(key).items(),
+    b'n/a': lambda conn, key, *args: (),
 }
 
 
@@ -121,10 +120,10 @@ def _get_db_summary(server, db):
     results = pipe.execute()
     for key, details, ttl in zip(keys, results[::2], results[1::2]):
         if not isinstance(details, dict):
-            details = dict(_fixup_pair(i.split(':'))
-                           for i in details.split() if ':' in i)
+            details = dict(_fixup_pair(i.split(b':'))
+                           for i in details.split() if b':' in i)
 
-        length = details['serializedlength'] + len(key)
+        length = details[b'serializedlength'] + len(key)
 
         if ttl:
             persistent_memory += length

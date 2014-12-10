@@ -12,6 +12,7 @@ from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 
 from .utils import cached_property
+from .utils import PY3
 
 REDISBOARD_DETAIL_FILTERS = [re.compile(name) for name in getattr(settings, 'REDISBOARD_DETAIL_FILTERS', (
     'aof_enabled', 'bgrewriteaof_in_progress', 'bgsave_in_progress',
@@ -115,7 +116,7 @@ class RedisServer(models.Model):
                 'brief_details': SortedDict(
                     prettify(k, v)
                     for name in REDISBOARD_DETAIL_FILTERS
-                    for k, v in info.iteritems()
+                    for k, v in (info.items() if PY3 else info.iteritems())
                     if name.match(k)
                 )
             }
