@@ -144,11 +144,15 @@ Screenshots
 
 Changelist:
 
-.. image:: https://cloud.github.com/downloads/ionelmc/django-redisboard/screenshot.png
+.. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/changelist.png
 
-Inspect page:
+Inspect:
 
-.. image:: https://cloud.github.com/downloads/ionelmc/django-redisboard/redisboard-inspect.png
+.. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect.png
+
+Inspect key details:
+
+.. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect-key.png
 
 
 Documentation
