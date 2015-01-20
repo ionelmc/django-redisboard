@@ -158,13 +158,12 @@ class RedisServer(models.Model):
 
     def slowlog_get(self, limit=REDISBOARD_SLOWLOG_LEN):
         try:
-            slowlog_get = self.connection.slowlog_get(REDISBOARD_SLOWLOG_LEN)
-            for i, (id, ts, duration, command) in enumerate(slowlog_get):
+            for slowlog in self.connection.slowlog_get(REDISBOARD_SLOWLOG_LEN):
                 yield dict(
-                    id=id,
-                    ts=datetime.fromtimestamp(ts),
-                    duration=duration,
-                    command=command,
+                    id=slowlog['id'],
+                    ts=datetime.fromtimestamp(slowlog['start_time']),
+                    duration=slowlog['duration'],
+                    command=slowlog['command'],
                 )
 
         except redis.exceptions.ConnectionError:

@@ -32,6 +32,13 @@ def redis_server(db):
             c.lpush('list', 'foo', 'bar', 'foobar')
             c.zadd('sorted-set', 'foo', 1)
             c.zadd('sorted-set', 'b', 2)
+            c.eval("""
+                local c = 0
+                while c < 1000000 do
+                    redis.call('get', 'str')
+                    c = c + 1
+                end
+            """, 0)
             yield server
     finally:
         try:
