@@ -38,11 +38,10 @@ class RedisServerAdmin(admin.ModelAdmin):
     def slowlog(self, obj):
         output = [(float('inf'), 'Total: %d items' % obj.slowlog_len())]
         for log in obj.slowlog_get():
-            command = ' '.join(l.decode('utf-8', 'replace')
-                               for l in log['command'])
+            command = log['command']
 
-            if command[100:]:
-                command = command[:97] + '...'
+            if len(command) > 255:
+                command = command[:252] + '...'
 
             output.append((
                 log['duration'],
