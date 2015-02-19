@@ -7,3 +7,5 @@ Authors
 * ??? - https://github.com/artscoop
 * Rick van Hattem - http://wol.ph/
 * Benjamin Wohlwend - https://github.com/piquadrat
+* Trbs - https://github.com/trbs
+
