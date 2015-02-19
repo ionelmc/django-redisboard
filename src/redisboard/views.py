@@ -1,5 +1,4 @@
 from logging import getLogger
-logger = getLogger(__name__)
 
 from django.core.paginator import Paginator
 from django.shortcuts import render
@@ -11,6 +10,8 @@ from django.http import HttpResponseNotFound
 from redis.exceptions import ResponseError
 
 from .utils import LazySlicingIterable
+
+logger = getLogger(__name__)
 
 REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE', 100)
 

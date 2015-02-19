@@ -29,6 +29,11 @@ REDISBOARD_DETAIL_SECONDS_KEYS = getattr(settings, 'REDISBOARD_DETAIL_SECONDS_KE
 
 REDISBOARD_SLOWLOG_LEN = getattr(settings, 'REDISBOARD_SLOWLOG_LEN', 10)
 
+REDISBOARD_SOCKET_TIMEOUT = getattr(settings, 'REDISBOARD_SOCKET_TIMEOUT', None)
+REDISBOARD_SOCKET_CONNECT_TIMEOUT = getattr(settings, 'REDISBOARD_SOCKET_CONNECT_TIMEOUT', None)
+REDISBOARD_SOCKET_KEEPALIVE = getattr(settings, 'REDISBOARD_SOCKET_KEEPALIVE', None)
+REDISBOARD_SOCKET_KEEPALIVE_OPTIONS = getattr(settings, 'REDISBOARD_SOCKET_KEEPALIVE_OPTIONS', None)
+
 
 def prettify(key, value):
     if key in REDISBOARD_DETAIL_SECONDS_KEYS:
@@ -95,6 +100,10 @@ class RedisServer(models.Model):
             port=self.port,
             password=self.password,
             unix_socket_path=unix_socket_path,
+            socket_timeout=REDISBOARD_SOCKET_TIMEOUT,
+            socket_connect_timeout=REDISBOARD_SOCKET_CONNECT_TIMEOUT,
+            socket_keepalive=REDISBOARD_SOCKET_KEEPALIVE,
+            socket_keepalive_options=REDISBOARD_SOCKET_KEEPALIVE_OPTIONS,
         )
 
     @connection.deleter
