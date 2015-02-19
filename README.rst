@@ -139,6 +139,27 @@ REDISBOARD_ITEMS_PER_PAGE
 
 REDISBOARD_ITEMS_PER_PAGE - default 100. Used for paginating the items from a list or a sorted set.
 
+REDISBOARD_SOCKET_TIMEOUT
+-------------------------
+
+REDISBOARD_SOCKET_TIMEOUT - default None. Socket operations time out after this many seconds.
+
+REDISBOARD_SOCKET_CONNECT_TIMEOUT
+---------------------------------
+
+REDISBOARD_SOCKET_CONNECT_TIMEOUT - default None. Socket connect operation times out after this many seconds.
+
+REDISBOARD_SOCKET_KEEPALIVE
+---------------------------
+
+REDISBOARD_SOCKET_KEEPALIVE - default None. Enables or Disables socket keepalive.
+
+REDISBOARD_SOCKET_KEEPALIVE_OPTIONS
+-----------------------------------
+
+REDISBOARD_SOCKET_KEEPALIVE_OPTIONS - default None. Additional options for socket keepalive.
+
+
 Screenshots
 ===========
 
