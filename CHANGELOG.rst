@@ -2,7 +2,7 @@
 Changelog
 ============
 
-1.2.0 (2015-02-20)
+1.2.0 (2015-02-21)
 ------------------
 
 * Add ``REDISBOARD_SOCKET_TIMEOUT``, ``REDISBOARD_SOCKET_CONNECT_TIMEOUT``, ``REDISBOARD_SOCKET_KEEPALIVE`` and
