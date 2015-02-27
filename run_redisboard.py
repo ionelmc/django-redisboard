@@ -17,7 +17,7 @@ if [ ! -e .redisboard.venv ]; then
     virtualenv .redisboard.venv
     .redisboard.venv/bin/pip install --quiet Django $REDISBOARD
 fi
-. .redisboard.venv/bin/activate
+. .redisboard.venv/bin/activate || . .redisboard.venv/bin/activate.sh
 if [ ! -e .redisboard.secret ]; then
     echo $(secret 32) > .redisboard.secret
 fi
