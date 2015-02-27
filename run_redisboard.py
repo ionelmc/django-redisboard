@@ -17,7 +17,11 @@ if [ ! -e .redisboard.venv ]; then
     virtualenv .redisboard.venv
     .redisboard.venv/bin/pip install --quiet Django $REDISBOARD
 fi
-. .redisboard.venv/bin/activate || . .redisboard.venv/bin/activate.sh
+if [ -e .redisboard.venv/bin/activate.sh ]; then
+    . .redisboard.venv/bin/activate.sh
+else
+    . .redisboard.venv/bin/activate
+fi
 if [ ! -e .redisboard.secret ]; then
     echo $(secret 32) > .redisboard.secret
 fi
@@ -53,6 +57,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 )
 SECRET_KEY = open('.redisboard.secret').read().strip()
 ROOT_URLCONF = 'run_redisboard'
