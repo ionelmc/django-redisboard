@@ -168,7 +168,7 @@ def _get_db_details(server, db):
     if size > server.sampling_threshold:
         sampling = True
         pipe = conn.pipeline()
-        for _ in (range if PY3 else xrange)(server.sampling_size):
+        for _ in (range if PY3 else xrange)(server.sampling_size):  # flake8=noqa
             pipe.randomkey()
 
         for key in set(pipe.execute()):
