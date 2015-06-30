@@ -2,51 +2,66 @@
     django-redisboard
 =============================
 
-| |docs| |travis| |appveyor| |coveralls| |landscape| |scrutinizer|
-| |version| |downloads| |wheel| |supported-versions| |supported-implementations|
+.. list-table::
+    :stub-columns: 1
+
+    * - docs
+      - |docs|
+    * - tests
+      - | |travis| |appveyor|
+        | |coveralls| |codecov| |landscape| |scrutinizer|
+    * - package
+      - |version| |downloads|
+
+..
+    |wheel| |supported-versions| |supported-implementations|
 
 .. |docs| image:: https://readthedocs.org/projects/django-redisboard/badge/?style=flat
     :target: https://readthedocs.org/projects/django-redisboard
     :alt: Documentation Status
 
-.. |travis| image:: http://img.shields.io/travis/ionelmc/django-redisboard/master.png?style=flat
+.. |travis| image:: http://img.shields.io/travis/ionelmc/django-redisboard/master.svg?style=flat&label=Travis
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/ionelmc/django-redisboard
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/ionelmc/django-redisboard?branch=master
+.. |appveyor| image:: https://img.shields.io/appveyor/ci/ionelmc/django-redisboard/master.svg?style=flat&label=AppVeyor
     :alt: AppVeyor Build Status
     :target: https://ci.appveyor.com/project/ionelmc/django-redisboard
 
-.. |coveralls| image:: http://img.shields.io/coveralls/ionelmc/django-redisboard/master.png?style=flat
+.. |coveralls| image:: http://img.shields.io/coveralls/ionelmc/django-redisboard/master.svg?style=flat&label=Coveralls
     :alt: Coverage Status
     :target: https://coveralls.io/r/ionelmc/django-redisboard
+
+.. |codecov| image:: http://img.shields.io/codecov/c/github/ionelmc/django-redisboard/master.svg?style=flat&label=Codecov
+    :alt: Coverage Status
+    :target: https://codecov.io/github/ionelmc/django-redisboard
 
 .. |landscape| image:: https://landscape.io/github/ionelmc/django-redisboard/master/landscape.svg?style=flat
     :target: https://landscape.io/github/ionelmc/django-redisboard/master
     :alt: Code Quality Status
 
-.. |version| image:: http://img.shields.io/pypi/v/django-redisboard.png?style=flat
+.. |version| image:: http://img.shields.io/pypi/v/django-redisboard.svg?style=flat
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/django-redisboard
 
-.. |downloads| image:: http://img.shields.io/pypi/dm/django-redisboard.png?style=flat
+.. |downloads| image:: http://img.shields.io/pypi/dm/django-redisboard.svg?style=flat
     :alt: PyPI Package monthly downloads
     :target: https://pypi.python.org/pypi/django-redisboard
 
-.. |wheel| image:: https://pypip.in/wheel/django-redisboard/badge.png?style=flat
+.. |wheel| image:: https://pypip.in/wheel/django-redisboard/badge.svg?style=flat
     :alt: PyPI Wheel
     :target: https://pypi.python.org/pypi/django-redisboard
 
-.. |supported-versions| image:: https://pypip.in/py_versions/django-redisboard/badge.png?style=flat
+.. |supported-versions| image:: https://pypip.in/py_versions/django-redisboard/badge.svg?style=flat
     :alt: Supported versions
     :target: https://pypi.python.org/pypi/django-redisboard
 
-.. |supported-implementations| image:: https://pypip.in/implementation/django-redisboard/badge.png?style=flat
+.. |supported-implementations| image:: https://pypip.in/implementation/django-redisboard/badge.svg?style=flat
     :alt: Supported imlementations
     :target: https://pypi.python.org/pypi/django-redisboard
 
-.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/django-redisboard/master.png?style=flat
-    :alt: Scrtinizer Status
+.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/django-redisboard/master.svg?style=flat
+    :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/ionelmc/django-redisboard/
 
 Redis monitoring and inspection drop-in application using django admin.
