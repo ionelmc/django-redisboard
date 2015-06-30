@@ -2,6 +2,12 @@
 Changelog
 ============
 
+1.2.1 (2015-06-30)
+------------------
+
+* Fixed a bug on Python 3 (no ``xrange``).
+* Fixed some issues the ``run_redisboard.py`` bootstrapper had with virtualenv.
+
 1.2.0 (2015-02-21)
 ------------------
 
