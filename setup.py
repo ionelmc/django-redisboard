@@ -28,7 +28,7 @@ setup(
     license='BSD',
     description='Redis monitoring and inspection drop-in application using django admin.',
     long_description='%s\n%s' % (read('README.rst'), re.sub(':obj:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))),
-    author='Ionel Cristian Maries',
+    author='Ionel Cristian Mărieș',
     author_email='contact@ionelmc.ro',
     url='https://github.com/ionelmc/django-redisboard',
     packages=find_packages('src'),
