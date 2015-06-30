@@ -24,7 +24,7 @@ def read(*names, **kwargs):
 
 setup(
     name='django-redisboard',
-    version='1.2.0',
+    version='1.2.1',
     license='BSD',
     description='Redis monitoring and inspection drop-in application using django admin.',
     long_description='%s\n%s' % (read('README.rst'), re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))),
