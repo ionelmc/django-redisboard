@@ -42,7 +42,6 @@ def _get_key_info(conn, key):
     try:
         obj_type = conn.type(key)
         pipe = conn.pipeline()
-
         try:
             pipe.execute_command('DEBUG', 'OBJECT', key)
             LENGTH_GETTERS[obj_type](pipe, key)
