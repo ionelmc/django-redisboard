@@ -157,7 +157,6 @@ def _raw_get_db_summary(server, db):
         volatile_memory = (volatile_memory / volatile_keys) * size
     else:
         volatile_memory = 0
-
     return dict(
         size=size,
         total_memory=total_memory,
@@ -167,7 +166,7 @@ def _raw_get_db_summary(server, db):
 
 def _get_db_summary(server, db):
     try:
-        _raw_get_db_summary(server, db)
+        return _raw_get_db_summary(server, db)
     except ResponseError as exc:
         logger.exception(exc)
         return dict(
