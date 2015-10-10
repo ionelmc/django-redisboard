@@ -42,10 +42,21 @@ def _get_key_info(conn, key):
     try:
         obj_type = conn.type(key)
         pipe = conn.pipeline()
-        pipe.execute_command('DEBUG', 'OBJECT', key)
-        LENGTH_GETTERS[obj_type](pipe, key)
-        pipe.ttl(key)
-        details, obj_length, obj_ttl = pipe.execute()
+        try:
+            pipe.execute_command('DEBUG', 'OBJECT', key)
+            LENGTH_GETTERS[obj_type](pipe, key)
+            pipe.ttl(key)
+            details, obj_length, obj_ttl = pipe.execute()
+        except ResponseError as exc:
+            logger.exception("Failed to get object info for key %r: %s", key, exc)
+            return {
+                'type': obj_type,
+                'name': key,
+                'details': {},
+                'length': "n/a",
+                'error': str(exc),
+                'ttl': "n/a",
+            }
         return {
             'type': obj_type,
             'name': key,
@@ -95,8 +106,7 @@ def _get_key_details(conn, db, key, page):
 
     return details
 
-
-def _get_db_summary(server, db):
+def _raw_get_db_summary(server, db):
     server.connection.execute_command('SELECT', db)
     pipe = server.connection.pipeline()
 
@@ -150,13 +160,24 @@ def _get_db_summary(server, db):
         volatile_memory = (volatile_memory / volatile_keys) * size
     else:
         volatile_memory = 0
-
     return dict(
         size=size,
         total_memory=total_memory,
         volatile_memory=volatile_memory,
         persistent_memory=persistent_memory,
     )
+
+def _get_db_summary(server, db):
+    try:
+        return _raw_get_db_summary(server, db)
+    except ResponseError as exc:
+        logger.exception("Failed to get object info for db keys: %s", exc)
+        return dict(
+            size=0,
+            total_memory=0,
+            volatile_memory=0,
+            persistent_memory=0,
+        )
 
 
 def _get_db_details(server, db):

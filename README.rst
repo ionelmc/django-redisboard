@@ -30,14 +30,14 @@
 
 .. |coveralls| image:: http://img.shields.io/coveralls/ionelmc/django-redisboard/master.svg?style=flat&label=Coveralls
     :alt: Coverage Status
-    :target: https://coveralls.io/r/ionelmc/django-redisboard
+    :target: https://coveralls.io/github/ionelmc/django-redisboard
 
 .. |codecov| image:: http://img.shields.io/codecov/c/github/ionelmc/django-redisboard/master.svg?style=flat&label=Codecov
     :alt: Coverage Status
     :target: https://codecov.io/github/ionelmc/django-redisboard
 
 .. |landscape| image:: https://landscape.io/github/ionelmc/django-redisboard/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/ionelmc/django-redisboard/master
+    :target: https://landscape.io/github/ionelmc/django-redisboard/44
     :alt: Code Quality Status
 
 .. |version| image:: http://img.shields.io/pypi/v/django-redisboard.svg?style=flat
@@ -194,7 +194,7 @@ Inspect key details:
 Documentation
 =============
 
-https://django-redisboard.readthedocs.org/
+https://django-redisboard.readthedocs.org/en/latest/
 
 Development
 ===========

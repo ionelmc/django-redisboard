@@ -2,6 +2,12 @@
 Changelog
 ============
 
+1.2.2 (2015-10-10)
+------------------
+
+* Exception handling for AWS ElastiCache Redis or any Redis that does not have DEBUG OBJECT command.
+* Enabled Redis keys to be inspected despite not having details from DEBUG OBJECT command.
+
 1.2.1 (2015-06-30)
 ------------------
 
