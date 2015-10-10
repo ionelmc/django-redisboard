@@ -48,11 +48,15 @@ def _get_key_info(conn, key):
             pipe.ttl(key)
             details, obj_length, obj_ttl = pipe.execute()
         except ResponseError as exc:
-            logger.exception(exc)
-            details = {}
-            obj_length = "n/a"
-            obj_ttl = "n/a"
-
+            logger.exception("Failed to get object info for key %r: %s", key, exc)
+            return {
+                'type': obj_type,
+                'name': key,
+                'details': {},
+                'length': "n/a",
+                'error': str(exc),
+                'ttl': "n/a",
+            }
         return {
             'type': obj_type,
             'name': key,
@@ -167,7 +171,7 @@ def _get_db_summary(server, db):
     try:
         return _raw_get_db_summary(server, db)
     except ResponseError as exc:
-        logger.exception(exc)
+        logger.exception("Failed to get object info for db keys: %s", exc)
         return dict(
             size=0,
             total_memory=0,
