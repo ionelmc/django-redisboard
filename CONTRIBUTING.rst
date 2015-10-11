@@ -17,8 +17,8 @@ When `reporting a bug <https://github.com/ionelmc/django-redisboard/issues>`_ pl
 Documentation improvements
 ==========================
 
-django-redisboard could always use more documentation, whether as part of the
-official django-redisboard docs, in docstrings, or even on the web in blog posts,
+Redisboard could always use more documentation, whether as part of the
+official Redisboard docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Feature requests and feedback

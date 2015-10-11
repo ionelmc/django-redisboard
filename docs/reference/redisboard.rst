@@ -1,5 +1,5 @@
 redisboard
-=============================
+==========
 
 .. automodule:: redisboard
     :members:

@@ -1,5 +1,5 @@
 Welcome to django-redisboard's documentation!
-======================================
+===============================================
 
 Contents:
 

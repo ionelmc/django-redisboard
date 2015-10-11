@@ -1,6 +1,6 @@
-=============================
-    django-redisboard
-=============================
+=================
+django-redisboard
+=================
 
 .. list-table::
     :stub-columns: 1
@@ -8,56 +8,65 @@
     * - docs
       - |docs|
     * - tests
-      - | |travis| |appveyor|
-        | |coveralls| |codecov| |landscape| |scrutinizer|
+      - | |travis| |appveyor| |requires|
+        | |coveralls| |codecov|
+        | |landscape| |scrutinizer| |codacy| |codeclimate|
     * - package
-      - |version| |downloads|
-
-..
-    |wheel| |supported-versions| |supported-implementations|
+      - |version| |downloads| |wheel| |supported-versions| |supported-implementations|
 
 .. |docs| image:: https://readthedocs.org/projects/django-redisboard/badge/?style=flat
     :target: https://readthedocs.org/projects/django-redisboard
     :alt: Documentation Status
 
-.. |travis| image:: http://img.shields.io/travis/ionelmc/django-redisboard/master.svg?style=flat&label=Travis
+.. |travis| image:: https://travis-ci.org/ionelmc/django-redisboard.svg?branch=master
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/ionelmc/django-redisboard
 
-.. |appveyor| image:: https://img.shields.io/appveyor/ci/ionelmc/django-redisboard/master.svg?style=flat&label=AppVeyor
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/ionelmc/django-redisboard?branch=master&svg=true
     :alt: AppVeyor Build Status
     :target: https://ci.appveyor.com/project/ionelmc/django-redisboard
 
-.. |coveralls| image:: http://img.shields.io/coveralls/ionelmc/django-redisboard/master.svg?style=flat&label=Coveralls
-    :alt: Coverage Status
-    :target: https://coveralls.io/github/ionelmc/django-redisboard
+.. |requires| image:: https://requires.io/github/ionelmc/django-redisboard/requirements.svg?branch=master
+    :alt: Requirements Status
+    :target: https://requires.io/github/ionelmc/django-redisboard/requirements/?branch=master
 
-.. |codecov| image:: http://img.shields.io/codecov/c/github/ionelmc/django-redisboard/master.svg?style=flat&label=Codecov
+.. |coveralls| image:: https://coveralls.io/repos/ionelmc/django-redisboard/badge.svg?branch=master&service=github
+    :alt: Coverage Status
+    :target: https://coveralls.io/r/ionelmc/django-redisboard
+
+.. |codecov| image:: https://codecov.io/github/ionelmc/django-redisboard/coverage.svg?branch=master
     :alt: Coverage Status
     :target: https://codecov.io/github/ionelmc/django-redisboard
 
 .. |landscape| image:: https://landscape.io/github/ionelmc/django-redisboard/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/ionelmc/django-redisboard/44
+    :target: https://landscape.io/github/ionelmc/django-redisboard/master
     :alt: Code Quality Status
 
-.. |version| image:: http://img.shields.io/pypi/v/django-redisboard.svg?style=flat
+.. |codacy| image:: https://img.shields.io/codacy/REPLACE_WITH_PROJECT_ID.svg?style=flat
+    :target: https://www.codacy.com/app/ionelmc/django-redisboard
+    :alt: Codacy Code Quality Status
+
+.. |codeclimate| image:: https://codeclimate.com/github/ionelmc/django-redisboard/badges/gpa.svg
+   :target: https://codeclimate.com/github/ionelmc/django-redisboard
+   :alt: CodeClimate Quality Status
+.. |version| image:: https://img.shields.io/pypi/v/django-redisboard.svg?style=flat
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/django-redisboard
 
-.. |downloads| image:: http://img.shields.io/pypi/dm/django-redisboard.svg?style=flat
+.. |downloads| image:: https://img.shields.io/pypi/dm/django-redisboard.svg?style=flat
     :alt: PyPI Package monthly downloads
     :target: https://pypi.python.org/pypi/django-redisboard
 
-.. |wheel| image:: https://pypip.in/wheel/django-redisboard/badge.svg?style=flat
+.. |wheel| image:: https://img.shields.io/pypi/wheel/django-redisboard.svg?style=flat
     :alt: PyPI Wheel
     :target: https://pypi.python.org/pypi/django-redisboard
 
-.. |supported-versions| image:: https://pypip.in/py_versions/django-redisboard/badge.svg?style=flat
+.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/django-redisboard.svg?style=flat
     :alt: Supported versions
     :target: https://pypi.python.org/pypi/django-redisboard
 
-.. |supported-implementations| image:: https://pypip.in/implementation/django-redisboard/badge.svg?style=flat
-    :alt: Supported imlementations
+.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/django-redisboard.svg?style=flat
+    :alt: Supported implementations
     :target: https://pypi.python.org/pypi/django-redisboard
 
 .. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/django-redisboard/master.svg?style=flat

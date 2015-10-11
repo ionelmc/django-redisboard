@@ -20,8 +20,8 @@ if os.getenv('SPELLCHECK'):
 
 source_suffix = '.rst'
 master_doc = 'index'
-project = 'redisboard'
-year = '2015'
+project = 'django-redisboard'
+year = '2011-2015'
 author = 'Ionel Cristian Mărieș'
 copyright = '{0}, {1}'.format(year, author)
 version = release = '1.2.1'

@@ -8,7 +8,6 @@ include .bumpversion.cfg
 include .coveragerc
 include .cookiecutterrc
 include .isort.cfg
-include .pylintrc
 
 include AUTHORS.rst
 include CHANGELOG.rst
@@ -18,4 +17,4 @@ include README.rst
 
 include tox.ini .travis.yml appveyor.yml run_redisboard.py
 
-global-exclude *.py[cod] __pycache__ *.so
+global-exclude *.py[cod] __pycache__ *.so *.dylib
