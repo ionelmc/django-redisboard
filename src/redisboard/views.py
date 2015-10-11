@@ -67,7 +67,7 @@ def _get_key_info(conn, key):
             'ttl': obj_ttl,
         }
     except ResponseError as exc:
-        logger.exception("Failed to get details for key %r", key)
+        logger.exception("Failed to get details for key %r: %s", key, exc)
         return {
             'type': "n/a",
             'length': "n/a",
@@ -171,7 +171,7 @@ def _get_db_summary(server, db):
     try:
         return _raw_get_db_summary(server, db)
     except ResponseError as exc:
-        logger.exception("Failed to get object info for db keys: %s", exc)
+        logger.exception("Failed to get summary for db %r: %s", db, exc)
         return dict(
             size=0,
             total_memory=0,
