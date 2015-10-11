@@ -2,7 +2,7 @@
 Changelog
 ============
 
-1.2.2 (2015-10-10)
+1.2.2 (2015-10-11)
 ------------------
 
 * Exception handling for AWS ElastiCache Redis or any Redis that does not have DEBUG OBJECT command.
