@@ -14,7 +14,6 @@ from .utils import PY3
 logger = getLogger(__name__)
 
 REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE', 100)
-REDISBOARD_DEBUG_OBJECT = getattr(settings, 'REDISBOARD_DEBUG_OBJECT', True)
 
 
 def safeint(value):
