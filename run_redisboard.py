@@ -31,6 +31,8 @@ exit
 from __future__ import print_function
 import os
 import sys
+REDISBOARD_SOCKET_CONNECT_TIMEOUT = 5
+REDISBOARD_SOCKET_TIMEOUT = 5
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
