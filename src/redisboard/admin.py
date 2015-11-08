@@ -36,8 +36,8 @@ class RedisServerAdmin(admin.ModelAdmin):
     ordering = ('hostname', 'port')
 
     def slowlog(self, obj):
-        output = [(float('inf'), 'Total: %d items' % obj.slowlog_len())]
-        for log in obj.slowlog_get():
+        output = [(float('inf'), 'Total: %d items' % obj.stats['slowlog_len'])]
+        for log in obj.stats['slowlog']:
             command = log['command']
 
             if len(command) > 255:
@@ -47,7 +47,10 @@ class RedisServerAdmin(admin.ModelAdmin):
                 log['duration'],
                 u'%.1fms: %s' % (log['duration'] / 1000., command),
             ))
-        return '<br>'.join(l for _, l in sorted(output, reverse=True))
+        if output:
+            return '<br>'.join(l for _, l in sorted(output, reverse=True))
+        else:
+            return 'n/a'
     slowlog.allow_tags = True
     slowlog.long_description = _('Slowlog')
 
@@ -76,15 +79,16 @@ class RedisServerAdmin(admin.ModelAdmin):
         brief_details = obj.stats['brief_details']
         for k, v in (brief_details.items() if PY3 else brief_details.iteritems()):
             output.append('<dt>%s</dt><dd>%s</dd>' % (k, v))
-
-        return '<dl class="details">%s</dl>' % ''.join(output)
+        if output:
+            return '<dl class="details">%s</dl>' % ''.join(output)
+        return 'n/a'
     details.allow_tags = True
     details.long_description = _("Details")
 
     def cpu_utilization(self, obj):
         stats = obj.stats
-        if stats['status'] == 'DOWN':
-            return ''
+        if stats['status'] != 'UP':
+            return 'n/a'
 
         data = (
             'used_cpu_sys',

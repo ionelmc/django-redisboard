@@ -2,6 +2,12 @@
 Changelog
 ============
 
+1.2.3 (2015-11-08)
+------------------
+
+* Fix error handling in couple places. Now pages don't return 500 errors if there's something bad going on with the
+  redis connection.
+
 1.2.2 (2015-10-11)
 ------------------
 

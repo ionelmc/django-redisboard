@@ -113,7 +113,10 @@ class RedisServer(models.Model):
     @cached_property
     def stats(self):
         try:
-            info = self.connection.info()
+            conn = self.connection
+            info = conn.info()
+            slowlog = conn.slowlog_get()
+            slowlog_len = conn.slowlog_len()
             return {
                 'status': 'UP',
                 'details': info,
@@ -127,7 +130,9 @@ class RedisServer(models.Model):
                     for name in REDISBOARD_DETAIL_FILTERS
                     for k, v in (info.items() if PY3 else info.iteritems())
                     if name.match(k)
-                )
+                ),
+                'slowlog': slowlog,
+                'slowlog_len': slowlog_len,
             }
         except redis.exceptions.ConnectionError:
             return {
@@ -136,6 +141,8 @@ class RedisServer(models.Model):
                 'memory': 'n/a',
                 'details': {},
                 'brief_details': {},
+                'slowlog': [],
+                'slowlog_len': 0,
             }
         except redis.exceptions.ResponseError as exc:
             return {
@@ -144,6 +151,8 @@ class RedisServer(models.Model):
                 'memory': 'n/a',
                 'details': {},
                 'brief_details': {},
+                'slowlog': [],
+                'slowlog_len': 0,
             }
 
     def __unicode__(self):
