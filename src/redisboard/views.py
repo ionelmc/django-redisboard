@@ -1,12 +1,11 @@
 from logging import getLogger
 
+from django.conf import settings
 from django.core.paginator import Paginator
+from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from django.utils.datastructures import SortedDict
-from django.conf import settings
 from django.utils.functional import curry
-from django.http import HttpResponseNotFound
-
 from redis.exceptions import ResponseError
 
 from .utils import LazySlicingIterable
@@ -15,6 +14,7 @@ from .utils import PY3
 logger = getLogger(__name__)
 
 REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE', 100)
+REDISBOARD_DEBUG_OBJECT = getattr(settings, 'REDISBOARD_DEBUG_OBJECT', True)
 
 
 def safeint(value):
@@ -43,28 +43,33 @@ def _get_key_info(conn, key):
         obj_type = conn.type(key)
         pipe = conn.pipeline()
         try:
-            pipe.execute_command('DEBUG', 'OBJECT', key)
+            pipe.object('REFCOUNT', key)
+            pipe.object('ENCODING', key)
+            pipe.object('IDLETIME', key)
             LENGTH_GETTERS[obj_type](pipe, key)
             pipe.ttl(key)
-            details, obj_length, obj_ttl = pipe.execute()
+
+            refcount, encoding, idletime, obj_length, obj_ttl = pipe.execute()
         except ResponseError as exc:
             logger.exception("Failed to get object info for key %r: %s", key, exc)
             return {
                 'type': obj_type,
                 'name': key,
-                'details': {},
                 'length': "n/a",
                 'error': str(exc),
                 'ttl': "n/a",
+                'refcount': "n/a",
+                'encoding': "n/a",
+                'idletime': "n/a",
             }
         return {
             'type': obj_type,
             'name': key,
-            'details': details if isinstance(details, dict) else dict(
-                _fixup_pair(i.split(b':')) for i in details.split() if b':' in i
-            ),
             'length': obj_length,
             'ttl': obj_ttl,
+            'refcount': refcount,
+            'encoding': encoding,
+            'idletime': idletime,
         }
     except ResponseError as exc:
         logger.exception("Failed to get details for key %r: %s", key, exc)
@@ -72,9 +77,11 @@ def _get_key_info(conn, key):
             'type': "n/a",
             'length': "n/a",
             'name': key,
-            'details': {},
             'error': str(exc),
             'ttl': "n/a",
+            'refcount': "n/a",
+            'encoding': "n/a",
+            'idletime': "n/a",
         }
 
 VALUE_GETTERS = {

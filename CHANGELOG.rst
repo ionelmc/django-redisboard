@@ -2,11 +2,13 @@
 Changelog
 ============
 
-1.2.3 (2015-11-08)
+2.0.0 (2015-11-08)
 ------------------
 
 * Fix error handling in couple places. Now pages don't return 500 errors if there's something bad going on with the
   redis connection.
+* Remove key stats that came from ``DEBUG OBJECT`` (LRU, Address, Length etc). Now ``OBJECT
+  [REFCOUNT|ENCODING|IDLETIME]`` is used instead. *BACKWARDS INCOMPATIBLE*
 
 1.2.2 (2015-10-11)
 ------------------

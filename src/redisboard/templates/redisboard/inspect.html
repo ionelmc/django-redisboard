@@ -104,27 +104,23 @@
                     <th>{% trans "Type" %}</th>
                     <th>{% trans "TTL" %}</th>
                     <th>{% trans "Encoding" %}</th>
-                    <th>{% trans "Size" %}</th>
                     <th>{% trans "Items" %}</th>
-                    <th>{% trans "LRU" %}</th>
+                    <th>{% trans "Idletime" %}</th>
                     <th>{% trans "Refs" %}</th>
-                    <th>{% trans "Other" %}</th>
                 </tr>
 
                 {% for key, key_detail in db_detail.keys.items %}
                 <tr>
                     <td><a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}?key={{ key|escape }}&db={{ db }}">{{ key }}</a></td>
                     {% if key_detail.error %}
-                    <td class="error" colspan="7">{% trans "ERROR:" %} {{ key_detail.error }}</td>
+                    <td class="error" colspan="6">{% trans "ERROR:" %} {{ key_detail.error }}</td>
                     {% else %}
                     <td>{{ key_detail.type }}</td>
                     <td>{{ key_detail.ttl }}</td>
-                    <td>{{ key_detail.details.encoding }}</td>
-                    <td>{{ key_detail.details.serializedlength|filesizeformat }}</td>
+                    <td>{{ key_detail.encoding }}</td>
                     <td>{{ key_detail.length }}</td>
-                    <td>{{ key_detail.details.lru|default:"n/a" }} (idle: {{ key_detail.details.lru_seconds_idle|default:"n/a" }})</td>
-                    <td>{{ key_detail.details.refcount }}</td>
-                    <td>At: {{ key_detail.details.at }}</td>
+                    <td>{{ key_detail.idletime }}</td>
+                    <td>{{ key_detail.refcount }}</td>
                     {% endif %}
                 </tr>
                 {% endfor %}
@@ -141,24 +137,20 @@
                     <th>{% trans "Type" %}</th>
                     <th>{% trans "TTL" %}</th>
                     <th>{% trans "Encoding" %}</th>
-                    <th>{% trans "Length" %}</th>
                     <th>{% trans "Items" %}</th>
-                    <th>{% trans "LRU" %}</th>
+                    <th>{% trans "Idletime" %}</th>
                     <th>{% trans "Refs" %}</th>
-                    <th>{% trans "Other" %}</th>
                 </tr>
                 <tr>
                     {% if key_details.error %}
-                    <td class="error" colspan="8">{% trans "ERROR:" %} {{ key_details.error }}</td>
+                    <td class="error" colspan="6">{% trans "ERROR:" %} {{ key_details.error }}</td>
                     {% else %}
                     <td>{{ key_details.type }}</td>
                     <td>{{ key_details.ttl }}</td>
-                    <td>{{ key_details.details.encoding }}</td>
-                    <td>{{ key_details.details.serializedlength }}</td>
+                    <td>{{ key_details.encoding }}</td>
                     <td>{{ key_details.length }}</td>
-                    <td>{{ key_details.details.lru|default:"n/a" }} (idle: {{ key_details.details.lru_seconds_idle|default:"n/a" }})</td>
-                    <td>{{ key_details.details.refcount }}</td>
-                    <td>At: {{ key_details.details.at }}</td>
+                    <td>{{ key_details.idletime }}</td>
+                    <td>{{ key_details.refcount }}</td>
                     {% endif %}
                 </tr>
             </table>
