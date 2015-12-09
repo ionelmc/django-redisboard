@@ -9,7 +9,6 @@ from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from distutils.version import LooseVersion
 try:
     from django.utils.datastructures import SortedDict as OrderedDict
 except ImportError:
