@@ -9,8 +9,8 @@ from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from distutils.version import StrictVersion
-if StrictVersion(django.get_version()) < StrictVersion('1.8'):
+from distutils.version import LooseVersion
+if LooseVersion(django.get_version()) < LooseVersion('1.8'):
     from django.utils.datastructures import SortedDict as OrderedDict
 else:
     from django.utils.datastructures import OrderedDict
