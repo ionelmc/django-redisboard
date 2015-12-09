@@ -10,9 +10,9 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from distutils.version import LooseVersion
-if LooseVersion(django.get_version()) < LooseVersion('1.8'):
+try:
     from django.utils.datastructures import SortedDict as OrderedDict
-else:
+except ImportError:
     from django.utils.datastructures import OrderedDict
 
 from django.utils.translation import ugettext_lazy as _
