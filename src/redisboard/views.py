@@ -4,7 +4,11 @@ from django.conf import settings
 from django.core.paginator import Paginator
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
-from django.utils.datastructures import SortedDict
+try:
+    from django.utils.datastructures import SortedDict as OrderedDict
+except ImportError:
+    from django.utils.datastructures import OrderedDict
+    
 from django.utils.functional import curry
 from redis.exceptions import ResponseError
 
@@ -215,7 +219,7 @@ def _get_db_details(server, db):
 def inspect(request, server):
     stats = server.stats
     conn = server.connection
-    database_details = SortedDict()
+    database_details = OrderedDict()
     key_details = None
 
     if stats['status'] == 'UP':
