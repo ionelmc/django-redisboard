@@ -8,8 +8,14 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.utils.datastructures import SortedDict
+
+try:
+    from django.utils.datastructures import SortedDict as OrderedDict
+except ImportError:
+    from django.utils.datastructures import OrderedDict
+
 from django.utils.translation import ugettext_lazy as _
+
 
 from .utils import cached_property
 from .utils import PY3
@@ -125,7 +131,7 @@ class RedisServer(models.Model):
                     info.get('used_memory_peak_human', 'n/a')
                 ),
                 'clients': info['connected_clients'],
-                'brief_details': SortedDict(
+                'brief_details': OrderedDict(
                     prettify(k, v)
                     for name in REDISBOARD_DETAIL_FILTERS
                     for k, v in (info.items() if PY3 else info.iteritems())
