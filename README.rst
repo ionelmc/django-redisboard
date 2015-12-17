@@ -90,7 +90,7 @@ Requirements
 :OS: Any
 :Runtime: Python 2.7, 3.4, 3.4 or PyPy
 :Services: Redis 2.2 or later.
-:Packages: Django>=1.3, py-redis>=2.10.0
+:Packages: Django>=1.8, py-redis>=2.10.0
 
 Don't have a django project ?
 =============================
