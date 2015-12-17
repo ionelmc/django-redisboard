@@ -2,6 +2,12 @@
 Changelog
 ============
 
+3.0.0 (2015-12-17)
+------------------
+
+* Drop support for Django < 1.8
+* Add support for Django 1.9. Contributed by gabn88 in `#25 <https://github.com/ionelmc/django-redisboard/pull/25>`_.
+
 2.0.0 (2015-11-08)
 ------------------
 
