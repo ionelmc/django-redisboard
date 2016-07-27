@@ -115,9 +115,9 @@ class RedisServerAdmin(admin.ModelAdmin):
     def get_urls(self):
         urlpatterns = super(RedisServerAdmin, self).get_urls()
         try:
-            from django.conf.urls import patterns, url
+            from django.conf.urls import url
         except ImportError:
-            from django.conf.urls.defaults import patterns, url
+            from django.conf.urls.defaults import url
 
         def wrap(view):
             def wrapper(*args, **kwargs):
@@ -125,12 +125,10 @@ class RedisServerAdmin(admin.ModelAdmin):
 
             return update_wrapper(wrapper, view)
 
-        return patterns(
-            '',
-            url(r'^(\d+)/inspect/$',
-                wrap(self.inspect_view),
-                name='redisboard_redisserver_inspect'),
-        ) + urlpatterns
+        return [url(r'^(\d+)/inspect/$',
+                    wrap(self.inspect_view),
+                    name='redisboard_redisserver_inspect')
+                ] + urlpatterns
 
     def inspect_view(self, request, server_id):
         server = get_object_or_404(RedisServer, id=server_id)
