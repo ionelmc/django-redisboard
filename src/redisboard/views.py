@@ -4,16 +4,18 @@ from django.conf import settings
 from django.core.paginator import Paginator
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
+from django.utils.functional import curry
+from redis.exceptions import ResponseError
+
+from .utils import PY3
+from .utils import LazySlicingIterable
+
 try:
     from django.utils.datastructures import SortedDict as OrderedDict
 except ImportError:
     from django.utils.datastructures import OrderedDict
     
-from django.utils.functional import curry
-from redis.exceptions import ResponseError
 
-from .utils import LazySlicingIterable
-from .utils import PY3
 
 logger = getLogger(__name__)
 

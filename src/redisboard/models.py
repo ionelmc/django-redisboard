@@ -8,17 +8,15 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
+from .utils import PY3
+from .utils import cached_property
 
 try:
     from django.utils.datastructures import SortedDict as OrderedDict
 except ImportError:
     from django.utils.datastructures import OrderedDict
-
-from django.utils.translation import ugettext_lazy as _
-
-
-from .utils import cached_property
-from .utils import PY3
 
 REDISBOARD_DETAIL_FILTERS = [re.compile(name) for name in getattr(settings, 'REDISBOARD_DETAIL_FILTERS', (
     'aof_enabled', 'bgrewriteaof_in_progress', 'bgsave_in_progress',

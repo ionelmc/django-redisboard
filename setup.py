@@ -66,7 +66,7 @@ setup(
         'redis>=2.10.0',
         # Requiring Django makes it harder to run a custom version and users
         # will have it installed anyway :)
-        #'Django>=1.4',
+        # 'Django>=1.4',
     ],
     extras_require={
         # eg: 'rst': ['docutils>=0.11'],

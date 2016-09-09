@@ -1,9 +1,9 @@
 from __future__ import print_function
 
-import pytest
 import os
 import tempfile
 
+import pytest
 from process_tests import TestProcess
 from process_tests import wait_for_strings
 from redis import StrictRedis

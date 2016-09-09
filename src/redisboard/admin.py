@@ -8,8 +8,8 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
 from .models import RedisServer
-from .views import inspect
 from .utils import PY3
+from .views import inspect
 
 if PY3:
     unicode = str
