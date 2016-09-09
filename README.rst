@@ -1,6 +1,8 @@
-=================
-django-redisboard
-=================
+========
+Overview
+========
+
+.. start-badges
 
 .. list-table::
     :stub-columns: 1
@@ -49,6 +51,7 @@ django-redisboard
 .. |codeclimate| image:: https://codeclimate.com/github/ionelmc/django-redisboard/badges/gpa.svg
    :target: https://codeclimate.com/github/ionelmc/django-redisboard
    :alt: CodeClimate Quality Status
+
 .. |version| image:: https://img.shields.io/pypi/v/django-redisboard.svg?style=flat
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/django-redisboard
@@ -72,6 +75,9 @@ django-redisboard
 .. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/django-redisboard/master.svg?style=flat
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/ionelmc/django-redisboard/
+
+
+.. end-badges
 
 Redis monitoring and inspection drop-in application using django admin.
 
