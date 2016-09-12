@@ -24,7 +24,7 @@ def read(*names, **kwargs):
 
 setup(
     name='django-redisboard',
-    version='3.0.0',
+    version='3.0.1',
     license='BSD',
     description='Redis monitoring and inspection drop-in application using django admin.',
     long_description='%s\n%s' % (
