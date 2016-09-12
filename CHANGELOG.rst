@@ -2,6 +2,11 @@
 Changelog
 ============
 
+3.0.1 (2016-09-12)
+------------------
+
+* Add supportfor Django 1.10. Contributed by Vincenzo Demasi in `#26 <https://github.com/ionelmc/django-redisboard/pull/26>`_.
+
 3.0.0 (2015-12-17)
 ------------------
 
