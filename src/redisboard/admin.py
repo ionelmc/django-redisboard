@@ -45,7 +45,7 @@ class RedisServerAdmin(admin.ModelAdmin):
 
             output.append((
                 log['duration'],
-                u'%.1fms: %s' % (log['duration'] / 1000., command),
+                u'%.1fms: %r' % (log['duration'] / 1000., command),
             ))
         if output:
             return '<br>'.join(l for _, l in sorted(output, reverse=True))
