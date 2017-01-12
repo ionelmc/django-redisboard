@@ -10,3 +10,4 @@ Authors
 * Trbs - https://github.com/trbs
 * John Lau - https://github.com/jolks
 * ??? - https://github.com/gabn88
+* Erik Telepovský - https://github.com/eriktelepovsky

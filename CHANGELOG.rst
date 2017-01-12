@@ -2,6 +2,11 @@
 Changelog
 ============
 
+3.0.2 (2017-01-??)
+------------------
+
+* Fixed UnicodeDecodeError in "redisboard/admin.py" (Issue `#15 <https://github.com/ionelmc/django-redisboard/issues/15>`_). Contributed by Erik Telepovský in `#29 <https://github.com/ionelmc/django-redisboard/pull/29>`_.
+
 3.0.1 (2016-09-12)
 ------------------
 
