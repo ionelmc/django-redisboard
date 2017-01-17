@@ -9,24 +9,32 @@ env:
     - TOXENV=check
     - TOXENV=docs
 
-    - TOXENV=2.7-1.8,coveralls,codecov
-    - TOXENV=2.7-1.8-nocover
-    - TOXENV=2.7-1.9,coveralls,codecov
-    - TOXENV=2.7-1.9-nocover
-    - TOXENV=3.3-1.8,coveralls,codecov
-    - TOXENV=3.3-1.8-nocover
-    - TOXENV=3.4-1.8,coveralls,codecov
-    - TOXENV=3.4-1.8-nocover
-    - TOXENV=3.4-1.9,coveralls,codecov
-    - TOXENV=3.4-1.9-nocover
-    - TOXENV=3.5-1.8,coveralls,codecov
-    - TOXENV=3.5-1.8-nocover
-    - TOXENV=3.5-1.9,coveralls,codecov
-    - TOXENV=3.5-1.9-nocover
-    - TOXENV=pypy-1.8,coveralls,codecov
-    - TOXENV=pypy-1.8-nocover
-    - TOXENV=pypy-1.9,coveralls,codecov
-    - TOXENV=pypy-1.9-nocover
+    - TOXENV=2.7-1.10-cover,report,coveralls,codecov
+    - TOXENV=2.7-1.10-nocov
+    - TOXENV=2.7-1.8-cover,report,coveralls,codecov
+    - TOXENV=2.7-1.8-nocov
+    - TOXENV=2.7-1.9-cover,report,coveralls,codecov
+    - TOXENV=2.7-1.9-nocov
+    - TOXENV=3.3-1.8-cover,report,coveralls,codecov
+    - TOXENV=3.3-1.8-nocov
+    - TOXENV=3.4-1.10-cover,report,coveralls,codecov
+    - TOXENV=3.4-1.10-nocov
+    - TOXENV=3.4-1.8-cover,report,coveralls,codecov
+    - TOXENV=3.4-1.8-nocov
+    - TOXENV=3.4-1.9-cover,report,coveralls,codecov
+    - TOXENV=3.4-1.9-nocov
+    - TOXENV=3.5-1.10-cover,report,coveralls,codecov
+    - TOXENV=3.5-1.10-nocov
+    - TOXENV=3.5-1.8-cover,report,coveralls,codecov
+    - TOXENV=3.5-1.8-nocov
+    - TOXENV=3.5-1.9-cover,report,coveralls,codecov
+    - TOXENV=3.5-1.9-nocov
+    - TOXENV=pypy-1.10-cover,report,coveralls,codecov
+    - TOXENV=pypy-1.10-nocov
+    - TOXENV=pypy-1.8-cover,report,coveralls,codecov
+    - TOXENV=pypy-1.8-nocov
+    - TOXENV=pypy-1.9-cover,report,coveralls,codecov
+    - TOXENV=pypy-1.9-nocov
 before_install:
   - python --version
   - uname -a

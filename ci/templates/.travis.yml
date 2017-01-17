@@ -9,7 +9,7 @@ env:
     - TOXENV=check
     - TOXENV=docs
 {% for env, config in tox_environments|dictsort %}{{ '' }}
-    - TOXENV={{ env }}{% if config.cover %},coveralls,codecov{% endif -%}
+    - TOXENV={{ env }}{% if config.cover %},report,coveralls,codecov{% endif -%}
 {% endfor %}
 
 before_install:
