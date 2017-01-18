@@ -41,7 +41,7 @@ class RedisServerAdmin(admin.ModelAdmin):
             command = log['command']
 
             if len(command) > 255:
-                command = command[:252] + '...'
+                command = str(command[:252]) + '...'
 
             output.append((
                 log['duration'],
