@@ -70,9 +70,9 @@
                 {% if db_detail.sampling %}
                     {% with db_detail.size as total %}
                         {% blocktrans count original.sampling_threshold as size %}
-                            {{ size }} random key our of {{ total }}
+                            {{ size }} random key out of {{ total }}
                         {% plural %}
-                            {{ size }} random keys our of {{ total }}
+                            {{ size }} random keys out of {{ total }}
                         {% endblocktrans %}
                     {% endwith %}
                 {% else %}
