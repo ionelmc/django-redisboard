@@ -14,7 +14,7 @@ try:
     from django.utils.datastructures import SortedDict as OrderedDict
 except ImportError:
     from django.utils.datastructures import OrderedDict
-    
+
 
 
 logger = getLogger(__name__)
@@ -229,6 +229,8 @@ def inspect(request, server):
             key = request.GET['key']
             db = request.GET.get('db', 0)
             page = request.GET.get('page', 1)
+            if isinstance(key, str) and key.startswith("b'") and key.endswith("'"):
+                key = str.encode(key[2:-1])
             key_details = _get_key_details(conn, db, key, page)
         else:
             databases = sorted(name[2:] for name in conn.info()
