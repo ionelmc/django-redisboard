@@ -227,6 +227,10 @@ def inspect(request, server):
     if stats['status'] == 'UP':
         if 'key' in request.GET:
             key = request.GET['key']
+            # request key parameter is of type str like: "b'asgi::group:users'"
+            # change it by bytes type: b''asgi::group:users'
+            if isinstance(key, str) and key.startswith("b'") and key.endswith("'"):
+                key =str.encode(key[2:-1])
             db = request.GET.get('db', 0)
             page = request.GET.get('page', 1)
             key_details = _get_key_details(conn, db, key, page)

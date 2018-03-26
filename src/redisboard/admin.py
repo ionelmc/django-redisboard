@@ -11,6 +11,7 @@ except:
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 
 from .models import RedisServer
 from .utils import PY3
@@ -53,7 +54,7 @@ class RedisServerAdmin(admin.ModelAdmin):
                 u'%.1fms: %r' % (log['duration'] / 1000., command),
             ))
         if output:
-            return '<br>'.join(l for _, l in sorted(output, reverse=True))
+            return mark_safe('<br><br>'.join(l for _, l in sorted(output, reverse=True)))
         else:
             return 'n/a'
     slowlog.allow_tags = True
@@ -72,9 +73,9 @@ class RedisServerAdmin(admin.ModelAdmin):
     clients.long_description = _("Clients")
 
     def tools(self, obj):
-        return '<a href="%s">%s</a>' % (
+        return mark_safe('<a href="%s">%s</a>' % (
             reverse("admin:redisboard_redisserver_inspect", args=(obj.id,)),
-            unicode(_("Inspect"))
+            unicode(_("Inspect")))
         )
     tools.allow_tags = True
     tools.long_description = _("Tools")
@@ -85,7 +86,7 @@ class RedisServerAdmin(admin.ModelAdmin):
         for k, v in (brief_details.items() if PY3 else brief_details.iteritems()):
             output.append('<dt>%s</dt><dd>%s</dd>' % (k, v))
         if output:
-            return '<dl class="details">%s</dl>' % ''.join(output)
+            return mark_safe('<dl class="details">%s</dl>' % ''.join(output))
         return 'n/a'
     details.allow_tags = True
     details.long_description = _("Details")
@@ -113,7 +114,7 @@ class RedisServerAdmin(admin.ModelAdmin):
             k = k.replace('_', ' ')
             output.append('<dt>%s</dt><dd>%s</dd>' % (k, v))
 
-        return '<dl class="details">%s</dl>' % ''.join(output)
+        return mark_safe('<dl class="details">%s</dl>' % ''.join(output))
     cpu_utilization.allow_tags = True
     cpu_utilization.long_description = _('CPU Utilization')
 
