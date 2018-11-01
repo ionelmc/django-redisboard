@@ -5,6 +5,7 @@ env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
+    - TEST_TIMEOUT=30
   matrix:
     - TOXENV=check
     - TOXENV=docs
@@ -18,9 +19,6 @@ matrix:
 {% endif %}
       env:
         - TOXENV={{ env }}{% if config.cover %},report,coveralls,codecov{% endif -%}
-{% if env.startswith("pypy") %}{{ '' }}
-          TEST_TIMEOUT=30
-{%- endif -%}
 {% endfor %}
 
 before_install:
