@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     import jinja2
 
-    import subprocess
+    import matrix
 
     jinja = jinja2.Environment(
         loader=jinja2.FileSystemLoader(join(base_path, "ci", "templates")),
@@ -44,12 +44,19 @@ if __name__ == "__main__":
         keep_trailing_newline=True
     )
 
-    tox_environments = [
-        line.strip()
-        # WARNING: 'tox' must be installed globally or in the project's virtualenv
-        for line in subprocess.check_output(['tox', '--listenvs'], universal_newlines=True).splitlines()
-    ]
-    tox_environments = [line for line in tox_environments if line not in ['clean', 'report', 'docs', 'check']]
+    tox_environments = {}
+    for (alias, conf) in matrix.from_file(join(base_path, "setup.cfg")).items():
+        python = conf["python_versions"]
+        deps = conf["dependencies"]
+        tox_environments[alias] = {
+            "deps": deps.split(),
+        }
+        if "coverage_flags" in conf:
+            cover = {"false": False, "true": True}[conf["coverage_flags"].lower()]
+            tox_environments[alias].update(cover=cover)
+        if "environment_variables" in conf:
+            env_vars = conf["environment_variables"]
+            tox_environments[alias].update(env_vars=env_vars.split())
 
     for name in os.listdir(join("ci", "templates")):
         with open(join(base_path, name), "w") as fh:

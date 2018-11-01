@@ -161,10 +161,10 @@ def main(args=None):
         print('=' * 80)
         print('''
     Credentials:
-    
+
         USERNAME: redisboard
         PASSWORD: %s
-    
+
     ''' % (pwd if args.password is None else '<PROVIDED VIA --password OPTION>'))
         print('=' * 80)
         print()

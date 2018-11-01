@@ -7,14 +7,13 @@ from django.shortcuts import render
 from django.utils.functional import curry
 from redis.exceptions import ResponseError
 
-from .utils import LazySlicingIterable
 from .utils import PY3
+from .utils import LazySlicingIterable
 
 try:
     from django.utils.datastructures import SortedDict as OrderedDict
 except ImportError:
     from django.utils.datastructures import OrderedDict
-
 logger = getLogger(__name__)
 
 REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE', 100)
@@ -96,12 +95,16 @@ def _get_key_info(conn, key):
 
 
 VALUE_GETTERS = {
-    'list': lambda conn, key, start=0, end=-1: [(pos + start, val)
-                                                 for (pos, val) in enumerate(conn.lrange(key, start, end))],
+    'list': lambda conn, key, start=0, end=-1: [
+        (pos + start, val)
+        for (pos, val) in enumerate(conn.lrange(key, start, end))
+    ],
     'string': lambda conn, key, *args: [('string', conn.get(key))],
     'set': lambda conn, key, *args: list(enumerate(conn.smembers(key))),
-    'zset': lambda conn, key, start=0, end=-1: [(pos + start, val)
-                                                 for (pos, val) in enumerate(conn.zrange(key, start, end))],
+    'zset': lambda conn, key, start=0, end=-1: [
+        (pos + start, val)
+        for (pos, val) in enumerate(conn.zrange(key, start, end))
+    ],
     'hash': lambda conn, key, *args: conn.hgetall(key).items(),
     'n/a': lambda conn, key, *args: (),
 }
@@ -209,7 +212,7 @@ def _get_db_details(server, db):
     if size > server.sampling_threshold:
         sampling = True
         pipe = conn.pipeline()
-        for _ in (range if PY3 else xrange)(server.sampling_size):  # flake8=noqa
+        for _ in (range if PY3 else xrange)(server.sampling_size):  # noqa
             pipe.randomkey()
 
         for key in set(pipe.execute()):

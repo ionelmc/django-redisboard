@@ -1,21 +1,19 @@
-# vim: set fileencoding=utf-8 :
 from functools import update_wrapper
 
 from django.contrib import admin
-
-try:
-    from django.urls import reverse
-except:
-    from django.core.urlresolvers import reverse
-
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
-from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 from .models import RedisServer
 from .utils import PY3
 from .views import inspect
+
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 if PY3:
     unicode = str
