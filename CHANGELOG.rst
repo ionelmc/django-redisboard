@@ -2,7 +2,7 @@
 Changelog
 ============
 
-3.0.3 (2018-11-01)
+4.0.0 (2018-11-01)
 ------------------
 
 * Fixed typo in inspect.html template to reflect `out`.
@@ -10,6 +10,10 @@ Changelog
   in `#33 <https://github.com/ionelmc/django-redisboard/pull/33>`_.
 * Converted the ``run_redisboard.py`` script to a ``redisboard`` bin and fixed Django 2.x issues.
 * Dropped support for Django older than 1.11.
+* Dropped support for Python older than 3.4 or 2.7.
+* Fixed issues with data being displayed as binary strings.
+* Fixed unwanted tag escaping. Contributed by Gilles Lavaux 
+  in `#37 <https://github.com/ionelmc/django-redisboard/pull/37>`_.
 
 3.0.2 (2017-01-19)
 ------------------

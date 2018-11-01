@@ -11,3 +11,4 @@ Authors
 * John Lau - https://github.com/jolks
 * ??? - https://github.com/gabn88
 * Erik Telepovský - https://github.com/eriktelepovsky
+* Gilles Lavaux - https://github.com/gilav
