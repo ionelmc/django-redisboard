@@ -165,7 +165,7 @@ def main(args=None):
         USERNAME: redisboard
         PASSWORD: %s
     
-    ''' % pwd if args.password is None else '<PROVIDED VIA --password OPTION>')
+    ''' % (pwd if args.password is None else '<PROVIDED VIA --password OPTION>'))
         print('=' * 80)
         print()
 
