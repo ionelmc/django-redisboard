@@ -10,8 +10,8 @@ cookiecutter:
     codacy: no
     codeclimate: no
     codecov: yes
-    command_line_interface: plain
-    command_line_interface_bin_name: run-redisboard
+    command_line_interface: argparse
+    command_line_interface_bin_name: redisboard
     coveralls: yes
     distribution_name: django-redisboard
     email: contact@ionelmc.ro
@@ -36,4 +36,4 @@ cookiecutter:
     travis: yes
     version: 3.0.2
     website: http://blog.ionelmc.ro
-    year: 2011-2017
+    year: 2011-2018

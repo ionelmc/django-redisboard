@@ -66,7 +66,7 @@ Overview
 
 Redis monitoring and inspection drop-in application using django admin.
 
-* Free software: BSD license
+* Free software: BSD 2-Clause License
 
 Features
 ========
