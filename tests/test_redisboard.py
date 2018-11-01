@@ -3,6 +3,7 @@ from __future__ import print_function
 import os
 import re
 import tempfile
+import time
 
 import psutil as psutil
 import pytest
@@ -98,16 +99,19 @@ def test_key_details(admin_client, redis_server, key):
 
 @pytest.mark.parametrize('entrypoint', ['redisboard', 'python -mredisboard'])
 def test_cli(entrypoint, tmpdir):
-    args = ['127.0.0.1:0', '--password', 'foobar', '--storage', tmpdir]
+    args = ['127.0.0.1:0', '--password', 'foobar', '--storage', str(tmpdir)]
     with TestProcess(*entrypoint.split() + args) as process:
         wait_for_strings(process.read, TIMEOUT, "server at http://")
         print(process.read())
-        for conn in psutil.Process(process.proc.pid).connections():
-            print(conn)
-            if conn.status == psutil.CONN_LISTEN and conn.laddr[0] == '127.0.0.1':
-                port = conn.laddr[1]
-                break
-        else:
+        t = time.time()
+        port = None
+        while time.time() - t < TIMEOUT and port is None:
+            for conn in psutil.Process(process.proc.pid).connections():
+                print(conn)
+                if conn.status == psutil.CONN_LISTEN and conn.laddr[0] == '127.0.0.1':
+                    port = conn.laddr[1]
+                    break
+        if port is None:
             pytest.fail("Didn't find the listen port!")
         session = requests.Session()
         resp = session.get('http://127.0.0.1:%s/' % port)
