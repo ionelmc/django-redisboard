@@ -2,26 +2,36 @@
 Changelog
 ============
 
-3.0.3 (2017-11-14)
+3.0.3 (2018-11-01)
+------------------
+
 * Fixed typo in inspect.html template to reflect `out`.
+* Added Django 2.0 support. Contributed by Erik Telepovský
+  in `#33 <https://github.com/ionelmc/django-redisboard/pull/33>`_.
+* Converted the ``run_redisboard.py`` script to a ``redisboard`` bin and fixed Django 2.x issues.
+* Dropped support for Django older than 1.11.
 
 3.0.2 (2017-01-19)
 ------------------
 
-* Fixed UnicodeDecodeError in "redisboard/admin.py" (Issue `#15 <https://github.com/ionelmc/django-redisboard/issues/15>`_). 
+* Fixed UnicodeDecodeError in "redisboard/admin.py" (fixes
+  issue `#15 <https://github.com/ionelmc/django-redisboard/issues/15>`_).
   Contributed by Erik Telepovský in `#29 <https://github.com/ionelmc/django-redisboard/pull/29>`_.
-* Fixed TypeError in "redisboard/admin.py". Contributed by gabn88 in `#28 <https://github.com/ionelmc/django-redisboard/pull/28>`_.
+* Fixed TypeError in "redisboard/admin.py". Contributed by gabn88
+  in `#28 <https://github.com/ionelmc/django-redisboard/pull/28>`_.
 
 3.0.1 (2016-09-12)
 ------------------
 
-* Add supportfor Django 1.10. Contributed by Vincenzo Demasi in `#26 <https://github.com/ionelmc/django-redisboard/pull/26>`_.
+* Add supportfor Django 1.10. Contributed by Vincenzo Demasi
+  in `#26 <https://github.com/ionelmc/django-redisboard/pull/26>`_.
 
 3.0.0 (2015-12-17)
 ------------------
 
 * Drop support for Django < 1.8
-* Add support for Django 1.9. Contributed by gabn88 in `#25 <https://github.com/ionelmc/django-redisboard/pull/25>`_.
+* Add support for Django 1.9. Contributed by gabn88
+  in `#25 <https://github.com/ionelmc/django-redisboard/pull/25>`_.
 
 2.0.0 (2015-11-08)
 ------------------

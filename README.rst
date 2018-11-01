@@ -83,22 +83,21 @@ Requirements
 :Services: Redis 2.2 or later.
 :Packages: Django>=1.8, py-redis>=2.10.0
 
-Don't have a django project ?
-=============================
+Don't have a django project?
+============================
 
-Use the quick start script ! It will create and run a django project on 0.0.0.0:8000 with just the redisboard installed.
+If you just want to run redisboard quickly do this::
 
-With curl::
+    pip install django-redisboard
+    redisboard
 
-    curl -L https://raw.github.com/ionelmc/django-redisboard/master/run_redisboard.py | tee run_redisboard.py | sh -e
+Don't want to run on 0.0.0.0:8000? Run::
 
-With wget::
+    redisboard ip:port
 
-    wget --no-check-certificate https://raw.github.com/ionelmc/django-redisboard/master/run_redisboard.py -O - | tee run_redisboard.py | sh -e
+Want a password that ain't random (you might need to ``rm -rf ~/.redisboard`` first tho)? Run::
 
-Don't want to run on 0.0.0.0:8000 ? Run::
-
-    ./run_redisboard.py ip:port
+    redisboard --password=foobar
 
 Installation guide
 ==================
@@ -119,11 +118,7 @@ Add ``redisboard`` to ``INSTALLED_APPS``:
 
 After that you need to run::
 
-    manage.py syncdb
-
-Or if you use south you can migrate this app::
-
-    manage.py migrate redisboard
+    manage.py migrate
 
 Then you can add redis servers in the admin. You will see the stats in the changelist.
 

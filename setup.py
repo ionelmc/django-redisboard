@@ -70,9 +70,7 @@ setup(
     ],
     install_requires=[
         'redis>=2.10.0',
-        # Requiring Django makes it harder to run a custom version and users
-        # will have it installed anyway :)
-        # 'Django>=1.4',
+        'Django',
     ],
     extras_require={
         # eg:
@@ -81,7 +79,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'run-redisboard = redisboard.cli:main',
+            'redisboard = redisboard.cli:main',
         ]
     },
 )
