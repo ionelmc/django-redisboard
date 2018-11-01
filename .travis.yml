@@ -12,73 +12,67 @@ matrix:
   include:
     - python: '2.7'
       env:
-        - TOXENV=py27-dj111,report,coveralls,codecov
-    - python: '2.7'
-      env:
-        - TOXENV=py27-dj20,report,coveralls,codecov
-    - python: '2.7'
-      env:
-        - TOXENV=py27-dj21,report,coveralls,codecov
+        - TOXENV=py27-dj111
     - python: '3.4'
       env:
-        - TOXENV=py34-dj111,report,coveralls,codecov
+        - TOXENV=py34-dj111
     - python: '3.4'
       env:
-        - TOXENV=py34-dj20,report,coveralls,codecov
+        - TOXENV=py34-dj20
     - python: '3.4'
       env:
-        - TOXENV=py34-dj21,report,coveralls,codecov
+        - TOXENV=py34-dj21
     - python: '3.5'
       env:
-        - TOXENV=py35-dj111,report,coveralls,codecov
+        - TOXENV=py35-dj111
     - python: '3.5'
       env:
-        - TOXENV=py35-dj20,report,coveralls,codecov
+        - TOXENV=py35-dj20
     - python: '3.5'
       env:
-        - TOXENV=py35-dj21,report,coveralls,codecov
+        - TOXENV=py35-dj21
     - python: '3.6'
       env:
-        - TOXENV=py36-dj111,report,coveralls,codecov
+        - TOXENV=py36-dj111
     - python: '3.6'
       env:
-        - TOXENV=py36-dj20,report,coveralls,codecov
+        - TOXENV=py36-dj20
     - python: '3.6'
       env:
-        - TOXENV=py36-dj21,report,coveralls,codecov
+        - TOXENV=py36-dj21
     - python: '3.7'
       dist: xenial
       sudo: required
       env:
-        - TOXENV=py37-dj111,report,coveralls,codecov
+        - TOXENV=py37-dj111
     - python: '3.7'
       dist: xenial
       sudo: required
       env:
-        - TOXENV=py37-dj20,report,coveralls,codecov
+        - TOXENV=py37-dj20
     - python: '3.7'
       dist: xenial
       sudo: required
       env:
-        - TOXENV=py37-dj21,report,coveralls,codecov
+        - TOXENV=py37-dj21
     - python: 'pypy'
       env:
-        - TOXENV=pypy-dj111,report,coveralls,codecov
+        - TOXENV=pypy-dj111
     - python: 'pypy'
       env:
-        - TOXENV=pypy-dj20,report,coveralls,codecov
+        - TOXENV=pypy-dj20
     - python: 'pypy'
       env:
-        - TOXENV=pypy-dj21,report,coveralls,codecov
+        - TOXENV=pypy-dj21
     - python: 'pypy3'
       env:
-        - TOXENV=pypy3-dj111,report,coveralls,codecov
+        - TOXENV=pypy3-dj111
     - python: 'pypy3'
       env:
-        - TOXENV=pypy3-dj20,report,coveralls,codecov
+        - TOXENV=pypy3-dj20
     - python: 'pypy3'
       env:
-        - TOXENV=pypy3-dj21,report,coveralls,codecov
+        - TOXENV=pypy3-dj21
 before_install:
   - python --version
   - uname -a

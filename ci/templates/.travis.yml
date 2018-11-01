@@ -10,15 +10,16 @@ env:
     - TOXENV=docs
 matrix:
   include:
-{%- for env in tox_environments %}{{ '' }}
+{%- for env, config in tox_environments|dictsort %}{{ '' }}
     - python: '{{ env.split("-")[0] if env.startswith("pypy") else "{0[2]}.{0[3]}".format(env) }}'
 {% if env.startswith('py37') %}
       dist: xenial
       sudo: required
 {% endif %}
       env:
-        - TOXENV={{ env }},report,coveralls,codecov
-{%- endfor %}{{ '' }}
+        - TOXENV={{ env }}{% if config.cover %},report,coveralls,codecov{% endif -%}
+{% endfor %}
+
 before_install:
   - python --version
   - uname -a
