@@ -55,21 +55,19 @@ matrix:
     - python: 'pypy'
       env:
         - TOXENV=pypy-dj111
-    - python: 'pypy'
-      env:
-        - TOXENV=pypy-dj20
-    - python: 'pypy'
-      env:
-        - TOXENV=pypy-dj21
+          TEST_TIMEOUT=30
     - python: 'pypy3'
       env:
         - TOXENV=pypy3-dj111
+          TEST_TIMEOUT=30
     - python: 'pypy3'
       env:
         - TOXENV=pypy3-dj20
+          TEST_TIMEOUT=30
     - python: 'pypy3'
       env:
         - TOXENV=pypy3-dj21
+          TEST_TIMEOUT=30
 before_install:
   - python --version
   - uname -a

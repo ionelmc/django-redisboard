@@ -18,6 +18,9 @@ matrix:
 {% endif %}
       env:
         - TOXENV={{ env }}{% if config.cover %},report,coveralls,codecov{% endif -%}
+{% if env.startswith("pypy") %}{{ '' }}
+          TEST_TIMEOUT=30
+{%- endif -%}
 {% endfor %}
 
 before_install:
