@@ -7,15 +7,13 @@ from django.shortcuts import render
 from django.utils.functional import curry
 from redis.exceptions import ResponseError
 
-from .utils import PY3
 from .utils import LazySlicingIterable
+from .utils import PY3
 
 try:
     from django.utils.datastructures import SortedDict as OrderedDict
 except ImportError:
     from django.utils.datastructures import OrderedDict
-    
-
 
 logger = getLogger(__name__)
 
@@ -43,6 +41,13 @@ LENGTH_GETTERS = {
 }
 
 
+def _decode_bytes(value):
+    if isinstance(value, bytes):
+        return value.decode('utf8')
+    else:
+        return value
+
+
 def _get_key_info(conn, key):
     try:
         obj_type = conn.type(key)
@@ -68,12 +73,12 @@ def _get_key_info(conn, key):
                 'idletime': "n/a",
             }
         return {
-            'type': obj_type,
+            'type': _decode_bytes(obj_type),
             'name': key,
             'length': obj_length,
             'ttl': obj_ttl,
             'refcount': refcount,
-            'encoding': encoding,
+            'encoding': _decode_bytes(encoding),
             'idletime': idletime,
         }
     except ResponseError as exc:
@@ -89,15 +94,16 @@ def _get_key_info(conn, key):
             'idletime': "n/a",
         }
 
+
 VALUE_GETTERS = {
-    b'list': lambda conn, key, start=0, end=-1: [(pos + start, val)
+    'list': lambda conn, key, start=0, end=-1: [(pos + start, val)
                                                  for (pos, val) in enumerate(conn.lrange(key, start, end))],
-    b'string': lambda conn, key, *args: [('string', conn.get(key))],
-    b'set': lambda conn, key, *args: list(enumerate(conn.smembers(key))),
-    b'zset': lambda conn, key, start=0, end=-1: [(pos + start, val)
+    'string': lambda conn, key, *args: [('string', conn.get(key))],
+    'set': lambda conn, key, *args: list(enumerate(conn.smembers(key))),
+    'zset': lambda conn, key, start=0, end=-1: [(pos + start, val)
                                                  for (pos, val) in enumerate(conn.zrange(key, start, end))],
-    b'hash': lambda conn, key, *args: conn.hgetall(key).items(),
-    b'n/a': lambda conn, key, *args: (),
+    'hash': lambda conn, key, *args: conn.hgetall(key).items(),
+    'n/a': lambda conn, key, *args: (),
 }
 
 
@@ -117,6 +123,7 @@ def _get_key_details(conn, db, key, page):
         details['data'] = VALUE_GETTERS[details['type']](conn, key)
 
     return details
+
 
 def _raw_get_db_summary(server, db):
     server.connection.execute_command('SELECT', db)
@@ -179,6 +186,7 @@ def _raw_get_db_summary(server, db):
         persistent_memory=persistent_memory,
     )
 
+
 def _get_db_summary(server, db):
     try:
         return _raw_get_db_summary(server, db)
@@ -227,10 +235,6 @@ def inspect(request, server):
     if stats['status'] == 'UP':
         if 'key' in request.GET:
             key = request.GET['key']
-            # request key parameter is of type str like: "b'asgi::group:users'"
-            # change it by bytes type: b''asgi::group:users'
-            if isinstance(key, str) and key.startswith("b'") and key.endswith("'"):
-                key =str.encode(key[2:-1])
             db = request.GET.get('db', 0)
             page = request.GET.get('page', 1)
             key_details = _get_key_details(conn, db, key, page)

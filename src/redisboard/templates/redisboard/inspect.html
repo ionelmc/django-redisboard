@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n static admin_modify %}
+{% load i18n static admin_modify byte_filters %}
 
 {% block title %}Inspect {{ original }}{% endblock %}
 
@@ -29,7 +29,7 @@
 &rsaquo; <a href="{% url 'admin:redisboard_redisserver_changelist' %}">{{ 'redisserver'|capfirst }}</a>
 {% if key_details %}
     &rsaquo; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}">{% trans 'Inspect' %} {{ original|truncatewords:"18" }}</a>
-    &rsaquo; {% trans "Key details" %}: {{ key_details.name }}
+    &rsaquo; {% trans "Key details" %}: {{ key_details.name|try_decode }}
 {% else %}
     &rsaquo; {% trans 'Inspect' %} {{ original|truncatewords:"18" }}
 {% endif %}
@@ -110,13 +110,13 @@
 
                 {% for key, key_detail in db_detail.keys.items %}
                 <tr>
-                    <td><a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}?key={{ key|escape }}&db={{ db }}">{{ key }}</a></td>
+                    <td><a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}?key={{ key|url_encode }}&db={{ db }}">{{ key|try_decode }}</a></td>
                     {% if key_detail.error %}
                     <td class="error" colspan="6">{% trans "ERROR:" %} {{ key_detail.error }}</td>
                     {% else %}
-                    <td>{{ key_detail.type }}</td>
+                    <td>{{ key_detail.type|try_decode }}</td>
                     <td>{{ key_detail.ttl }}</td>
-                    <td>{{ key_detail.encoding }}</td>
+                    <td>{{ key_detail.encoding|try_decode }}</td>
                     <td>{{ key_detail.length }}</td>
                     <td>{{ key_detail.idletime }}</td>
                     <td>{{ key_detail.refcount }}</td>
@@ -130,7 +130,7 @@
     {% endfor %}
     {% if key_details %}
         <fieldset class="module aligned key-details">
-            <h2>{% trans "Key details" %}: {{ key_details.name }}</h2>
+            <h2>{% trans "Key details" %}: {{ key_details.name|try_decode }}</h2>
             <table>
                 <tr>
                     <th>{% trans "Type" %}</th>
@@ -144,9 +144,9 @@
                     {% if key_details.error %}
                     <td class="error" colspan="6">{% trans "ERROR:" %} {{ key_details.error }}</td>
                     {% else %}
-                    <td>{{ key_details.type }}</td>
+                    <td>{{ key_details.type|try_decode }}</td>
                     <td>{{ key_details.ttl }}</td>
-                    <td>{{ key_details.encoding }}</td>
+                    <td>{{ key_details.encoding|try_decode }}</td>
                     <td>{{ key_details.length }}</td>
                     <td>{{ key_details.idletime }}</td>
                     <td>{{ key_details.refcount }}</td>
@@ -155,7 +155,7 @@
             </table>
         </fieldset>
         <fieldset class="module aligned key-data">
-            <h2>{% trans "Key data" %}: {{ key_details.name }}</h2>
+            <h2>{% trans "Key data" %}: {{ key_details.name|try_decode }}</h2>
             <table>
                 {% for key, value in key_details.data.object_list|default:key_details.data %}
                 <tr><td>{{ key }}</td><td>{{ value|pprint }}</td></tr>
@@ -167,7 +167,7 @@
                 {% if key_details.data.number == nr %}
                     <span class="this-page">{{ nr }}</span>
                 {% else %}
-                    <a href="?key={{ key_details.name|escape }}&db={{ key_details.db }}&page={{ nr }}">{{ nr }}</a>
+                    <a href="?key={{ key_details.name|url_encode }}&db={{ key_details.db }}&page={{ nr }}">{{ nr }}</a>
                 {% endif %}
                 {% endfor %}
                 {{ key_details.data.paginator.count }} items

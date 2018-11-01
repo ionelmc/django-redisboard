@@ -54,7 +54,7 @@ class RedisServerAdmin(admin.ModelAdmin):
                 u'%.1fms: %r' % (log['duration'] / 1000., command),
             ))
         if output:
-            return mark_safe('<br><br>'.join(l for _, l in sorted(output, reverse=True)))
+            return mark_safe('<br>'.join(l for _, l in sorted(output, reverse=True)))
         else:
             return 'n/a'
     slowlog.allow_tags = True
@@ -75,8 +75,8 @@ class RedisServerAdmin(admin.ModelAdmin):
     def tools(self, obj):
         return mark_safe('<a href="%s">%s</a>' % (
             reverse("admin:redisboard_redisserver_inspect", args=(obj.id,)),
-            unicode(_("Inspect")))
-        )
+            unicode(_("Inspect"))
+        ))
     tools.allow_tags = True
     tools.long_description = _("Tools")
 
