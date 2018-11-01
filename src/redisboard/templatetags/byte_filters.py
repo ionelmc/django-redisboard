@@ -1,6 +1,9 @@
-from urllib.parse import quote
-
 from django import template
+
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib import quote
 
 register = template.Library()
 
