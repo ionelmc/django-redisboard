@@ -1,7 +1,6 @@
-Welcome to django-redisboard's documentation!
-===============================================
-
-Contents:
+========
+Contents
+========
 
 .. toctree::
    :maxdepth: 2

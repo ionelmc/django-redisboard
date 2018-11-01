@@ -14,6 +14,7 @@ parts
 bin
 var
 sdist
+wheelhouse
 develop-eggs
 .installed.cfg
 lib
@@ -28,6 +29,7 @@ pip-log.txt
 .coverage
 .tox
 .coverage.*
+.pytest_cache/
 nosetests.xml
 coverage.xml
 htmlcov
@@ -60,5 +62,7 @@ docs/_build
 .pytest
 .bootstrap
 .appveyor.token
-.redisboard*
 *.bak
+
+# Mypy Cache
+.mypy_cache/
