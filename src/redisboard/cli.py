@@ -171,4 +171,4 @@ def main(args=None):
 
         RedisServer.objects.create(label='localhost', hostname='127.0.0.1')
 
-    execute_from_command_line(['django-admin', 'runserver', '--insecure', args.addrport])
+    execute_from_command_line(['django-admin', 'runserver', '--insecure', '--noreload', args.addrport])

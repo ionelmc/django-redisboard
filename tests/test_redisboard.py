@@ -1,19 +1,21 @@
 from __future__ import print_function
 
 import os
+import re
 import tempfile
 
+import psutil as psutil
 import pytest
+import requests
 from process_tests import TestProcess
 from process_tests import wait_for_strings
-from redis import StrictRedis
 
 from redisboard.models import RedisServer
 
 TIMEOUT = int(os.getenv('REDISBOARD_TEST_TIMEOUT', 2))
 
 
-@pytest.yield_fixture(scope="module")
+@pytest.fixture(scope="module")
 def redis_process():
     socket_path = tempfile.mktemp('.sock')
     try:
@@ -27,7 +29,7 @@ def redis_process():
             pass
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def redis_server(redis_process, db):
     server = RedisServer.objects.create(
         hostname=redis_process,
@@ -92,3 +94,27 @@ def test_key_details(admin_client, redis_server, key):
     print(response)
     content = response.content.decode('utf-8')
     assert '<h2>Key data: {}</h2>'.format(key) in content
+
+
+@pytest.mark.parametrize('entrypoint', ['redisboard', 'python -mredisboard'])
+def test_cli(entrypoint, tmpdir):
+    args = ['127.0.0.1:0', '--password', 'foobar', '--storage', tmpdir]
+    with TestProcess(*entrypoint.split() + args) as process:
+        wait_for_strings(process.read, TIMEOUT, "server at http://")
+        print(process.read())
+        for conn in psutil.Process(process.proc.pid).connections():
+            print(conn)
+            if conn.status == psutil.CONN_LISTEN and conn.laddr[0] == '127.0.0.1':
+                port = conn.laddr[1]
+                break
+        else:
+            pytest.fail("Didn't find the listen port!")
+        session = requests.Session()
+        resp = session.get('http://127.0.0.1:%s/' % port)
+        csrftoken, = re.findall('name=[\'"]csrfmiddlewaretoken[\'"] value=[\'"](.*?)[\'"]', resp.text)
+        resp = session.post('http://127.0.0.1:%s/login/?next=/redisboard/redisserver/' % port, data={
+            'csrfmiddlewaretoken': csrftoken,
+            'username': 'redisboard',
+            'password': 'foobar',
+        })
+        assert '<a href="/redisboard/redisserver/1/inspect/"' in resp.text
