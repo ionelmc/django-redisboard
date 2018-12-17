@@ -59,6 +59,18 @@ def _get_key_info(conn, key):
             pipe.ttl(key)
 
             refcount, encoding, idletime, obj_length, obj_ttl = pipe.execute()
+        except KeyError:
+            logger.exception("The key %r does not exist", key)
+            return {
+                'type': 'none',
+                'name': key,
+                'length': "n/a",
+                'error': "The key does not exist",
+                'ttl': "n/a",
+                'refcount': "n/a",
+                'encoding': "n/a",
+                'idletime': "n/a",
+            }
         except ResponseError as exc:
             logger.exception("Failed to get object info for key %r: %s", key, exc)
             return {
