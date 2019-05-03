@@ -36,7 +36,7 @@ class RedisServerAdmin(admin.ModelAdmin):
         'tools',
     )
 
-    list_filter = 'label', 'hostname'
+    list_filter = 'label', 'hostname', 'port'
     ordering = ('hostname', 'port')
 
     def slowlog(self, obj):
