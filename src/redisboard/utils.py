@@ -91,7 +91,7 @@ class cached_property(object):
         return self.__class__(self.__get, self.__set, fdel)
 
 
-# Strait from Django2's django.utils.functionl
+# Straight from Django2's django.utils.functionl
 # You can't trivially replace this with `functools.partial` because this binds
 # to classes and returns bound instances, whereas functools.partial (on
 # CPython) is a type and its instances don't bind.
