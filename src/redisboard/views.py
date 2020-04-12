@@ -12,7 +12,7 @@ from .utils import LazySlicingIterable, curry
 try:
     from django.utils.datastructures import SortedDict as OrderedDict
 except ImportError:
-    from django.utils.datastructures import OrderedDict
+    from collections import OrderedDict
 logger = getLogger(__name__)
 
 REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE', 100)
