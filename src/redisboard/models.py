@@ -16,7 +16,7 @@ from .utils import cached_property
 try:
     from django.utils.datastructures import SortedDict as OrderedDict
 except ImportError:
-    from django.utils.datastructures import OrderedDict
+    from collections import OrderedDict
 
 REDISBOARD_DETAIL_FILTERS = [re.compile(name) for name in getattr(settings, 'REDISBOARD_DETAIL_FILTERS', (
     'aof_enabled', 'bgrewriteaof_in_progress', 'bgsave_in_progress',
