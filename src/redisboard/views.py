@@ -4,11 +4,10 @@ from django.conf import settings
 from django.core.paginator import Paginator
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
-from django.utils.functional import curry
 from redis.exceptions import ResponseError
 
 from .utils import PY3
-from .utils import LazySlicingIterable
+from .utils import LazySlicingIterable, curry
 
 try:
     from django.utils.datastructures import SortedDict as OrderedDict
