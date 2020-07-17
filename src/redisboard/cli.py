@@ -148,6 +148,7 @@ def main(args=None):
     ]
 
     from django.contrib.auth.models import User
+
     from redisboard.models import RedisServer
 
     if not os.path.exists(database_path):
