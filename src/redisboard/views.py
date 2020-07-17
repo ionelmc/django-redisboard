@@ -1,3 +1,4 @@
+from functools import partial
 from logging import getLogger
 
 from django.conf import settings
@@ -7,7 +8,7 @@ from django.shortcuts import render
 from redis.exceptions import ResponseError
 
 from .utils import PY3
-from .utils import LazySlicingIterable, curry
+from .utils import LazySlicingIterable
 
 try:
     from django.utils.datastructures import SortedDict as OrderedDict
@@ -129,7 +130,7 @@ def _get_key_details(conn, db, key, page):
         details['data'] = Paginator(
             LazySlicingIterable(
                 lambda: details['length'],
-                curry(VALUE_GETTERS[details['type']], conn, key)
+                partial(VALUE_GETTERS[details['type']], conn, key)
             ),
             REDISBOARD_ITEMS_PER_PAGE
         ).page(page)

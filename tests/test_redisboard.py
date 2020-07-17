@@ -42,8 +42,7 @@ def redis_server(redis_process, db):
     c.hset('hash', 'key', 'val')
     c.hset('hash', 'foo', 'bar')
     c.lpush('list', 'foo', 'bar', 'foobar')
-    c.zadd('sorted-set', 'foo', 1)
-    c.zadd('sorted-set', 'b', 2)
+    c.zadd('sorted-set', {'foo': 1, 'b': 2})
     c.eval("""
         local c = 0
         while c < 1000000 do
