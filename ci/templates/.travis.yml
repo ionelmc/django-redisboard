@@ -1,62 +1,47 @@
 language: python
-sudo: false
-cache: pip
+dist: xenial
+cache: false
 env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
     - TEST_TIMEOUT=30
-  matrix:
-    - TOXENV=check
-    - TOXENV=docs
+    - LANG=en_US.UTF-8
 matrix:
   include:
-{%- for env, config in tox_environments|dictsort %}{{ '' }}
-    - python: '{{ env.split("-")[0] if env.startswith("pypy") else "{0[2]}.{0[3]}".format(env) }}'
-{% if env.startswith('py37') %}
-      dist: xenial
-      sudo: required
-{% endif %}
+    - python: '3.6'
       env:
-        - TOXENV={{ env }}{% if config.cover %},report,coveralls,codecov{% endif -%}
-{% endfor %}
-
+        - TOXENV=check
+    - python: '3.6'
+      env:
+        - TOXENV=docs
+{%- for env, config in tox_environments|dictsort %}{{ '' }}
+    - env:
+        - TOXENV={{ env }}{% if config.cover %},codecov,coveralls{% endif %}
+{%- if env.startswith('pypy3') %}{{ '' }}
+        - TOXPYTHON=pypy3
+      python: 'pypy3'
+{%- elif env.startswith('pypy') %}{{ '' }}
+      python: 'pypy'
+{%- else %}{{ '' }}
+      python: '{{ '{0[2]}.{0[3]}'.format(env) }}'
+{%- endif %}
+{%- endfor %}{{ '' }}
 before_install:
   - python --version
   - uname -a
-  - lsb_release -a
+  - lsb_release -a || true
 install:
-  - pip install tox
+  - python -mpip install --progress-bar=off tox -rci/requirements.txt
   - virtualenv --version
   - easy_install --version
   - pip --version
   - tox --version
-  - |
-    set -ex
-    if [[ $TRAVIS_PYTHON_VERSION == 'pypy' ]]; then
-        (cd $HOME
-         wget https://bitbucket.org/pypy/pypy/downloads/pypy2-v6.0.0-linux64.tar.bz2
-         tar xf pypy2-*.tar.bz2
-         pypy2-*/bin/pypy -m ensurepip
-         pypy2-*/bin/pypy -m pip install -U virtualenv)
-        export PATH=$(echo $HOME/pypy2-*/bin):$PATH
-        export TOXPYTHON=$(echo $HOME/pypy2-*/bin/pypy)
-    fi
-    if [[ $TRAVIS_PYTHON_VERSION == 'pypy3' ]]; then
-        (cd $HOME
-         wget https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-linux64.tar.bz2
-         tar xf pypy3-*.tar.bz2
-         pypy3-*/bin/pypy3 -m ensurepip
-         pypy3-*/bin/pypy3 -m pip install -U virtualenv)
-        export PATH=$(echo $HOME/pypy3-*/bin):$PATH
-        export TOXPYTHON=$(echo $HOME/pypy3-*/bin/pypy3)
-    fi
-    set +x
 script:
   - tox -v
 after_failure:
-  - more .tox/log/* | cat
-  - more .tox/*/log/* | cat
+  - cat .tox/log/*
+  - cat .tox/*/log/*
 notifications:
   email:
     on_success: never

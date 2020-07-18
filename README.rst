@@ -15,13 +15,11 @@ Overview
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
-
 .. |docs| image:: https://readthedocs.org/projects/django-redisboard/badge/?style=flat
     :target: https://readthedocs.org/projects/django-redisboard
     :alt: Documentation Status
 
-
-.. |travis| image:: https://travis-ci.org/ionelmc/django-redisboard.svg?branch=master
+.. |travis| image:: https://api.travis-ci.org/ionelmc/django-redisboard.svg?branch=master
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/ionelmc/django-redisboard
 
@@ -37,29 +35,30 @@ Overview
     :alt: Coverage Status
     :target: https://coveralls.io/r/ionelmc/django-redisboard
 
-.. |codecov| image:: https://codecov.io/github/ionelmc/django-redisboard/coverage.svg?branch=master
+.. |codecov| image:: https://codecov.io/gh/ionelmc/django-redisboard/branch/master/graphs/badge.svg?branch=master
     :alt: Coverage Status
     :target: https://codecov.io/github/ionelmc/django-redisboard
 
 .. |version| image:: https://img.shields.io/pypi/v/django-redisboard.svg
     :alt: PyPI Package latest release
-    :target: https://pypi.python.org/pypi/django-redisboard
+    :target: https://pypi.org/project/django-redisboard
+
+.. |wheel| image:: https://img.shields.io/pypi/wheel/django-redisboard.svg
+    :alt: PyPI Wheel
+    :target: https://pypi.org/project/django-redisboard
+
+.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/django-redisboard.svg
+    :alt: Supported versions
+    :target: https://pypi.org/project/django-redisboard
+
+.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/django-redisboard.svg
+    :alt: Supported implementations
+    :target: https://pypi.org/project/django-redisboard
 
 .. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/django-redisboard/v4.0.0.svg
     :alt: Commits since latest release
     :target: https://github.com/ionelmc/django-redisboard/compare/v4.0.0...master
 
-.. |wheel| image:: https://img.shields.io/pypi/wheel/django-redisboard.svg
-    :alt: PyPI Wheel
-    :target: https://pypi.python.org/pypi/django-redisboard
-
-.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/django-redisboard.svg
-    :alt: Supported versions
-    :target: https://pypi.python.org/pypi/django-redisboard
-
-.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/django-redisboard.svg
-    :alt: Supported implementations
-    :target: https://pypi.python.org/pypi/django-redisboard
 
 
 .. end-badges

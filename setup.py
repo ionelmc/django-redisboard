@@ -26,7 +26,7 @@ def read(*names, **kwargs):
 setup(
     name='django-redisboard',
     version='4.0.0',
-    license='BSD 2-Clause License',
+    license='BSD-2-Clause',
     description='Redis monitoring and inspection drop-in application using django admin.',
     long_description='%s\n%s' % (
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
@@ -51,10 +51,10 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         # uncomment if you test on these interpreters:
@@ -65,12 +65,18 @@ setup(
         'Framework :: Django',
         'Topic :: Internet :: WWW/HTTP',
     ],
+    project_urls={
+        'Documentation': 'https://django-redisboard.readthedocs.io/',
+        'Changelog': 'https://django-redisboard.readthedocs.io/en/latest/changelog.html',
+        'Issue Tracker': 'https://github.com/ionelmc/django-redisboard/issues',
+    },
     keywords=[
-        # eg: 'keyword1', 'keyword2', 'keyword3',
+        'django', 'redis', 'monitoring', 'inspector', 'statistics'
     ],
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
     install_requires=[
-        'redis>=2.10.0',
-        'Django',
+        'redis>=3.5',
+        'Django>=1.11',
     ],
     extras_require={
         # eg:
