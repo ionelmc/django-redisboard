@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .models import RedisServer
 from .utils import PY3
