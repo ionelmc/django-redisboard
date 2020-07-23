@@ -151,9 +151,9 @@ def main(args=None):
 
     from redisboard.models import RedisServer
 
-    if not os.path.exists(database_path):
-        execute_from_command_line(['django-admin', 'migrate', '--noinput'])
-
+    create_user = not os.path.exists(database_path)
+    execute_from_command_line(['django-admin', 'migrate', '--noinput'])
+    if create_user:
         user = User.objects.create(username='redisboard', is_superuser=True, is_staff=True, is_active=True)
         pwd = get_random(8, string.digits + string.ascii_letters) if args.password is None else args.password
         user.set_password(pwd)
