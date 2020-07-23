@@ -2,6 +2,18 @@
 Changelog
 =========
 
+4.1.0 (2020-07-23)
+------------------
+
+* Fixed a KeyError that could occur on fast changing databases.
+  Contributed by Rand01ph in `#39 <https://github.com/ionelmc/django-redisboard/pull/39>`_.
+* Added a port filter.
+  Contributed by Rick van Hattem in `#41 <https://github.com/ionelmc/django-redisboard/pull/41>`_.
+* Added support for Django 3.
+  Contributed by Alireza Amouzadeh in `#43 <https://github.com/ionelmc/django-redisboard/pull/43>`_.
+* Fixed issues that could occur when running ``redisboard`` (the CLI) with newer Django
+  (migrations will run now).
+
 4.0.0 (2018-11-01)
 ------------------
 
@@ -12,7 +24,7 @@ Changelog
 * Dropped support for Django older than 1.11.
 * Dropped support for Python older than 3.4 or 2.7.
 * Fixed issues with data being displayed as binary strings.
-* Fixed unwanted tag escaping. Contributed by Gilles Lavaux 
+* Fixed unwanted tag escaping. Contributed by Gilles Lavaux
   in `#37 <https://github.com/ionelmc/django-redisboard/pull/37>`_.
 
 3.0.2 (2017-01-19)
