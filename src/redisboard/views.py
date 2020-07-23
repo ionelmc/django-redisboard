@@ -50,17 +50,8 @@ def _decode_bytes(value):
 def _get_key_info(conn, key):
     try:
         obj_type = conn.type(key)
-        pipe = conn.pipeline()
-        try:
-            pipe.object('REFCOUNT', key)
-            pipe.object('ENCODING', key)
-            pipe.object('IDLETIME', key)
-            LENGTH_GETTERS[obj_type](pipe, key)
-            pipe.ttl(key)
-
-            refcount, encoding, idletime, obj_length, obj_ttl = pipe.execute()
-        except KeyError:
-            logger.exception("The key %r does not exist", key)
+        length_getter = LENGTH_GETTERS.get(obj_type)
+        if not length_getter:
             return {
                 'type': 'none',
                 'name': key,
@@ -71,6 +62,17 @@ def _get_key_info(conn, key):
                 'encoding': "n/a",
                 'idletime': "n/a",
             }
+
+        pipe = conn.pipeline()
+
+        try:
+            pipe.object('REFCOUNT', key)
+            pipe.object('ENCODING', key)
+            pipe.object('IDLETIME', key)
+            length_getter(pipe, key)
+            pipe.ttl(key)
+
+            refcount, encoding, idletime, obj_length, obj_ttl = pipe.execute()
         except ResponseError as exc:
             logger.exception("Failed to get object info for key %r: %s", key, exc)
             return {
@@ -119,6 +121,7 @@ VALUE_GETTERS = {
     ],
     'hash': lambda conn, key, *args: conn.hgetall(key).items(),
     'n/a': lambda conn, key, *args: (),
+    'none': lambda conn, key, *args: (),
 }
 
 

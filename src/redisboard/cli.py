@@ -127,7 +127,9 @@ def main(args=None):
     from django.conf import settings
     from django.conf.urls import url
     from django.contrib import admin
+    from django.contrib.staticfiles.storage import staticfiles_storage
     from django.core.management import execute_from_command_line
+    from django.views.generic.base import RedirectView
 
     settings.configure(
         SECRET_KEY=secret_key,
@@ -145,6 +147,7 @@ def main(args=None):
     global urlpatterns
     urlpatterns = [
         url(r'', admin.site.urls),
+        url('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicon.ico'), permanent=True))
     ]
 
     from django.contrib.auth.models import User
