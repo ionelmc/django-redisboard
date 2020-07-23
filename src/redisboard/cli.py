@@ -147,7 +147,7 @@ def main(args=None):
     global urlpatterns
     urlpatterns = [
         url(r'', admin.site.urls),
-        url('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicon.ico'), permanent=True))
+        url('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('redisboard/favicon.ico'), permanent=True))
     ]
 
     from django.contrib.auth.models import User

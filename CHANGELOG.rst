@@ -11,8 +11,10 @@ Changelog
   Contributed by Rick van Hattem in `#41 <https://github.com/ionelmc/django-redisboard/pull/41>`_.
 * Added support for Django 3.
   Contributed by Alireza Amouzadeh in `#43 <https://github.com/ionelmc/django-redisboard/pull/43>`_.
-* Fixed issues that could occur when running ``redisboard`` (the CLI) with newer Django
+* Fixed issues that could occur when running the ``redisboard`` CLI with newer Django
   (migrations will run now).
+* Fixed ugettext deprecation.
+* Added a ``favicon.ico`` and handler in the ``redisboard`` CLI.
 
 4.0.0 (2018-11-01)
 ------------------
