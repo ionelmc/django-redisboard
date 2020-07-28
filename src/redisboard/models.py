@@ -138,7 +138,7 @@ class RedisServer(models.Model):
                 'slowlog': slowlog,
                 'slowlog_len': slowlog_len,
             }
-        except redis.exceptions.ConnectionError:
+        except (redis.exceptions.ConnectionError, redis.exceptions.TimeoutError):
             return {
                 'status': 'DOWN',
                 'clients': 'n/a',
@@ -148,7 +148,7 @@ class RedisServer(models.Model):
                 'slowlog': [],
                 'slowlog_len': 0,
             }
-        except redis.exceptions.ResponseError as exc:
+        except redis.exceptions.RedisError as exc:
             return {
                 'status': 'ERROR: %s' % exc.args,
                 'clients': 'n/a',

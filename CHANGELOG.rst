@@ -2,6 +2,13 @@
 Changelog
 =========
 
+
+4.1.1 (2020-07-28)
+------------------
+
+* Improved exception handling for errors coming from redis. Now timeouts show the server as "DOWN" and other errors
+  don't result in a 500 page.
+
 4.1.0 (2020-07-23)
 ------------------
 
