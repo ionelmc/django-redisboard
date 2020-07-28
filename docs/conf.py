@@ -20,7 +20,7 @@ project = 'django-redisboard'
 year = '2011-2020'
 author = 'Ionel Cristian Mărieș'
 copyright = '{0}, {1}'.format(year, author)
-version = release = '4.1.0'
+version = release = '4.1.1'
 
 pygments_style = 'trac'
 templates_path = ['.']
