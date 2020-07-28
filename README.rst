@@ -10,7 +10,7 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - | |travis| |appveyor| |requires|
+      - | |travis| |requires|
         | |coveralls| |codecov|
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
@@ -22,10 +22,6 @@ Overview
 .. |travis| image:: https://api.travis-ci.org/ionelmc/django-redisboard.svg?branch=master
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/ionelmc/django-redisboard
-
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/ionelmc/django-redisboard?branch=master&svg=true
-    :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/ionelmc/django-redisboard
 
 .. |requires| image:: https://requires.io/github/ionelmc/django-redisboard/requirements.svg?branch=master
     :alt: Requirements Status

@@ -5,7 +5,7 @@ cookiecutter:
     -   jinja2_time.TimeExtension
     _template: /home/ionel/open-source/cookiecutter-pylibrary
     allow_tests_inside_package: no
-    appveyor: yes
+    appveyor: no
     c_extension_function: '-'
     c_extension_module: '-'
     c_extension_optional: no
