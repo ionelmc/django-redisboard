@@ -17,7 +17,7 @@ extensions = [
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'django-redisboard'
-year = '2011-2020'
+year = '2011-2022'
 author = 'Ionel Cristian Mărieș'
 copyright = '{0}, {1}'.format(year, author)
 version = release = '4.1.1'
@@ -38,7 +38,7 @@ html_use_smartypants = True
 html_last_updated_fmt = '%b %d, %Y'
 html_split_index = False
 html_sidebars = {
-   '**': ['searchbox.html', 'globaltoc.html', 'sourcelink.html'],
+    '**': ['searchbox.html', 'globaltoc.html', 'sourcelink.html'],
 }
 html_short_title = '%s-%s' % (project, version)
 

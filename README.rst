@@ -10,18 +10,18 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - | |travis| |requires|
+      - | |github-actions| |requires|
         | |coveralls| |codecov|
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
 .. |docs| image:: https://readthedocs.org/projects/django-redisboard/badge/?style=flat
-    :target: https://readthedocs.org/projects/django-redisboard
+    :target: https://django-redisboard.readthedocs.io/
     :alt: Documentation Status
 
-.. |travis| image:: https://api.travis-ci.org/ionelmc/django-redisboard.svg?branch=master
-    :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/ionelmc/django-redisboard
+.. |github-actions| image:: https://github.com/ionelmc/django-redisboard/actions/workflows/github-actions.yml/badge.svg
+    :alt: GitHub Actions Build Status
+    :target: https://github.com/ionelmc/django-redisboard/actions
 
 .. |requires| image:: https://requires.io/github/ionelmc/django-redisboard/requirements.svg?branch=master
     :alt: Requirements Status

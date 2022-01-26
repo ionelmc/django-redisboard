@@ -11,8 +11,10 @@ from os.path import abspath
 from os.path import dirname
 from os.path import exists
 from os.path import join
+from os.path import relpath
 
 base_path = dirname(dirname(abspath(__file__)))
+templates_path = join(base_path, "ci", "templates")
 
 
 def check_call(args):
@@ -38,7 +40,7 @@ def exec_in_env():
             except subprocess.CalledProcessError:
                 check_call(["virtualenv", env_path])
         print("Installing `jinja2` into bootstrap environment...")
-        check_call([join(bin_path, "pip"), "install", "jinja2", "tox", "matrix"])
+        check_call([join(bin_path, "pip"), "install", "jinja2", "tox"])
     python_executable = join(bin_path, "python")
     if not os.path.exists(python_executable):
         python_executable += '.exe'
@@ -50,34 +52,33 @@ def exec_in_env():
 
 def main():
     import jinja2
-    import matrix
 
     print("Project path: {0}".format(base_path))
 
     jinja = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(join(base_path, "ci", "templates")),
+        loader=jinja2.FileSystemLoader(templates_path),
         trim_blocks=True,
         lstrip_blocks=True,
         keep_trailing_newline=True
     )
 
-    tox_environments = {}
-    for (alias, conf) in matrix.from_file(join(base_path, "setup.cfg")).items():
-        deps = conf["dependencies"]
-        tox_environments[alias] = {
-            "deps": deps.split(),
-        }
-        if "coverage_flags" in conf:
-            cover = {"false": False, "true": True}[conf["coverage_flags"].lower()]
-            tox_environments[alias].update(cover=cover)
-        if "environment_variables" in conf:
-            env_vars = conf["environment_variables"]
-            tox_environments[alias].update(env_vars=env_vars.split())
+    tox_environments = [
+        line.strip()
+        # 'tox' need not be installed globally, but must be importable
+        # by the Python that is running this script.
+        # This uses sys.executable the same way that the call in
+        # cookiecutter-pylibrary/hooks/post_gen_project.py
+        # invokes this bootstrap.py itself.
+        for line in subprocess.check_output([sys.executable, '-m', 'tox', '--listenvs'], universal_newlines=True).splitlines()
+    ]
+    tox_environments = [line for line in tox_environments if line.startswith('py')]
 
-    for name in os.listdir(join("ci", "templates")):
-        with open(join(base_path, name), "w") as fh:
-            fh.write(jinja.get_template(name).render(tox_environments=tox_environments))
-        print("Wrote {}".format(name))
+    for root, _, files in os.walk(templates_path):
+        for name in files:
+            relative = relpath(root, templates_path)
+            with open(join(base_path, relative, name), "w") as fh:
+                fh.write(jinja.get_template(join(relative, name)).render(tox_environments=tox_environments))
+            print("Wrote {}".format(name))
     print("DONE.")
 
 
