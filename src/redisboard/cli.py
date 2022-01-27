@@ -125,10 +125,10 @@ def main(args=None):
 
     import django
     from django.conf import settings
-    from django.conf.urls import url
     from django.contrib import admin
     from django.contrib.staticfiles.storage import staticfiles_storage
     from django.core.management import execute_from_command_line
+    from django.urls import path
     from django.views.generic.base import RedirectView
 
     settings.configure(
@@ -146,8 +146,8 @@ def main(args=None):
 
     global urlpatterns
     urlpatterns = [
-        url(r'', admin.site.urls),
-        url('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('redisboard/favicon.ico'), permanent=True))
+        path('', admin.site.urls),
+        path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('redisboard/favicon.ico'), permanent=True))
     ]
 
     from django.contrib.auth.models import User
