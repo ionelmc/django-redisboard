@@ -32,8 +32,6 @@ jobs:
 {% endif %}
 {% for os, python_arch in [
     ['ubuntu', 'x64'],
-    ['windows', 'x64'],
-    ['macos', 'x64'],
 ] %}
           - name: '{{ env }} ({{ os }})'
             python: '{{ python }}'
@@ -58,6 +56,7 @@ jobs:
         pip --version
         tox --version
         pip list --format=freeze
+        sudo apt-get install -y redis-server
     - name: test
       env:
         TOXPYTHON: '{{ '${{ matrix.toxpython }}' }}'
