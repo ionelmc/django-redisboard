@@ -2,6 +2,15 @@
 Changelog
 =========
 
+5.0.0 (2022-01-27)
+------------------
+
+* Drop support for old Python/Django. Minimum requirements are now Python 3.6 and Django 2.2.
+* Fixed various issues with newer Django (up to 4.0):
+
+  * Fixed various deprecations and broken imports.
+  * Added a ``default_auto_field`` - fixes Django complaining about missing migrations if you have a custom ``DEFAULT_AUTO_FIELD``
+    in settings.
 
 4.1.1 (2020-07-28)
 ------------------
