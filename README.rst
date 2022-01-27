@@ -51,9 +51,9 @@ Overview
     :alt: Supported implementations
     :target: https://pypi.org/project/django-redisboard
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/django-redisboard/v4.1.1.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/django-redisboard/v5.0.0.svg
     :alt: Commits since latest release
-    :target: https://github.com/ionelmc/django-redisboard/compare/v4.1.1...master
+    :target: https://github.com/ionelmc/django-redisboard/compare/v5.0.0...master
 
 
 
