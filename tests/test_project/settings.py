@@ -13,9 +13,7 @@ import os
 import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-TEMPLATE_DIRS = [
-    os.path.join(sys.prefix, 'django', 'contrib', 'admin', 'templates')
-]
+TEMPLATE_DIRS = [os.path.join(sys.prefix, 'django', 'contrib', 'admin', 'templates')]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -116,17 +114,9 @@ LOGGING = {
         }
     },
     'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'default'
-        },
+        'console': {'level': 'DEBUG', 'class': 'logging.StreamHandler', 'formatter': 'default'},
     },
     'loggers': {
-        '': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True
-        },
-    }
+        '': {'handlers': ['console'], 'level': 'DEBUG', 'propagate': True},
+    },
 }

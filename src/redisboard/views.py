@@ -109,16 +109,10 @@ def _get_key_info(conn, key):
 
 
 VALUE_GETTERS = {
-    'list': lambda conn, key, start=0, end=-1: [
-        (pos + start, val)
-        for (pos, val) in enumerate(conn.lrange(key, start, end))
-    ],
+    'list': lambda conn, key, start=0, end=-1: [(pos + start, val) for (pos, val) in enumerate(conn.lrange(key, start, end))],
     'string': lambda conn, key, *args: [('string', conn.get(key))],
     'set': lambda conn, key, *args: list(enumerate(conn.smembers(key))),
-    'zset': lambda conn, key, start=0, end=-1: [
-        (pos + start, val)
-        for (pos, val) in enumerate(conn.zrange(key, start, end))
-    ],
+    'zset': lambda conn, key, start=0, end=-1: [(pos + start, val) for (pos, val) in enumerate(conn.zrange(key, start, end))],
     'hash': lambda conn, key, *args: conn.hgetall(key).items(),
     'n/a': lambda conn, key, *args: (),
     'none': lambda conn, key, *args: (),
@@ -131,11 +125,7 @@ def _get_key_details(conn, db, key, page):
     details['db'] = db
     if details['type'] in ('list', 'zset'):
         details['data'] = Paginator(
-            LazySlicingIterable(
-                lambda: details['length'],
-                partial(VALUE_GETTERS[details['type']], conn, key)
-            ),
-            REDISBOARD_ITEMS_PER_PAGE
+            LazySlicingIterable(lambda: details['length'], partial(VALUE_GETTERS[details['type']], conn, key)), REDISBOARD_ITEMS_PER_PAGE
         ).page(page)
     else:
         details['data'] = VALUE_GETTERS[details['type']](conn, key)
@@ -169,8 +159,7 @@ def _raw_get_db_summary(server, db):
     results = pipe.execute()
     for key, details, ttl in zip(keys, results[::2], results[1::2]):
         if not isinstance(details, dict):
-            details = dict(_fixup_pair(i.split(b':'))
-                           for i in details.split() if b':' in i)
+            details = dict(_fixup_pair(i.split(b':')) for i in details.split() if b':' in i)
 
         length = details[b'serializedlength'] + len(key)
 
@@ -257,8 +246,7 @@ def inspect(request, server):
             page = request.GET.get('page', 1)
             key_details = _get_key_details(conn, db, key, page)
         else:
-            databases = sorted(name[2:] for name in conn.info()
-                               if name.startswith('db'))
+            databases = sorted(name[2:] for name in conn.info() if name.startswith('db'))
             total_size = 0
             for db in databases:
                 database_details[db] = summary = _get_db_summary(server, db)
@@ -279,10 +267,14 @@ def inspect(request, server):
                 else:
                     return HttpResponseNotFound("Unknown database.")
 
-    return render(request, "redisboard/inspect.html", {
-        'databases': database_details,
-        'key_details': key_details,
-        'original': server,
-        'stats': stats,
-        'app_label': 'redisboard',
-    })
+    return render(
+        request,
+        "redisboard/inspect.html",
+        {
+            'databases': database_details,
+            'key_details': key_details,
+            'original': server,
+            'stats': stats,
+            'app_label': 'redisboard',
+        },
+    )

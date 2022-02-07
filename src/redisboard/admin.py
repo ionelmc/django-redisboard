@@ -21,9 +21,7 @@ if PY3:
 
 class RedisServerAdmin(admin.ModelAdmin):
     class Media:
-        css = {
-            'all': ('redisboard/admin.css',)
-        }
+        css = {'all': ('redisboard/admin.css',)}
 
     list_display = (
         '__unicode__',
@@ -47,10 +45,12 @@ class RedisServerAdmin(admin.ModelAdmin):
             if len(command) > 255:
                 command = str(command[:252]) + '...'
 
-            output.append((
-                log['duration'],
-                u'%.1fms: %r' % (log['duration'] / 1000., command),
-            ))
+            output.append(
+                (
+                    log['duration'],
+                    u'%.1fms: %r' % (log['duration'] / 1000.0, command),
+                )
+            )
         if output:
             return mark_safe('<br>'.join(l for _, l in sorted(output, reverse=True)))
         else:
@@ -75,10 +75,7 @@ class RedisServerAdmin(admin.ModelAdmin):
     clients.long_description = _("Clients")
 
     def tools(self, obj):
-        return mark_safe('<a href="%s">%s</a>' % (
-            reverse("admin:redisboard_redisserver_inspect", args=(obj.id,)),
-            unicode(_("Inspect"))
-        ))
+        return mark_safe('<a href="%s">%s</a>' % (reverse("admin:redisboard_redisserver_inspect", args=(obj.id,)), unicode(_("Inspect"))))
 
     tools.allow_tags = True
     tools.long_description = _("Tools")
@@ -86,7 +83,7 @@ class RedisServerAdmin(admin.ModelAdmin):
     def details(self, obj):
         output = []
         brief_details = obj.stats['brief_details']
-        for k, v in (brief_details.items() if PY3 else brief_details.iteritems()):
+        for k, v in brief_details.items() if PY3 else brief_details.iteritems():
             output.append('<dt>%s</dt><dd>%s</dd>' % (k, v))
         if output:
             return mark_safe('<dl class="details">%s</dl>' % ''.join(output))
@@ -137,10 +134,7 @@ class RedisServerAdmin(admin.ModelAdmin):
 
     def inspect_view(self, request, server_id):
         server = get_object_or_404(RedisServer, id=server_id)
-        if (
-            self.has_change_permission(request, server) and
-            request.user.has_perm('redisboard.can_inspect')
-        ):
+        if self.has_change_permission(request, server) and request.user.has_perm('redisboard.can_inspect'):
             return inspect(request, server)
         else:
             return HttpResponseForbidden("You can't inspect this server.")

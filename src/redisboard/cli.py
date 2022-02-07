@@ -1,4 +1,4 @@
-'''
+"""
 Module that contains the command line app.
 
 Why does this file exist, and why not put this in __main__?
@@ -13,9 +13,7 @@ Why does this file exist, and why not put this in __main__?
     there's no ``redisboard.__main__`` in ``sys.modules``.
 
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
-
-
-'''
+"""
 from __future__ import print_function
 
 import argparse
@@ -24,12 +22,14 @@ import random
 import string
 
 parser = argparse.ArgumentParser(description='Runs redisboard in an ad-hoc django project.')
-parser.add_argument('--password', '-p',
-                    help='The admin password. A random one will be generated if not provided.')
-parser.add_argument('--storage', '-s', default=os.path.expanduser('~/.redisboard'),
-                    help='Where to save the SECRET_KEY and sqlite database. (default: %(default)s)')
-parser.add_argument('addrport', nargs='?', default='0:8000',
-                    help='Optional port number, or ipaddr:port (default: %(default)s)')
+parser.add_argument('--password', '-p', help='The admin password. A random one will be generated if not provided.')
+parser.add_argument(
+    '--storage',
+    '-s',
+    default=os.path.expanduser('~/.redisboard'),
+    help='Where to save the SECRET_KEY and sqlite database. (default: %(default)s)',
+)
+parser.add_argument('addrport', nargs='?', default='0:8000', help='Optional port number, or ipaddr:port (default: %(default)s)')
 
 DJANGO_SETTINGS = dict(
     REDISBOARD_SOCKET_CONNECT_TIMEOUT=5,
@@ -45,19 +45,21 @@ DJANGO_SETTINGS = dict(
         'django.contrib.staticfiles',
         'redisboard',
     ),
-    TEMPLATES=[{
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    }],
+    TEMPLATES=[
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [],
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'context_processors': [
+                    'django.template.context_processors.debug',
+                    'django.template.context_processors.request',
+                    'django.contrib.auth.context_processors.auth',
+                    'django.contrib.messages.context_processors.messages',
+                ],
+            },
+        }
+    ],
     MIDDLEWARE=[
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
@@ -80,11 +82,7 @@ DJANGO_SETTINGS = dict(
             }
         },
         'handlers': {
-            'console': {
-                'level': 'DEBUG',
-                'class': 'logging.StreamHandler',
-                'formatter': 'default'
-            },
+            'console': {'level': 'DEBUG', 'class': 'logging.StreamHandler', 'formatter': 'default'},
         },
         'loggers': {
             'django.request': {
@@ -92,21 +90,14 @@ DJANGO_SETTINGS = dict(
                 'level': 'DEBUG',
                 'propagate': True,
             },
-            '': {
-                'handlers': ['console'],
-                'level': 'INFO',
-                'propagate': False
-            },
-        }
+            '': {'handlers': ['console'], 'level': 'INFO', 'propagate': False},
+        },
     },
 )
 
 
 def get_random(length=50, chars='abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'):
-    return ''.join(
-        random.SystemRandom().choice(chars)
-        for _ in range(length)
-    )
+    return ''.join(random.SystemRandom().choice(chars) for _ in range(length))
 
 
 def main(args=None):
@@ -132,14 +123,7 @@ def main(args=None):
     from django.views.generic.base import RedirectView
 
     settings.configure(
-        SECRET_KEY=secret_key,
-        DATABASES={
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': database_path
-            }
-        },
-        **DJANGO_SETTINGS
+        SECRET_KEY=secret_key, DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': database_path}}, **DJANGO_SETTINGS
     )
 
     django.setup()
@@ -147,7 +131,7 @@ def main(args=None):
     global urlpatterns
     urlpatterns = [
         path('', admin.site.urls),
-        path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('redisboard/favicon.ico'), permanent=True))
+        path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('redisboard/favicon.ico'), permanent=True)),
     ]
 
     from django.contrib.auth.models import User
@@ -163,13 +147,16 @@ def main(args=None):
         user.save()
         print()
         print('=' * 80)
-        print('''
+        print(
+            '''
     Credentials:
 
         USERNAME: redisboard
         PASSWORD: %s
 
-    ''' % (pwd if args.password is None else '<PROVIDED VIA --password OPTION>'))
+    '''
+            % (pwd if args.password is None else '<PROVIDED VIA --password OPTION>')
+        )
         print('=' * 80)
         print()
 

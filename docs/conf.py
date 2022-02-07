@@ -31,7 +31,7 @@ extlinks = {
 html_theme = "sphinx_py3doc_enhanced_theme"
 html_theme_path = [sphinx_py3doc_enhanced_theme.get_html_theme_path()]
 html_theme_options = {
-    'githuburl': 'https://github.com/ionelmc/django-redisboard/'
+    'githuburl': 'https://github.com/ionelmc/django-redisboard/',
 }
 
 html_use_smartypants = True

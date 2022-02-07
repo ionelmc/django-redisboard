@@ -25,11 +25,12 @@ default_context:
     linter: flake8
     package_name: redisboard
     pre_commit: yes
+    pre_commit_formatter: blue
     project_name: django-redisboard
     project_short_description: Redis monitoring and inspection drop-in application using django admin.
     pypi_badge: yes
     pypi_disable_upload: no
-    release_date: '2020-07-28'
+    release_date: '2022-01-27'
     repo_hosting: github.com
     repo_hosting_domain: github.com
     repo_main_branch: master
@@ -48,7 +49,7 @@ default_context:
     test_runner: pytest
     travis: no
     travis_osx: no
-    version: 4.1.1
+    version: 5.0.0
     version_manager: bump2version
     website: http://blog.ionelmc.ro
     year_from: '2011'

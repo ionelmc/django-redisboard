@@ -23,8 +23,7 @@ setup(
     version='5.0.0',
     license='BSD-2-Clause',
     description='Redis monitoring and inspection drop-in application using django admin.',
-    long_description='%s\n%s'
-    % (
+    long_description='{}\n{}'.format(
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
         re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst')),
     ),

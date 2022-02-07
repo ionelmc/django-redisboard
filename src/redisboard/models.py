@@ -18,18 +18,30 @@ try:
 except ImportError:
     from collections import OrderedDict
 
-REDISBOARD_DETAIL_FILTERS = [re.compile(name) for name in getattr(settings, 'REDISBOARD_DETAIL_FILTERS', (
-    'aof_enabled', 'bgrewriteaof_in_progress', 'bgsave_in_progress',
-    'changes_since_last_save', 'db.*', 'last_save_time', 'multiplexing_api',
-    'total_commands_processed', 'total_connections_received', 'uptime_in_days',
-    'uptime_in_seconds', 'vm_enabled', 'redis_version'
-))]
-REDISBOARD_DETAIL_TIMESTAMP_KEYS = getattr(settings, 'REDISBOARD_DETAIL_TIMESTAMP_KEYS', (
-    'last_save_time',
-))
-REDISBOARD_DETAIL_SECONDS_KEYS = getattr(settings, 'REDISBOARD_DETAIL_SECONDS_KEYS', (
-    'uptime_in_seconds',
-))
+REDISBOARD_DETAIL_FILTERS = [
+    re.compile(name)
+    for name in getattr(
+        settings,
+        'REDISBOARD_DETAIL_FILTERS',
+        (
+            'aof_enabled',
+            'bgrewriteaof_in_progress',
+            'bgsave_in_progress',
+            'changes_since_last_save',
+            'db.*',
+            'last_save_time',
+            'multiplexing_api',
+            'total_commands_processed',
+            'total_connections_received',
+            'uptime_in_days',
+            'uptime_in_seconds',
+            'vm_enabled',
+            'redis_version',
+        ),
+    )
+]
+REDISBOARD_DETAIL_TIMESTAMP_KEYS = getattr(settings, 'REDISBOARD_DETAIL_TIMESTAMP_KEYS', ('last_save_time',))
+REDISBOARD_DETAIL_SECONDS_KEYS = getattr(settings, 'REDISBOARD_DETAIL_SECONDS_KEYS', ('uptime_in_seconds',))
 
 REDISBOARD_SLOWLOG_LEN = getattr(settings, 'REDISBOARD_SLOWLOG_LEN', 10)
 
@@ -53,9 +65,7 @@ class RedisServer(models.Model):
         unique_together = ('hostname', 'port')
         verbose_name = _("Redis Server")
         verbose_name_plural = _("Redis Servers")
-        permissions = (
-            ("can_inspect", "Can inspect redis servers"),
-        )
+        permissions = (("can_inspect", "Can inspect redis servers"),)
 
     label = models.CharField(
         _('Label'),
@@ -67,24 +77,32 @@ class RedisServer(models.Model):
     hostname = models.CharField(
         _("Hostname"),
         max_length=250,
-        help_text=_('This can also be the absolute path to a redis socket')
+        help_text=_('This can also be the absolute path to a redis socket'),
     )
 
-    port = models.IntegerField(_("Port"), validators=[
-        MaxValueValidator(65535), MinValueValidator(1)
-    ], default=6379, blank=True, null=True)
-    password = models.CharField(_("Password"), max_length=250,
-                                null=True, blank=True)
+    port = models.IntegerField(
+        _("Port"),
+        validators=[MaxValueValidator(65535), MinValueValidator(1)],
+        default=6379,
+        blank=True,
+        null=True,
+    )
+    password = models.CharField(
+        _("Password"),
+        max_length=250,
+        null=True,
+        blank=True,
+    )
 
     sampling_threshold = models.IntegerField(
         _("Sampling threshold"),
         default=1000,
-        help_text=_("Number of keys after which only a sample (of random keys) is shown on the inspect page.")
+        help_text=_("Number of keys after which only a sample (of random keys) is shown on the inspect page."),
     )
     sampling_size = models.IntegerField(
         _("Sampling size"),
         default=200,
-        help_text=_("Number of random keys shown when sampling is used. Note that each key translates to a RANDOMKEY call in redis.")
+        help_text=_("Number of random keys shown when sampling is used. Note that each key translates to a RANDOMKEY call in redis."),
     )
 
     def clean(self):
@@ -124,10 +142,7 @@ class RedisServer(models.Model):
             return {
                 'status': 'UP',
                 'details': info,
-                'memory': "%s (peak: %s)" % (
-                    info['used_memory_human'],
-                    info.get('used_memory_peak_human', 'n/a')
-                ),
+                'memory': "%s (peak: %s)" % (info['used_memory_human'], info.get('used_memory_peak_human', 'n/a')),
                 'clients': info['connected_clients'],
                 'brief_details': OrderedDict(
                     prettify(k, v)
