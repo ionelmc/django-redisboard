@@ -13,7 +13,7 @@ from process_tests import wait_for_strings
 
 from redisboard.models import RedisServer
 
-TIMEOUT = int(os.getenv('TEST_TIMEOUT', 2))
+TIMEOUT = int(os.getenv('TEST_TIMEOUT', 10))
 
 
 @pytest.fixture(scope="module")
