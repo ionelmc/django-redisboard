@@ -14,10 +14,7 @@ from setuptools import setup
 
 
 def read(*names, **kwargs):
-    with io.open(
-        join(dirname(__file__), *names),
-        encoding=kwargs.get('encoding', 'utf8')
-    ) as fh:
+    with io.open(join(dirname(__file__), *names), encoding=kwargs.get('encoding', 'utf8')) as fh:
         return fh.read()
 
 
@@ -26,9 +23,10 @@ setup(
     version='5.0.0',
     license='BSD-2-Clause',
     description='Redis monitoring and inspection drop-in application using django admin.',
-    long_description='%s\n%s' % (
+    long_description='%s\n%s'
+    % (
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
-        re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
+        re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst')),
     ),
     author='Ionel Cristian Mărieș',
     author_email='contact@ionelmc.ro',
@@ -47,10 +45,8 @@ setup(
         'Operating System :: POSIX',
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -71,9 +67,7 @@ setup(
         'Changelog': 'https://django-redisboard.readthedocs.io/en/latest/changelog.html',
         'Issue Tracker': 'https://github.com/ionelmc/django-redisboard/issues',
     },
-    keywords=[
-        'django', 'redis', 'monitoring', 'inspector', 'statistics'
-    ],
+    keywords=['django', 'redis', 'monitoring', 'inspector', 'statistics'],
     python_requires='>=3.6',
     install_requires=[
         'redis>=3.5',
