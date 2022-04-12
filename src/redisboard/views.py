@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from functools import partial
 from logging import getLogger
 
@@ -10,10 +11,6 @@ from redis.exceptions import ResponseError
 from .utils import PY3
 from .utils import LazySlicingIterable
 
-try:
-    from django.utils.datastructures import SortedDict as OrderedDict
-except ImportError:
-    from collections import OrderedDict
 logger = getLogger(__name__)
 
 REDISBOARD_ITEMS_PER_PAGE = getattr(settings, 'REDISBOARD_ITEMS_PER_PAGE', 100)

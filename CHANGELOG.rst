@@ -2,6 +2,14 @@
 Changelog
 =========
 
+
+6.0.0 (2022-04-12)
+------------------
+
+* Replaced the hostname/port fields with an url field.
+  This allow SSL connection and whatever Redis will have in the future.
+* Removed more dead code.
+
 5.0.0 (2022-01-27)
 ------------------
 

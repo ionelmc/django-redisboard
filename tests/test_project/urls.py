@@ -1,9 +1,6 @@
-try:
-    from django.urls import url
-except ImportError:
-    from django.urls import re_path as url
 from django.contrib import admin
+from django.urls import path
 
 urlpatterns = [
-    url(r"^", admin.site.urls),
+    path("", admin.site.urls),
 ]

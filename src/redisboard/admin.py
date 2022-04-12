@@ -3,17 +3,13 @@ from functools import update_wrapper
 from django.contrib import admin
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .models import RedisServer
 from .utils import PY3
 from .views import inspect
-
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
 
 if PY3:
     unicode = str
@@ -24,7 +20,7 @@ class RedisServerAdmin(admin.ModelAdmin):
         css = {'all': ('redisboard/admin.css',)}
 
     list_display = (
-        '__unicode__',
+        '__str__',
         'status',
         'memory',
         'clients',
@@ -34,8 +30,8 @@ class RedisServerAdmin(admin.ModelAdmin):
         'tools',
     )
 
-    list_filter = 'label', 'hostname', 'port'
-    ordering = ('hostname', 'port')
+    list_filter = ('label',)
+    ordering = ('label', 'url')
 
     def slowlog(self, obj):
         output = [(float('inf'), 'Total: %d items' % obj.stats['slowlog_len'])]

@@ -5,7 +5,7 @@
 exclude: '^(\.tox|ci/templates|\.bumpversion\.cfg)(/|$)'
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+    rev: v4.2.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -14,11 +14,11 @@ repos:
     rev: 5.10.1
     hooks:
       - id: isort
+  - repo: https://github.com/grantjenks/blue
+    rev: v0.8.0
+    hooks:
+      - id: blue
   - repo: https://gitlab.com/pycqa/flake8
     rev: 3.9.2
     hooks:
       - id: flake8
-  - repo: https://github.com/grantjenks/blue
-    rev: v0.7.0
-    hooks:
-      - id: blue

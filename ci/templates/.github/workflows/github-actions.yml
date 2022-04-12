@@ -56,7 +56,6 @@ jobs:
         pip --version
         tox --version
         pip list --format=freeze
-        sudo apt-get install -y redis-server
     - name: test
       env:
         TOXPYTHON: '{{ '${{ matrix.toxpython }}' }}'

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 import sphinx_py3doc_enhanced_theme
 
@@ -28,7 +28,7 @@ extlinks = {
     'issue': ('https://github.com/ionelmc/django-redisboard/issues/%s', '#'),
     'pr': ('https://github.com/ionelmc/django-redisboard/pull/%s', 'PR #'),
 }
-html_theme = "sphinx_py3doc_enhanced_theme"
+html_theme = 'sphinx_py3doc_enhanced_theme'
 html_theme_path = [sphinx_py3doc_enhanced_theme.get_html_theme_path()]
 html_theme_options = {
     'githuburl': 'https://github.com/ionelmc/django-redisboard/',

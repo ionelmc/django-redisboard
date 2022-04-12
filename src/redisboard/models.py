@@ -1,22 +1,16 @@
 import re
+from collections import OrderedDict
 from datetime import datetime
 from datetime import timedelta
 
 import redis
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxValueValidator
-from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from .utils import PY3
 from .utils import cached_property
-
-try:
-    from django.utils.datastructures import SortedDict as OrderedDict
-except ImportError:
-    from collections import OrderedDict
 
 REDISBOARD_DETAIL_FILTERS = [
     re.compile(name)
@@ -60,9 +54,15 @@ def prettify(key, value):
         return key, value
 
 
+def validate_url(value):
+    try:
+        redis.connection.parse_url(value)
+    except Exception as exc:
+        raise ValidationError(str(exc))
+
+
 class RedisServer(models.Model):
     class Meta:
-        unique_together = ('hostname', 'port')
         verbose_name = _("Redis Server")
         verbose_name_plural = _("Redis Servers")
         permissions = (("can_inspect", "Can inspect redis servers"),)
@@ -73,25 +73,20 @@ class RedisServer(models.Model):
         blank=True,
         null=True,
     )
-
-    hostname = models.CharField(
-        _("Hostname"),
+    url = models.CharField(
+        _("URL"),
         max_length=250,
-        help_text=_('This can also be the absolute path to a redis socket'),
-    )
-
-    port = models.IntegerField(
-        _("Port"),
-        validators=[MaxValueValidator(65535), MinValueValidator(1)],
-        default=6379,
-        blank=True,
-        null=True,
+        unique=True,
+        help_text=_(
+            '<a href="https://www.iana.org/assignments/uri-schemes/prov/redis">IANA-compliant</a> URL. Examples: <pre>'
+            'redis://[[username]:[password]]@localhost:6379/0\n'
+            'rediss://[[username]:[password]]@localhost:6379/0\n'
+            'unix://[[username]:[password]]@/path/to/socket.sock?db=0</pre>'
+        ),
+        validators=[validate_url],
     )
     password = models.CharField(
-        _("Password"),
-        max_length=250,
-        null=True,
-        blank=True,
+        _("Password"), max_length=250, null=True, blank=True, help_text=_('You can also specify the password here (the field is masked).')
     )
 
     sampling_threshold = models.IntegerField(
@@ -105,27 +100,15 @@ class RedisServer(models.Model):
         help_text=_("Number of random keys shown when sampling is used. Note that each key translates to a RANDOMKEY call in redis."),
     )
 
-    def clean(self):
-        if not self.hostname.startswith('/') and not self.port:
-            raise ValidationError(_('Please provide either a hostname AND a port or the path to a redis socket'))
-
     @cached_property
     def connection(self):
-        if self.hostname.startswith('/'):
-            unix_socket_path = self.hostname
-            hostname = None
-        else:
-            hostname = self.hostname
-            unix_socket_path = None
-        return redis.Redis(
-            host=hostname,
-            port=self.port,
-            password=self.password,
-            unix_socket_path=unix_socket_path,
-            socket_timeout=REDISBOARD_SOCKET_TIMEOUT,
-            socket_connect_timeout=REDISBOARD_SOCKET_CONNECT_TIMEOUT,
-            socket_keepalive=REDISBOARD_SOCKET_KEEPALIVE,
-            socket_keepalive_options=REDISBOARD_SOCKET_KEEPALIVE_OPTIONS,
+        return redis.StrictRedis(
+            single_connection_client=True,
+            connection_pool=redis.ConnectionPool.from_url(
+                self.url,
+                password=self.password,
+                retry_on_timeout=True,
+            ),
         )
 
     @connection.deleter
@@ -174,18 +157,11 @@ class RedisServer(models.Model):
                 'slowlog_len': 0,
             }
 
-    def __unicode__(self):
+    def __str__(self):
         if self.label:
-            label = '%s (%%s)' % self.label
+            return f'{self.label} ({self.url})'
         else:
-            label = '%s'
-
-        if self.port:
-            label = label % ('%s:%s' % (self.hostname, self.port))
-        else:
-            label = label % self.hostname
-
-        return label
+            return self.url
 
     def slowlog_len(self):
         try:
@@ -193,7 +169,7 @@ class RedisServer(models.Model):
         except redis.exceptions.ConnectionError:
             return 0
 
-    def slowlog_get(self, limit=REDISBOARD_SLOWLOG_LEN):
+    def slowlog_get(self):
         try:
             for slowlog in self.connection.slowlog_get(REDISBOARD_SLOWLOG_LEN):
                 yield dict(

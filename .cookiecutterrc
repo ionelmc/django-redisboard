@@ -20,6 +20,8 @@ default_context:
     email: contact@ionelmc.ro
     full_name: Ionel Cristian Mărieș
     github_actions: yes
+    github_actions_osx: no
+    github_actions_windows: no
     legacy_python: no
     license: BSD 2-Clause License
     linter: flake8
@@ -38,15 +40,14 @@ default_context:
     repo_username: ionelmc
     requiresio: yes
     scrutinizer: no
+    setup_py_uses_pytest_runner: no
     setup_py_uses_setuptools_scm: no
-    setup_py_uses_test_runner: no
     sphinx_docs: yes
     sphinx_docs_hosting: https://django-redisboard.readthedocs.io/
     sphinx_doctest: no
     sphinx_theme: sphinx-py3doc-enhanced-theme
     test_matrix_configurator: no
     test_matrix_separate_coverage: no
-    test_runner: pytest
     travis: no
     travis_osx: no
     version: 5.0.0

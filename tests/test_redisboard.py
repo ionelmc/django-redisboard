@@ -1,8 +1,5 @@
-from __future__ import print_function
-
 import os
 import re
-import tempfile
 import time
 
 import psutil as psutil
@@ -16,24 +13,10 @@ from redisboard.models import RedisServer
 TIMEOUT = int(os.getenv('TEST_TIMEOUT', 10))
 
 
-@pytest.fixture(scope="module")
-def redis_process():
-    socket_path = tempfile.mktemp('.sock')
-    try:
-        with TestProcess('redis-server', '--port', '0', '--unixsocket', socket_path) as process:
-            wait_for_strings(process.read, TIMEOUT, "Running")
-            yield socket_path
-    finally:
-        try:
-            os.unlink(socket_path)
-        except Exception:
-            pass
-
-
 @pytest.fixture
-def redis_server(redis_process, db):
+def redis_server(redis_server, db):
     server = RedisServer.objects.create(
-        hostname=redis_process,
+        url=f'unix:///{redis_server}',
     )
     c = server.connection
     c.set('str', 'bar')
@@ -108,15 +91,15 @@ def test_cli(entrypoint, tmpdir):
                     break
         if port is None:
             pytest.fail("Didn't find the listen port!")
-        session = requests.Session()
-        resp = session.get('http://127.0.0.1:%s/' % port)
-        (csrftoken,) = re.findall('name=[\'"]csrfmiddlewaretoken[\'"] value=[\'"](.*?)[\'"]', resp.text)
-        resp = session.post(
-            'http://127.0.0.1:%s/login/?next=/redisboard/redisserver/' % port,
-            data={
-                'csrfmiddlewaretoken': csrftoken,
-                'username': 'redisboard',
-                'password': 'foobar',
-            },
-        )
-        assert '<a href="/redisboard/redisserver/1/inspect/"' in resp.text
+        with requests.Session() as session:
+            resp = session.get('http://127.0.0.1:%s/' % port)
+            (csrftoken,) = re.findall('name=[\'"]csrfmiddlewaretoken[\'"] value=[\'"](.*?)[\'"]', resp.text)
+            resp = session.post(
+                'http://127.0.0.1:%s/login/?next=/redisboard/redisserver/' % port,
+                data={
+                    'csrfmiddlewaretoken': csrftoken,
+                    'username': 'redisboard',
+                    'password': 'foobar',
+                },
+            )
+            assert '<a href="/redisboard/redisserver/1/inspect/"' in resp.text

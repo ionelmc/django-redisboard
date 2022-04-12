@@ -14,7 +14,7 @@ Why does this file exist, and why not put this in __main__?
 
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
-from __future__ import print_function
+
 
 import argparse
 import os
@@ -22,19 +22,32 @@ import random
 import string
 
 parser = argparse.ArgumentParser(description='Runs redisboard in an ad-hoc django project.')
-parser.add_argument('--password', '-p', help='The admin password. A random one will be generated if not provided.')
+parser.add_argument(
+    '--password',
+    '-p',
+    help='The admin password. A random one will be generated if not provided.',
+)
 parser.add_argument(
     '--storage',
     '-s',
     default=os.path.expanduser('~/.redisboard'),
     help='Where to save the SECRET_KEY and sqlite database. (default: %(default)s)',
 )
-parser.add_argument('addrport', nargs='?', default='0:8000', help='Optional port number, or ipaddr:port (default: %(default)s)')
+parser.add_argument(
+    'addrport',
+    nargs='?',
+    default='0:8000',
+    help='Optional port number, or ipaddr:port (default: %(default)s)',
+)
 
 DJANGO_SETTINGS = dict(
     REDISBOARD_SOCKET_CONNECT_TIMEOUT=5,
     REDISBOARD_SOCKET_TIMEOUT=5,
-    CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}},
+    CACHES={
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        },
+    },
     SESSION_ENGINE='django.contrib.sessions.backends.db',
     INSTALLED_APPS=(
         'django.contrib.admin',
@@ -148,18 +161,17 @@ def main(args=None):
         print()
         print('=' * 80)
         print(
-            '''
+            f'''
     Credentials:
 
         USERNAME: redisboard
-        PASSWORD: %s
+        PASSWORD: {pwd if args.password is None else '<PROVIDED VIA --password OPTION>'}
 
-    '''
-            % (pwd if args.password is None else '<PROVIDED VIA --password OPTION>')
+'''
         )
         print('=' * 80)
         print()
 
-        RedisServer.objects.create(label='localhost', hostname='127.0.0.1')
+        RedisServer.objects.create(label='localhost', url='redis://127.0.0.1')
 
     execute_from_command_line(['django-admin', 'runserver', '--insecure', '--noreload', args.addrport])
