@@ -29,33 +29,40 @@ class RedisServerAdmin(admin.ModelAdmin):
     list_filter = ('label',)
     ordering = ('label', 'url')
 
-    @admin.display(description=_('Details'))
     def details(self, obj):
         return obj.details_html()
 
-    @admin.display(description=_('CPU Utilization'))
+    details.short_description = _('Details')
+
     def cpu_utilization(self, obj):
         return obj.cpu_utilization_html()
 
-    @admin.display(description=_('Slowlog'))
+    cpu_utilization.short_description = _('CPU Utilization')
+
     def slowlog(self, obj):
         return obj.slowlog_html()
 
-    @admin.display(description=_('Status'))
+    slowlog.short_description = _('Slowlog')
+
     def status(self, obj):
         return obj.stats['status']
 
-    @admin.display(description=_('Memory'))
+    status.short_description = _('Status')
+
     def memory(self, obj):
         return obj.stats['memory']
 
-    @admin.display(description=_('Clients'))
+    memory.short_description = _('Memory')
+
     def clients(self, obj):
         return obj.stats['clients']
 
-    @admin.display(description=_('Tools'))
+    clients.short_description = _('Clients')
+
     def tools(self, obj):
         return format_html('<a href="{}">{}</a>', reverse("admin:redisboard_redisserver_inspect", args=(obj.id,)), _("Inspect"))
+
+    tools.short_description = _('Tools')
 
     def get_urls(self):
         urlpatterns = super(RedisServerAdmin, self).get_urls()
