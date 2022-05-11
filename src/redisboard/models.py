@@ -1,5 +1,4 @@
 import re
-from collections import OrderedDict
 from datetime import datetime
 from datetime import timedelta
 
@@ -7,9 +6,9 @@ import redis
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from .utils import PY3
 from .utils import cached_property
 
 REDISBOARD_DETAIL_FILTERS = [
@@ -101,7 +100,7 @@ class RedisServer(models.Model):
     )
 
     @cached_property
-    def connection(self):
+    def connection(self) -> redis.StrictRedis:
         return redis.StrictRedis(
             single_connection_client=True,
             connection_pool=redis.ConnectionPool.from_url(
@@ -127,12 +126,7 @@ class RedisServer(models.Model):
                 'details': info,
                 'memory': "%s (peak: %s)" % (info['used_memory_human'], info.get('used_memory_peak_human', 'n/a')),
                 'clients': info['connected_clients'],
-                'brief_details': OrderedDict(
-                    prettify(k, v)
-                    for name in REDISBOARD_DETAIL_FILTERS
-                    for k, v in (info.items() if PY3 else info.iteritems())
-                    if name.match(k)
-                ),
+                'brief_details': dict(prettify(k, v) for name in REDISBOARD_DETAIL_FILTERS for k, v in info.items() if name.match(k)),
                 'slowlog': slowlog,
                 'slowlog_len': slowlog_len,
             }
@@ -157,27 +151,72 @@ class RedisServer(models.Model):
                 'slowlog_len': 0,
             }
 
+    def slowlog_html(self):
+        commands = []
+        for log in self.stats['slowlog']:
+            command = log['command']
+            if isinstance(command, bytes):
+                command = repr(command)[2:-1]
+
+            if len(command) > 255:
+                command = f'{command:252}...'
+
+            commands.append((log['duration'], command))
+        commands.sort(reverse=True)
+        if commands:
+            output = ''.join(f'<tr><th>{duration / 1000.0:.1f}ms</th><td>{command}</td></tr>' for duration, command in commands)
+            return mark_safe(f'<table><tr><th colspan="2">Total: {self.stats["slowlog_len"]} items</th></tr>{output}</table>')
+
+        else:
+            return 'n/a'
+
+    def details_html(self):
+        output = []
+        brief_details = self.stats['brief_details']
+        for k, v in brief_details.items():
+            k = k.replace('_', ' ')
+            if isinstance(v, dict):
+                keys = v.keys()
+                output.append(f'<tr><td colspan="2"><table><tr><th>{k}</th>')
+                output.append(''.join(f'<th>{k}</th>' for k in keys))
+                output.append('</tr><tr><td></td>')
+                output.append(''.join(f'<td>{v[k]}</td>' for k in keys))
+                output.append('</tr></table></td></tr>')
+            else:
+                output.append(f'<tr><th>{k}</th><td>{v}</td></tr>')
+        if output:
+            return mark_safe(f'<table>{"".join(output)}</table>')
+        return 'n/a'
+
+    def cpu_utilization_html(self):
+        stats = self.stats
+        if stats['status'] != 'UP':
+            return 'n/a'
+
+        data = (
+            'used_cpu_sys',
+            'used_cpu_sys_children',
+            'used_cpu_user',
+            'used_cpu_user_children',
+        )
+        data = dict((k, stats['details'][k]) for k in data)
+        total_cpu = sum(data.values())
+        uptime = stats['details']['uptime_in_seconds']
+        data['cpu_utilization'] = '%.3f%%' % (total_cpu / uptime if uptime else 0)
+
+        data = sorted(data.items())
+
+        output = []
+        for k, v in data:
+            k = k.replace('_', ' ')
+            output.append(f'<tr><th>{k}</th><td>{v}</td></tr>')
+
+        if output:
+            return mark_safe(f'<table>{"".join(output)}</table>')
+        return 'n/a'
+
     def __str__(self):
         if self.label:
             return f'{self.label} ({self.url})'
         else:
             return self.url
-
-    def slowlog_len(self):
-        try:
-            return self.connection.slowlog_len()
-        except redis.exceptions.ConnectionError:
-            return 0
-
-    def slowlog_get(self):
-        try:
-            for slowlog in self.connection.slowlog_get(REDISBOARD_SLOWLOG_LEN):
-                yield dict(
-                    id=slowlog['id'],
-                    ts=datetime.fromtimestamp(slowlog['start_time']),
-                    duration=slowlog['duration'],
-                    command=slowlog['command'],
-                )
-
-        except redis.exceptions.ConnectionError:
-            pass

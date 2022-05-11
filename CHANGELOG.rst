@@ -2,6 +2,16 @@
 Changelog
 =========
 
+7.0.0 (2022-05-12)
+------------------
+
+* Removed some of the more expensive and frankly pointless stats computations.
+* Fixed internal error that occurred for empty databases.
+* Cleaned up more code (hopefully all the Python 2 is all gone now).
+* Changed the inspect page to include all the stats from the changelist.
+* Changed the stats display to use tables instead of definition lists.
+* Changed the ``--password`` CLI option to update the password regardless if the local sqlite was created or not.
+
 
 6.0.0 (2022-04-12)
 ------------------

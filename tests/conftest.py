@@ -1,17 +1,10 @@
-import re
-
 import pytest
 from process_tests import TestProcess
 from process_tests import wait_for_strings
 from redis.client import StrictRedis
 
 
-@pytest.fixture(scope="session")
-def tmp_path(request, tmp_path_factory):
-    return tmp_path_factory.mktemp(re.sub(r"[\W]", "_", request.node.name))
-
-
-@pytest.fixture(scope="session")
+@pytest.fixture
 def redis_server(tmp_path):
     redis_socket = str(tmp_path.joinpath('redis.sock'))
     with TestProcess(

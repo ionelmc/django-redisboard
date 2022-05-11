@@ -1,8 +1,3 @@
-.inspect-form th {
-    vertical-align: middle;
-    text-align: center;
-}
-
 .inspect-form #content-main {
     min-width: 980px;
     margin: 0 auto;
@@ -20,6 +15,7 @@
 .inspect-form .database-details td:nth-child(n+2) {
     text-align: center;
 }
+.inspect-form .key-details th,
 .inspect-form .key-details td {
     text-align: center;
 }
@@ -53,15 +49,34 @@ td.error {
     border: 1px solid gray;
     margin: 5px;
 }
-dl.details dt{
-    margin: 0px;
-    float: left;
-    clear: left;
-    width: 160px;
-    text-align: right;
-    font-weight: normal;
+table table tr:nth-child(2n) {
+    background: transparent;
 }
-dl.details dd{
-    margin: 0px;
-    margin-left: 170px;
+table table th:first-of-type {
+    width: 75%;
+}
+table table th {
+    padding-right: 0 !important;
+}
+table table tr:last-of-type th,
+table table tr:last-of-type td {
+    border-bottom: none;
+}
+table table table {
+    border-bottom: none;
+}
+table table td {
+    text-align: center;
+}
+table table td,
+table table th {
+    padding: 5px;
+}
+table table td[colspan] {
+    padding: 0;
+}
+table .field-slowlog th,
+table .field-slowlog td {
+    width: min-content !important;
+    text-align: left;
 }

@@ -4,15 +4,11 @@ from django.contrib import admin
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from .models import RedisServer
-from .utils import PY3
-from .views import inspect
-
-if PY3:
-    unicode = str
+from .views import inspect_view
 
 
 class RedisServerAdmin(admin.ModelAdmin):
@@ -33,88 +29,33 @@ class RedisServerAdmin(admin.ModelAdmin):
     list_filter = ('label',)
     ordering = ('label', 'url')
 
+    @admin.display(description=_('Details'))
+    def details(self, obj):
+        return obj.details_html()
+
+    @admin.display(description=_('CPU Utilization'))
+    def cpu_utilization(self, obj):
+        return obj.cpu_utilization_html()
+
+    @admin.display(description=_('Slowlog'))
     def slowlog(self, obj):
-        output = [(float('inf'), 'Total: %d items' % obj.stats['slowlog_len'])]
-        for log in obj.stats['slowlog']:
-            command = log['command']
+        return obj.slowlog_html()
 
-            if len(command) > 255:
-                command = str(command[:252]) + '...'
-
-            output.append(
-                (
-                    log['duration'],
-                    u'%.1fms: %r' % (log['duration'] / 1000.0, command),
-                )
-            )
-        if output:
-            return mark_safe('<br>'.join(l for _, l in sorted(output, reverse=True)))
-        else:
-            return 'n/a'
-
-    slowlog.allow_tags = True
-    slowlog.long_description = _('Slowlog')
-
+    @admin.display(description=_('Status'))
     def status(self, obj):
         return obj.stats['status']
 
-    status.long_description = _("Status")
-
+    @admin.display(description=_('Memory'))
     def memory(self, obj):
         return obj.stats['memory']
 
-    memory.long_description = _("Memory")
-
+    @admin.display(description=_('Clients'))
     def clients(self, obj):
         return obj.stats['clients']
 
-    clients.long_description = _("Clients")
-
+    @admin.display(description=_('Tools'))
     def tools(self, obj):
-        return mark_safe('<a href="%s">%s</a>' % (reverse("admin:redisboard_redisserver_inspect", args=(obj.id,)), unicode(_("Inspect"))))
-
-    tools.allow_tags = True
-    tools.long_description = _("Tools")
-
-    def details(self, obj):
-        output = []
-        brief_details = obj.stats['brief_details']
-        for k, v in brief_details.items() if PY3 else brief_details.iteritems():
-            output.append('<dt>%s</dt><dd>%s</dd>' % (k, v))
-        if output:
-            return mark_safe('<dl class="details">%s</dl>' % ''.join(output))
-        return 'n/a'
-
-    details.allow_tags = True
-    details.long_description = _("Details")
-
-    def cpu_utilization(self, obj):
-        stats = obj.stats
-        if stats['status'] != 'UP':
-            return 'n/a'
-
-        data = (
-            'used_cpu_sys',
-            'used_cpu_sys_children',
-            'used_cpu_user',
-            'used_cpu_user_children',
-        )
-        data = dict((k, stats['details'][k]) for k in data)
-        total_cpu = sum(data.values() if PY3 else data.itervalues())
-        uptime = stats['details']['uptime_in_seconds']
-        data['cpu_utilization'] = '%.3f%%' % (total_cpu / uptime if uptime else 0)
-
-        data = sorted(data.items())
-
-        output = []
-        for k, v in data:
-            k = k.replace('_', ' ')
-            output.append('<dt>%s</dt><dd>%s</dd>' % (k, v))
-
-        return mark_safe('<dl class="details">%s</dl>' % ''.join(output))
-
-    cpu_utilization.allow_tags = True
-    cpu_utilization.long_description = _('CPU Utilization')
+        return format_html('<a href="{}">{}</a>', reverse("admin:redisboard_redisserver_inspect", args=(obj.id,)), _("Inspect"))
 
     def get_urls(self):
         urlpatterns = super(RedisServerAdmin, self).get_urls()
@@ -131,7 +72,7 @@ class RedisServerAdmin(admin.ModelAdmin):
     def inspect_view(self, request, server_id):
         server = get_object_or_404(RedisServer, id=server_id)
         if self.has_change_permission(request, server) and request.user.has_perm('redisboard.can_inspect'):
-            return inspect(request, server)
+            return inspect_view(request, server)
         else:
             return HttpResponseForbidden("You can't inspect this server.")
 

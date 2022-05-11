@@ -1,7 +1,4 @@
 # shamelessly taken from kombu.utils
-import sys
-
-PY3 = sys.version_info[0] == 3
 
 
 class LazySlicingIterable(object):
@@ -89,3 +86,10 @@ class cached_property(object):
 
     def deleter(self, fdel):
         return self.__class__(self.__get, self.__set, fdel)
+
+
+def maybe_text(value):
+    if isinstance(value, bytes):
+        return value.decode('utf8')
+    else:
+        return value

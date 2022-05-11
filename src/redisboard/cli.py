@@ -173,5 +173,9 @@ def main(args=None):
         print()
 
         RedisServer.objects.create(label='localhost', url='redis://127.0.0.1')
+    elif args.password is not None:
+        user = User.objects.get(username='redisboard')
+        user.set_password(args.password)
+        user.save()
 
     execute_from_command_line(['django-admin', 'runserver', '--insecure', '--noreload', args.addrport])
