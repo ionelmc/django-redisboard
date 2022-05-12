@@ -48,7 +48,7 @@ DJANGO_SETTINGS = dict(
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         },
     },
-    SESSION_ENGINE='django.contrib.sessions.backends.db',
+    SESSION_ENGINE='django.contrib.sessions.backends.cached_db',
     INSTALLED_APPS=(
         'django.contrib.admin',
         'django.contrib.auth',
@@ -154,7 +154,7 @@ def main(args=None):
     create_user = not os.path.exists(database_path)
     execute_from_command_line(['django-admin', 'migrate', '--noinput'])
     if create_user:
-        user = User.objects.create(username='redisboard', is_superuser=True, is_staff=True, is_active=True)
+        user = User(username='redisboard', is_superuser=True, is_staff=True, is_active=True)
         pwd = get_random(8, string.digits + string.ascii_letters) if args.password is None else args.password
         user.set_password(pwd)
         user.save()
@@ -175,7 +175,9 @@ def main(args=None):
         RedisServer.objects.create(label='localhost', url='redis://127.0.0.1')
     elif args.password is not None:
         user = User.objects.get(username='redisboard')
-        user.set_password(args.password)
-        user.save()
+        if not user.check_password(args.password):
+            print('Updating password...')
+            user.set_password(args.password)
+            user.save(update_fields=['password'])
 
     execute_from_command_line(['django-admin', 'runserver', '--insecure', '--noreload', args.addrport])
