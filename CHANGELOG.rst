@@ -2,6 +2,12 @@
 Changelog
 =========
 
+7.0.1 (2022-05-12)
+------------------
+
+* Fixed ``--password`` killing the django session (it won't change the password and invalidate session if it's identical).
+* Fixed some alignment regressions in the table cells.
+
 7.0.0 (2022-05-12)
 ------------------
 
