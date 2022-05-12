@@ -80,3 +80,8 @@ table .field-slowlog td {
     width: min-content !important;
     text-align: left;
 }
+.server-status thead th,
+.database-details table th {
+    vertical-align: middle;
+    text-align: center;
+}
