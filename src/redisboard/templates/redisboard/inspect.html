@@ -4,17 +4,18 @@
 {% block title %}Inspect {{ original }}{% endblock %}
 
 {% block extrahead %}{{ block.super }}
-    {% url 'admin:jsi18n' as jsi18nurl %}
-    <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
-    {{ media }}
+  {% url 'admin:jsi18n' as jsi18nurl %}
+  <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+  {{ media }}
 {% endblock %}
 
 {% block extrastyle %}
-    {{ block.super }}
-    {% get_static_prefix as STATIC_PREFIX %}
-    {% get_media_prefix as MEDIA_PREFIX %}
+  {{ block.super }}
+  {% get_static_prefix as STATIC_PREFIX %}
+  {% get_media_prefix as MEDIA_PREFIX %}
 
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_PREFIX|default:MEDIA_PREFIX }}redisboard/admin.css"/>
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}">
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_PREFIX|default:MEDIA_PREFIX }}redisboard/admin.css"/>
 {% endblock %}
 
 {% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
@@ -22,166 +23,103 @@
 {% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} inspect-form{% endblock %}
 
 {% if is_popup %}
-    {% block breadcrumbs %}
-        <div class="breadcrumbs">
-            <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-            &rsaquo; <a href="{% url 'admin:app_list' app_label='redisboard' %}">{{ 'redisboard'|capfirst|escape }}</a>
-            &rsaquo; <a href="{% url 'admin:redisboard_redisserver_changelist' %}">{{ 'redisserver'|capfirst }}</a>
-            {% if key_details %}
-                &rsaquo;
-                <a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}">{% trans 'Inspect' %} {{ original|truncatewords:"18" }}</a>
-                &rsaquo; {% trans "Key details" %}: {{ key_details.name|try_decode }}
-            {% else %}
-                &rsaquo; {% trans 'Inspect' %} {{ original|truncatewords:"18" }}
-            {% endif %}
-        </div>
-    {% endblock %}
+  {% block breadcrumbs %}
+    <div class="breadcrumbs">
+      <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+      &rsaquo; <a href="{% url 'admin:app_list' app_label='redisboard' %}">{{ 'redisboard'|capfirst|escape }}</a>
+      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_changelist' %}">{{ 'redisserver'|capfirst }}</a>
+      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_change' original.id %}">{{ original|truncatewords:"18" }}</a>
+      {% if active %}
+        &rsaquo; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}">{% trans 'Inspect' %}</a>
+        &rsaquo; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id active.id %}">{% trans 'DB' %}: {{ active.id }}</a>
+      {% else %}
+        &rsaquo; {% trans 'Inspect' %}
+      {% endif %}
+    </div>
+  {% endblock %}
 {% endif %}
 
 {% block content %}
-    {% spaceless %}
-        <div id="content-main" class="module">
-            <table class="server-status">
-                <thead>
-                <tr>
-                    <th>{% trans "Status" %}</th>
-                    <th>{% trans "Memory" %}</th>
-                    <th>{% trans "Clients" %}</th>
-                    <th>{% trans "Details" %}</th>
-                    <th>{% trans "CPU Utilization" %}</th>
-                    <th>{% trans "Slowlog" %}</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>{{ stats.status }}</td>
-                    <td>{{ stats.memory }}</td>
-                    <td>{{ stats.clients }}</td>
-                    <td>{{ original.details_html }}</td>
-                    <td>{{ original.cpu_utilization_html }}</td>
-                    <td class="field-slowlog">{{ original.slowlog_html }}</td>
-                </tr>
-                </tbody>
-            </table>
-
-            {% for db, db_detail in databases.items %}
-                <fieldset class="module aligned database-details">
-                    <h2>
-                        {% trans "Database" %} {{ db }}:
-                        {% if db_detail.sampling %}
-                            {% with db_detail.keys as total %}
-                                {% blocktrans count original.sampling_threshold as size %}
-                                    {{ size }} random key out of {{ total }}
-                                {% plural %}
-                                    {{ size }} random keys out of {{ total }}
-                                {% endblocktrans %}
-                            {% endwith %}
-                        {% else %}
-                            {% blocktrans count db_detail.keys as size %}
-                                {{ size }} key
-                            {% plural %}
-                                {{ size }} keys
-                            {% endblocktrans %}
-                        {% endif %}
-
-                        {% if db_detail.active %}
-                            &larr;
-                        {% else %}
-                            &ndash;
-                            <a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}?db={{ db }}">{% trans "Show details" %}</a>
-                        {% endif %}
-                    </h2>
-                    {% if db_detail.active %}
-                        <table>
-                            <tr>
-                                <th rowspan="2">{% trans "Keys" %} ({{ db_detail.data|length }})</th>
-                                <th colspan="7">{% trans "Details" %}</th>
-                            </tr>
-                            <tr>
-                                <th>{% trans "Type" %}</th>
-                                <th>{% trans "TTL" %}</th>
-                                <th>{% trans "Encoding" %}</th>
-                                <th>{% trans "Items" %}</th>
-                                <th>{% trans "Idletime" %}</th>
-                                <th>{% trans "Refs" %}</th>
-                            </tr>
-
-                            {% for key, key_detail in db_detail.data.items %}
-                                <tr>
-                                    <td>
-                                        <a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}?key={{ key|url_encode }}&db={{ db }}">{{ key|try_decode }}</a>
-                                    </td>
-                                    {% if key_detail.error %}
-                                        <td class="error" colspan="6">{% trans "ERROR:" %} {{ key_detail.error }}</td>
-                                    {% else %}
-                                        <td>{{ key_detail.type|try_decode }}</td>
-                                        <td>{{ key_detail.ttl }}</td>
-                                        <td>{{ key_detail.encoding|try_decode }}</td>
-                                        <td>{{ key_detail.length }}</td>
-                                        <td>{{ key_detail.idletime }}</td>
-                                        <td>{{ key_detail.refcount }}</td>
-                                    {% endif %}
-                                </tr>
-                            {% endfor %}
-
-                        </table>
-                    {% endif %}
-                </fieldset>
-            {% empty %}
-                <fieldset class="module aligned database-details">
-                    <h2>{% trans "No databases found!" %}</h2>
-                </fieldset>
-            {% endfor %}
-            {% if key_details %}
-                <fieldset class="module aligned key-details">
-                    <h2>{% trans "Key details" %}: {{ key_details.name|try_decode }}</h2>
-                    <table>
-                        <tr>
-                            <th>{% trans "Type" %}</th>
-                            <th>{% trans "TTL" %}</th>
-                            <th>{% trans "Encoding" %}</th>
-                            <th>{% trans "Items" %}</th>
-                            <th>{% trans "Idletime" %}</th>
-                            <th>{% trans "Refs" %}</th>
-                        </tr>
-                        <tr>
-                            {% if key_details.error %}
-                                <td class="error" colspan="6">{% trans "ERROR:" %} {{ key_details.error }}</td>
-                            {% else %}
-                                <td>{{ key_details.type|try_decode }}</td>
-                                <td>{{ key_details.ttl }}</td>
-                                <td>{{ key_details.encoding|try_decode }}</td>
-                                <td>{{ key_details.length }}</td>
-                                <td>{{ key_details.idletime }}</td>
-                                <td>{{ key_details.refcount }}</td>
-                            {% endif %}
-                        </tr>
-                    </table>
-                </fieldset>
-                <fieldset class="module aligned key-data">
-                    <h2>{% trans "Key data" %}: {{ key_details.name|try_decode }}</h2>
-                    <table>
-                        {% for key, value in key_details.data.object_list|default:key_details.data %}
-                            <tr>
-                                <td>{{ key }}</td>
-                                <td>{{ value|pprint }}</td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                    {% if key_details.data.paginator and key_details.data.paginator.num_pages > 1 %}
-                        <p class="paginator">
-                            {% for nr in key_details.data.paginator.page_range %}
-                                {% if key_details.data.number == nr %}
-                                    <span class="this-page">{{ nr }}</span>
-                                {% else %}
-                                    <a href="?key={{ key_details.name|url_encode }}&db={{ key_details.db }}&page={{ nr }}">{{ nr }}</a>
-                                {% endif %}
-                            {% endfor %}
-                            {{ key_details.data.paginator.count }} items
-                        </p>
-                    {% endif %}
-                </fieldset>
+  {% spaceless %}
+    <div id="content-main" class="module">
+      {% if not active %}
+        <table class="server-status">
+          <thead>
+          <tr>
+            <th>{% trans 'Status' %}</th>
+            <th>{% trans 'Memory' %}</th>
+            <th>{% trans 'Clients' %}</th>
+            <th>{% trans 'Details' %}</th>
+            <th>{% trans 'CPU Utilization' %}</th>
+            <th>{% trans 'Slowlog' %}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>{{ stats.status }}</td>
+            <td>{{ stats.memory }}</td>
+            <td>{{ stats.clients }}</td>
+            <td>{{ display.details }}</td>
+            <td>{{ display.cpu }}</td>
+            <td class="field-slowlog">{{ display.slowlog }}</td>
+          </tr>
+          </tbody>
+        </table>
+      {% endif %}
+      {% for db in databases %}
+        {% with db.scan as scan %}
+          <fieldset class="module aligned key-details">
+            <h2 id="db-{{ db.id }}">
+              {% trans 'Database' %} {{ db.id }}:
+              {% if scan %}
+                {% if scan.count < db.stats.keys %}
+                  {% blocktrans with total=scan.total count count=scan.count %}
+                    {{ count }} key ({{ total }} total)
+                  {% plural %}
+                    {{ count }} keys ({{ total }} total)
+                  {% endblocktrans %}
+                {% else %}
+                  {% blocktrans count count=scan.count %}
+                    {{ count }} key
+                  {% plural %}
+                    {{ count }} keys
+                  {% endblocktrans %}
+                {% endif %}
+                &larr;
+              {% else %}
+                {% blocktrans count total=db.stats.keys %}
+                  {{ total }} key
+                {% plural %}
+                  {{ total }} keys
+                {% endblocktrans %}
+                &ndash;
+                <a href="{% url 'admin:redisboard_redisserver_inspect' original.id db.id %}{{ filters }}">{% trans 'Show details' %}</a>
+              {% endif %}
+            </h2>
+            {% if scan %}
+              {{ scan.data }}
+              {% if scan.cursor or db.cursor %}
+                <p class="paginator">
+                  {% if db.cursor %}
+                    <a href="{% url 'admin:redisboard_redisserver_inspect' server_id=original.id db=db.id %}{{ filters }}">
+                      {% trans 'Reset' %}</a>
+                  {% endif %}
+                  <span class="this-page">at cursor: {{ db.cursor }}</span>
+                  {% if scan.cursor %}
+                    <a
+                      href="{% url 'admin:redisboard_redisserver_inspect' server_id=original.id db=db.id cursor=scan.cursor %}{{ filters }}">
+                      {% trans 'Next' %}</a>
+                  {% endif %}
+                </p>
+              {% endif %}
             {% endif %}
-        </div>
-    {% endspaceless %}
+          </fieldset>
+        {% endwith %}
+      {% empty %}
+        <fieldset class="module aligned database-details">
+          <h2>{% trans 'No database found!' %}</h2>
+        </fieldset>
+      {% endfor %}
+    </div>
+  {% endspaceless %}
 {% endblock %}

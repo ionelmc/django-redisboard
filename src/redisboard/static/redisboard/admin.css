@@ -3,85 +3,105 @@
     margin: 0 auto;
     float: none;
 }
+
 .inspect-form table {
     width: 100%;
 }
-.inspect-form .database-details td:first-child {
+
+.inspect-form .key-details td:first-child {
     width: 60%;
+    text-align: left;
 }
+
 .inspect-form .server-status td {
     text-align: center;
 }
-.inspect-form .database-details td:nth-child(n+2) {
+
+.inspect-form .key td:nth-child(n+2) {
     text-align: center;
 }
+
 .inspect-form .key-details th,
 .inspect-form .key-details td {
     text-align: center;
 }
+
 .inspect-form .key-data td {
     text-align: left;
 }
+
 .inspect-form .key-details tr:hover td,
-.inspect-form .key-data tr:hover td,
-.inspect-form .database-details tr:hover td {
+.inspect-form .key-data tr:hover td {
     background: #FFFF80;
 }
+
 .inspect-form .key-data td:nth-child(2) {
     font-family: monospace;
     width: 99%;
 }
+
 .inspect-form .details td {
     width: 50%;
     word-break: break-all;
 }
+
 .inspect-form .key-data td:nth-child(2) {
     word-break: break-all;
 }
+
 td.error {
     font-weight: bold;
     color: #B22222;
 }
-.inspect-form .paginator a,
-.inspect-form .paginator span {
-    display: inline-block;
-    padding: 5px;
-    border: 1px solid gray;
-    margin: 5px;
-}
+
 table table tr:nth-child(2n) {
     background: transparent;
 }
-table table th:first-of-type {
-    width: 75%;
-}
+
 table table th {
     padding-right: 0 !important;
 }
+
 table table tr:last-of-type th,
 table table tr:last-of-type td {
     border-bottom: none;
 }
+
 table table table {
     border-bottom: none;
 }
+
 table table td {
     text-align: center;
 }
+
 table table td,
 table table th {
     padding: 5px;
 }
+
 table table td[colspan] {
     padding: 0;
 }
+
 table .field-slowlog th,
 table .field-slowlog td {
     width: min-content !important;
     text-align: left;
 }
+
 .server-status thead th,
-.database-details table th {
+.key-details table th {
     vertical-align: middle;
     text-align: center;
+}
+
+table table table th:nth-child(n+2) {
+    text-align: center;
+    width: 25%;
+}
+
+p {
+    box-sizing: border-box;
+
 }

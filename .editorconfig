@@ -13,7 +13,7 @@ charset = utf-8
 [*.{bat,cmd,ps1}]
 end_of_line = crlf
 
-[*.{yml,yaml}]
+[*.{yml,yaml,html}]
 indent_size = 2
 
 [*.tsv]

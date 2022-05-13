@@ -15,6 +15,7 @@ Overview
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
+
 .. |docs| image:: https://readthedocs.org/projects/django-redisboard/badge/?style=flat
     :target: https://django-redisboard.readthedocs.io/
     :alt: Documentation Status
@@ -93,10 +94,6 @@ Install from pypi, with pip::
 
     pip install django-redisboard
 
-Or with setuptools::
-
-    easy_install django-redisboard
-
 Add ``redisboard`` to ``INSTALLED_APPS``:
 
 ::
@@ -116,62 +113,95 @@ Redisboard has few css tweaks for the pages (they are optional). If you use stat
 If you do not use django.contrib.staticfiles you must manually symlink the
 site-packages/redisboard/static/redisboard dir to <your media root>/redisboard.
 
-Optional django settings
+Optional Django settings
 ========================
 
-REDISBOARD_DETAIL_FILTERS
--------------------------
+======================================= ====
+Setting name                            Description
+======================================= ====
+``REDISBOARD_CONNECTION_POOL_OPTIONS``  Extra connection options. Default: ``{}``. Example:
 
-REDISBOARD_DETAIL_FILTERS - a list of regular expressions to match against the keys in the server
-details colum. Eg, to only show uptime and list of active databases::
+                                        .. sourcecode:: python
 
-    REDISBOARD_DETAIL_FILTERS = ['uptime.*', 'db.*']
+                                            REDISBOARD_CONNECTION_POOL_OPTIONS = {'socket_timeout': 60, 'socket_connect_timeout': 10}
 
-To show all the details just use::
 
-    REDISBOARD_DETAIL_FILTERS = ['.*']
+``REDISBOARD_DECODER_CLASS``            Default: ``'redisboard.data.UTF8BackslashReplaceDecoder'``.
+``REDISBOARD_DISPLAY_CLASS``            Default: ``'redisboard.data.TabularDisplay'``.
+``REDISBOARD_VALUE_QUERY_CLASS``        Default: ``'redisboard.data.ValueQuery'``.
+``REDISBOARD_LENGTH_QUERY_CLASS``       Default: ``'redisboard.data.LengthQuery'``.
+``REDISBOARD_DETAIL_FILTERS``           A list of regular expressions to match against the keys in the server
+                                        details colum. Eg, to only show uptime and list of active databases:
 
-REDISBOARD_ITEMS_PER_PAGE
--------------------------
+                                        .. sourcecode:: python
 
-REDISBOARD_ITEMS_PER_PAGE - default 100. Used for paginating the items from a list or a sorted set.
+                                            REDISBOARD_DETAIL_FILTERS = ['uptime.*', 'db.*']
 
-REDISBOARD_SOCKET_TIMEOUT
--------------------------
+                                        To show all the details just use:
 
-REDISBOARD_SOCKET_TIMEOUT - default None. Socket operations time out after this many seconds.
+                                        .. sourcecode:: python
 
-REDISBOARD_SOCKET_CONNECT_TIMEOUT
----------------------------------
-
-REDISBOARD_SOCKET_CONNECT_TIMEOUT - default None. Socket connect operation times out after this many seconds.
-
-REDISBOARD_SOCKET_KEEPALIVE
----------------------------
-
-REDISBOARD_SOCKET_KEEPALIVE - default None. Enables or Disables socket keepalive.
-
-REDISBOARD_SOCKET_KEEPALIVE_OPTIONS
------------------------------------
-
-REDISBOARD_SOCKET_KEEPALIVE_OPTIONS - default None. Additional options for socket keepalive.
-
+                                            REDISBOARD_DETAIL_FILTERS = ['.*']
+``REDISBOARD_DETAIL_CONVERTERS``        Mapping of regexes to functions to convert those values. Checkout the sourcecode for what's
+                                        available.
+``REDISBOARD_SLOWLOG_NUM``              Number of slowlog entries to show. Default: ``10``.
+``REDISBOARD_SCAN_COUNT``               Count used for the various scan commands. Affects pagination for key list and key details.
+                                        Default: ``1000``.
+``REDISBOARD_STRING_PAGINATION``        Count used just for paginating string values. Default: ``10000``
+======================================= ====
 
 Screenshots
 ===========
 
-Changelist:
+Screenshot of the changelist:
 
 .. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/changelist.png
+    :alt: Screenshot of the changelist
 
-Inspect:
+Screenshot of inspecting:
 
 .. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect.png
+    :alt: Screenshot of inspecting
 
-Inspect key details:
+Screenshot of inspecting a sorted set:
 
-.. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect-key.png
+.. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect-sorted-set.jpg
+    :alt: Screenshot of inspecting a sorted set
 
+Screenshot of inspecting a db:
+
+.. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect-db.jpg
+    :alt: Screenshot of inspecting a db
+
+Screenshot of inspecting a big string:
+
+.. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect-big-string.jpg
+    :alt: Screenshot of inspecting a big string
+
+Screenshot of inspecting a hash:
+
+.. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect-hash.jpg
+    :alt: Screenshot of inspecting a hash
+
+Screenshot of inspecting a hash with binary values:
+
+.. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect-binary-hash.jpg
+    :alt: Screenshot of inspecting a hash with binary values
+
+Screenshot of inspecting a binary string:
+
+.. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect-binary-string.jpg
+    :alt: Screenshot of inspecting a binary string
+
+Screenshot of inspecting a binary key:
+
+.. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect-binary-key.jpg
+    :alt: Screenshot of inspecting a binary key
+
+Screenshot of inspecting a set:
+
+.. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect-set.jpg
+    :alt: Screenshot of inspecting a set
 
 Documentation
 =============

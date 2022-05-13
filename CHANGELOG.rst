@@ -2,6 +2,24 @@
 Changelog
 =========
 
+8.0.0 (2022-05-15)
+------------------
+
+* Dropped support for Python 3.6.
+* Overhauled internals to support customization of redis queries, deserialization and display using custom classes.
+  For that purpose there are new settings: ``REDISBOARD_DECODER_CLASS``, ``REDISBOARD_DISPLAY_CLASS``, ``REDISBOARD_VALUE_QUERY_CLASS`` and
+  ``REDISBOARD_LENGTH_QUERY_CLASS``.
+* Fixed various issues with pagination by simplifying it and making the use of cursors transparent to the user.
+  For this purpose the ``sampling_size`` and ``sampling_threshold`` models fields have been removed, and the ``REDISBOARD_ITEMS_PER_PAGE``
+  was removed and replaced with ``REDISBOARD_SCAN_COUNT`` and ``REDISBOARD_STRING_PAGINATION``.
+* Added new setting ``REDISBOARD_DETAIL_CONVERTERS`` for customizing display of server details somewhat.
+* Added new setting ``REDISBOARD_SLOWLOG_NUM`` option for limiting the slowlow displayed.
+* The default value for the ``REDISBOARD_DETAIL_FILTERS`` setting was changed.
+* Better connection management was implemented, both via render callbacks and ``__del__`` (as a fallback).
+  There shouldn't be any connection leaks anymore. If the DEBUG setting is True then warnings
+  will be issued should any connection be closed via ``__del__``.
+* Added the ``--debug`` (to enable DEBUG and autoreload) and ``--decoder`` (to load a different data decoder) in the ``redisboard`` CLI.
+
 7.0.1 (2022-05-12)
 ------------------
 

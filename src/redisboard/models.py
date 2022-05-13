@@ -1,15 +1,45 @@
 import re
 from datetime import datetime
-from datetime import timedelta
+from itertools import starmap
+from logging import getLogger
+from typing import TYPE_CHECKING
+from typing import Dict
+from typing import Type
 
 import redis
+from attr import Factory
+from attr import define
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.safestring import mark_safe
+from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 
+from .connection import ClosableStrictRedis
+from .structs import datetime_fromtimestamp_usec
+from .structs import timedelta_fromseconds
 from .utils import cached_property
+
+if TYPE_CHECKING:
+    from .data import BaseDecoder
+    from .data import BaseDisplay
+    from .data import LengthQuery
+    from .data import ValueQuery
+
+logger = getLogger(__name__)
+
+REDISBOARD_DECODER_CLASS: 'Type[BaseDecoder]' = import_string(
+    getattr(settings, 'REDISBOARD_DECODER_CLASS', 'redisboard.data.UTF8BackslashReplaceDecoder'),
+)
+REDISBOARD_DISPLAY_CLASS: 'Type[BaseDisplay]' = import_string(
+    getattr(settings, 'REDISBOARD_DISPLAY_CLASS', 'redisboard.data.TabularDisplay'),
+)
+REDISBOARD_VALUE_QUERY_CLASS: 'Type[ValueQuery]' = import_string(
+    getattr(settings, 'REDISBOARD_VALUE_QUERY_CLASS', 'redisboard.data.ValueQuery'),
+)
+REDISBOARD_LENGTH_QUERY_CLASS: 'Type[LengthQuery]' = import_string(
+    getattr(settings, 'REDISBOARD_LENGTH_QUERY_CLASS', 'redisboard.data.LengthQuery'),
+)
 
 REDISBOARD_DETAIL_FILTERS = [
     re.compile(name)
@@ -17,38 +47,42 @@ REDISBOARD_DETAIL_FILTERS = [
         settings,
         'REDISBOARD_DETAIL_FILTERS',
         (
-            'aof_enabled',
-            'bgrewriteaof_in_progress',
-            'bgsave_in_progress',
-            'changes_since_last_save',
-            'db.*',
-            'last_save_time',
-            'multiplexing_api',
-            'total_commands_processed',
-            'total_connections_received',
-            'uptime_in_days',
-            'uptime_in_seconds',
-            'vm_enabled',
+            '.*_version',
+            '.*_api',
+            '.*_human',
+            '.*_policy',
+            'expired_keys',
+            'evicted_keys',
             'redis_version',
+            'redis_mode',
+            'os',
         ),
     )
 ]
-REDISBOARD_DETAIL_TIMESTAMP_KEYS = getattr(settings, 'REDISBOARD_DETAIL_TIMESTAMP_KEYS', ('last_save_time',))
-REDISBOARD_DETAIL_SECONDS_KEYS = getattr(settings, 'REDISBOARD_DETAIL_SECONDS_KEYS', ('uptime_in_seconds',))
+REDISBOARD_DETAIL_CONVERTERS = {
+    re.compile(name): converter
+    for name, converter in getattr(
+        settings,
+        'REDISBOARD_DETAIL_FILTERS',
+        {
+            '.*_seconds$': timedelta_fromseconds,
+            'avg_ttl': timedelta_fromseconds,
+            '.*_time$': datetime.fromtimestamp,
+            '.*_time_usec$': datetime_fromtimestamp_usec,
+        },
+    ).items()
+}
 
-REDISBOARD_SLOWLOG_LEN = getattr(settings, 'REDISBOARD_SLOWLOG_LEN', 10)
-
-REDISBOARD_SOCKET_TIMEOUT = getattr(settings, 'REDISBOARD_SOCKET_TIMEOUT', None)
-REDISBOARD_SOCKET_CONNECT_TIMEOUT = getattr(settings, 'REDISBOARD_SOCKET_CONNECT_TIMEOUT', None)
-REDISBOARD_SOCKET_KEEPALIVE = getattr(settings, 'REDISBOARD_SOCKET_KEEPALIVE', None)
-REDISBOARD_SOCKET_KEEPALIVE_OPTIONS = getattr(settings, 'REDISBOARD_SOCKET_KEEPALIVE_OPTIONS', None)
+REDISBOARD_SLOWLOG_NUM = getattr(settings, 'REDISBOARD_SLOWLOG_NUM', 10)
 
 
-def prettify(key, value):
-    if key in REDISBOARD_DETAIL_SECONDS_KEYS:
-        return key, timedelta(seconds=value)
-    elif key in REDISBOARD_DETAIL_TIMESTAMP_KEYS:
-        return key, datetime.fromtimestamp(value)
+def coerce_detail(key, value):
+    for name, converter in REDISBOARD_DETAIL_CONVERTERS.items():
+        if name.match(key):
+            try:
+                return key, converter(value)
+            except Exception:
+                logger.exception(f'Failed converting {key}={value} with {converter}')
     else:
         return key, value
 
@@ -60,20 +94,49 @@ def validate_url(value):
         raise ValidationError(str(exc))
 
 
+@define(slots=False)
+class RedisServerStats:
+    status: str = 'n/a'
+    info: dict = Factory(dict)
+    slowlog: list = Factory(dict)
+
+    @cached_property
+    def details(self):
+        return dict(coerce_detail(k, v) for k, v in self.info.items() if any(name.match(k) for name in REDISBOARD_DETAIL_FILTERS))
+
+    @cached_property
+    def memory(self):
+        if 'used_memory_human' in self.info:
+            return f'{self.info["used_memory_human"]} (peak: {self.info.get("used_memory_peak_human", "n/a")})'
+        else:
+            return 'n/a'
+
+    @cached_property
+    def clients(self):
+        return self.info.get('connected_clients', 'n/a')
+
+    @cached_property
+    def databases(self) -> Dict[int, dict]:
+        return {int(name[2:]): dict(starmap(coerce_detail, data.items())) for name, data in self.info.items() if name.startswith('db')}
+
+    def __bool__(self):
+        return self.status == 'UP'
+
+
 class RedisServer(models.Model):
     class Meta:
-        verbose_name = _("Redis Server")
-        verbose_name_plural = _("Redis Servers")
-        permissions = (("can_inspect", "Can inspect redis servers"),)
+        verbose_name = _('Redis Server')
+        verbose_name_plural = _('Redis Servers')
+        permissions = (('can_inspect', 'Can inspect redis servers'),)
 
     label = models.CharField(
-        _('Label'),
+        verbose_name=_('Label'),
         max_length=50,
         blank=True,
         null=True,
     )
     url = models.CharField(
-        _("URL"),
+        verbose_name=_('URL'),
         max_length=250,
         unique=True,
         help_text=_(
@@ -85,138 +148,52 @@ class RedisServer(models.Model):
         validators=[validate_url],
     )
     password = models.CharField(
-        _("Password"), max_length=250, null=True, blank=True, help_text=_('You can also specify the password here (the field is masked).')
-    )
-
-    sampling_threshold = models.IntegerField(
-        _("Sampling threshold"),
-        default=1000,
-        help_text=_("Number of keys after which only a sample (of random keys) is shown on the inspect page."),
-    )
-    sampling_size = models.IntegerField(
-        _("Sampling size"),
-        default=200,
-        help_text=_("Number of random keys shown when sampling is used. Note that each key translates to a RANDOMKEY call in redis."),
+        verbose_name=_('Password'),
+        max_length=250,
+        null=True,
+        blank=True,
+        help_text=_('You can also specify the password here (the field is masked).'),
     )
 
     @cached_property
     def connection(self) -> redis.StrictRedis:
-        return redis.StrictRedis(
-            single_connection_client=True,
-            connection_pool=redis.ConnectionPool.from_url(
-                self.url,
-                password=self.password,
-                retry_on_timeout=True,
-            ),
-        )
-
-    @connection.deleter
-    def connection(self, value):
-        value.connection_pool.disconnect()
+        return ClosableStrictRedis(self.url, self.password)
 
     @cached_property
-    def stats(self):
+    def display(self) -> 'BaseDisplay':
+        return REDISBOARD_DISPLAY_CLASS(
+            decoder_class=REDISBOARD_DECODER_CLASS,
+            value_query_class=REDISBOARD_VALUE_QUERY_CLASS,
+            length_query_class=REDISBOARD_LENGTH_QUERY_CLASS,
+            server=self,
+        )
+
+    @cached_property
+    def stats(self) -> RedisServerStats:
         try:
             conn = self.connection
             info = conn.info()
-            slowlog = conn.slowlog_get()
-            slowlog_len = conn.slowlog_len()
-            return {
-                'status': 'UP',
-                'details': info,
-                'memory': "%s (peak: %s)" % (info['used_memory_human'], info.get('used_memory_peak_human', 'n/a')),
-                'clients': info['connected_clients'],
-                'brief_details': dict(prettify(k, v) for name in REDISBOARD_DETAIL_FILTERS for k, v in info.items() if name.match(k)),
-                'slowlog': slowlog,
-                'slowlog_len': slowlog_len,
-            }
-        except (redis.exceptions.ConnectionError, redis.exceptions.TimeoutError):
-            return {
-                'status': 'DOWN',
-                'clients': 'n/a',
-                'memory': 'n/a',
-                'details': {},
-                'brief_details': {},
-                'slowlog': [],
-                'slowlog_len': 0,
-            }
+            slowlog = conn.slowlog_get(num=REDISBOARD_SLOWLOG_NUM)
+            return RedisServerStats(
+                status='UP',
+                info=info,
+                slowlog=slowlog,
+            )
+        except (redis.exceptions.ConnectionError, redis.exceptions.TimeoutError) as exc:
+            return RedisServerStats(
+                status=f'DOWN: {exc}',
+            )
         except redis.exceptions.RedisError as exc:
-            return {
-                'status': 'ERROR: %s' % exc.args,
-                'clients': 'n/a',
-                'memory': 'n/a',
-                'details': {},
-                'brief_details': {},
-                'slowlog': [],
-                'slowlog_len': 0,
-            }
+            return RedisServerStats(
+                status=f'ERROR: {exc!r}',
+            )
 
-    def slowlog_html(self):
-        commands = []
-        for log in self.stats['slowlog']:
-            command = log['command']
-            if isinstance(command, bytes):
-                command = repr(command)[2:-1]
-
-            if len(command) > 255:
-                command = f'{command:252}...'
-
-            commands.append((log['duration'], command))
-        commands.sort(reverse=True)
-        if commands:
-            output = ''.join(f'<tr><th>{duration / 1000.0:.1f}ms</th><td>{command}</td></tr>' for duration, command in commands)
-            return mark_safe(f'<table><tr><th colspan="2">Total: {self.stats["slowlog_len"]} items</th></tr>{output}</table>')
-
-        else:
-            return 'n/a'
-
-    def details_html(self):
-        output = []
-        brief_details = self.stats['brief_details']
-        for k, v in brief_details.items():
-            k = k.replace('_', ' ')
-            if isinstance(v, dict):
-                keys = v.keys()
-                output.append(f'<tr><td colspan="2"><table><tr><th>{k}</th>')
-                output.append(''.join(f'<th>{k}</th>' for k in keys))
-                output.append('</tr><tr><td></td>')
-                output.append(''.join(f'<td>{v[k]}</td>' for k in keys))
-                output.append('</tr></table></td></tr>')
-            else:
-                output.append(f'<tr><th>{k}</th><td>{v}</td></tr>')
-        if output:
-            return mark_safe(f'<table>{"".join(output)}</table>')
-        return 'n/a'
-
-    def cpu_utilization_html(self):
-        stats = self.stats
-        if stats['status'] != 'UP':
-            return 'n/a'
-
-        data = (
-            'used_cpu_sys',
-            'used_cpu_sys_children',
-            'used_cpu_user',
-            'used_cpu_user_children',
-        )
-        data = dict((k, stats['details'][k]) for k in data)
-        total_cpu = sum(data.values())
-        uptime = stats['details']['uptime_in_seconds']
-        data['cpu_utilization'] = '%.3f%%' % (total_cpu / uptime if uptime else 0)
-
-        data = sorted(data.items())
-
-        output = []
-        for k, v in data:
-            k = k.replace('_', ' ')
-            output.append(f'<tr><th>{k}</th><td>{v}</td></tr>')
-
-        if output:
-            return mark_safe(f'<table>{"".join(output)}</table>')
-        return 'n/a'
+    @cached_property
+    def has_frequency(self):
+        return self.stats.info['maxmemory_policy'].endswith('-lfu')
 
     def __str__(self):
         if self.label:
-            return f'{self.label} ({self.url})'
+            return self.label
         else:
             return self.url

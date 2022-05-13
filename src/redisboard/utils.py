@@ -1,95 +1,46 @@
-# shamelessly taken from kombu.utils
+try:
+    from functools import cached_property
+except ImportError:
+    from threading import RLock
 
+    _NOT_FOUND = object()
 
-class LazySlicingIterable(object):
-    def __init__(self, length_getter, items_getter):
-        self.length_getter = length_getter
-        self.items_getter = items_getter
+    class cached_property:
+        def __init__(self, func):
+            self.func = func
+            self.attrname = None
+            self.__doc__ = func.__doc__
+            self.lock = RLock()
 
-    def __len__(self):
-        return self.length_getter()
+        def __set_name__(self, owner, name):
+            if self.attrname is None:
+                self.attrname = name
+            elif name != self.attrname:
+                raise TypeError('Cannot assign the same cached_property to two different names ' f'({self.attrname!r} and {name!r}).')
 
-    def __getitem__(self, k):
-        if isinstance(k, int):
-            return self.items_getter(k, k)
-        elif isinstance(k, slice):
-            if k.step:
-                raise RuntimeError("Can't use steps for slicing.")
-            return self.items_getter(k.start, k.stop)
-        else:
-            raise TypeError("Must be int or slice.")
-
-
-class cached_property(object):
-    """Property descriptor that caches the return value
-    of the get function.
-
-    *Examples*
-
-    .. code-block:: python
-
-        @cached_property
-        def connection(self):
-            return Connection()
-
-        @connection.setter  # Prepares stored value
-        def connection(self, value):
-            if value is None:
-                raise TypeError("Connection must be a connection")
-            return value
-
-        @connection.deleter
-        def connection(self, value):
-            # Additional action to do at del(self.attr)
-            if value is not None:
-                print("Connection %r deleted" % (value, ))
-
-    """
-
-    def __init__(self, fget=None, fset=None, fdel=None, doc=None):
-        self.__get = fget
-        self.__set = fset
-        self.__del = fdel
-        self.__doc__ = doc or fget.__doc__
-        self.__name__ = fget.__name__
-        self.__module__ = fget.__module__
-
-    def __get__(self, obj, type=None):
-        if obj is None:
-            return self
-        try:
-            return obj.__dict__[self.__name__]
-        except KeyError:
-            value = obj.__dict__[self.__name__] = self.__get(obj)
-            return value
-
-    def __set__(self, obj, value):
-        if obj is None:
-            return self
-        if self.__set is not None:
-            value = self.__set(obj, value)
-        obj.__dict__[self.__name__] = value
-
-    def __delete__(self, obj):
-        if obj is None:
-            return self
-        try:
-            value = obj.__dict__.pop(self.__name__)
-        except KeyError:
-            pass
-        else:
-            if self.__del is not None:
-                self.__del(obj, value)
-
-    def setter(self, fset):
-        return self.__class__(self.__get, fset, self.__del)
-
-    def deleter(self, fdel):
-        return self.__class__(self.__get, self.__set, fdel)
-
-
-def maybe_text(value):
-    if isinstance(value, bytes):
-        return value.decode('utf8')
-    else:
-        return value
+        def __get__(self, instance, owner=None):
+            if instance is None:
+                return self
+            if self.attrname is None:
+                raise TypeError('Cannot use cached_property instance without calling __set_name__ on it.')
+            try:
+                cache = instance.__dict__
+            except AttributeError:  # not all objects have __dict__ (e.g. class defines slots)
+                msg = f"No '__dict__' attribute on {type(instance).__name__!r} " f'instance to cache {self.attrname!r} property.'
+                raise TypeError(msg) from None
+            val = cache.get(self.attrname, _NOT_FOUND)
+            if val is _NOT_FOUND:
+                with self.lock:
+                    # check if another thread filled cache while we awaited lock
+                    val = cache.get(self.attrname, _NOT_FOUND)
+                    if val is _NOT_FOUND:
+                        val = self.func(instance)
+                        try:
+                            cache[self.attrname] = val
+                        except TypeError:
+                            msg = (
+                                f"The '__dict__' attribute on {type(instance).__name__!r} instance "
+                                f'does not support item assignment for caching {self.attrname!r} property.'
+                            )
+                            raise TypeError(msg) from None
+            return val

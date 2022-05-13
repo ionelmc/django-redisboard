@@ -15,13 +15,24 @@ Why does this file exist, and why not put this in __main__?
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
 
-
 import argparse
 import os
 import random
 import string
 
+
+def parse_class(value):
+    if '.' not in value:
+        value = f'redisboard.data.{value}'
+    return value
+
+
 parser = argparse.ArgumentParser(description='Runs redisboard in an ad-hoc django project.')
+parser.add_argument(
+    '--debug',
+    action='store_true',
+    help='Enable debug mode (DEBUG=True and autoreload enabled).',
+)
 parser.add_argument(
     '--password',
     '-p',
@@ -32,6 +43,13 @@ parser.add_argument(
     '-s',
     default=os.path.expanduser('~/.redisboard'),
     help='Where to save the SECRET_KEY and sqlite database. (default: %(default)s)',
+)
+parser.add_argument(
+    '--decoder',
+    '-d',
+    default='UTF8BackslashReplaceDecoder',
+    type=parse_class,
+    help='Decoder class to use . (default: %(default)s)',
 )
 parser.add_argument(
     'addrport',
@@ -58,21 +76,6 @@ DJANGO_SETTINGS = dict(
         'django.contrib.staticfiles',
         'redisboard',
     ),
-    TEMPLATES=[
-        {
-            'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': [],
-            'APP_DIRS': True,
-            'OPTIONS': {
-                'context_processors': [
-                    'django.template.context_processors.debug',
-                    'django.template.context_processors.request',
-                    'django.contrib.auth.context_processors.auth',
-                    'django.contrib.messages.context_processors.messages',
-                ],
-            },
-        }
-    ],
     MIDDLEWARE=[
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
@@ -136,15 +139,36 @@ def main(args=None):
     from django.views.generic.base import RedirectView
 
     settings.configure(
-        SECRET_KEY=secret_key, DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': database_path}}, **DJANGO_SETTINGS
+        DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': database_path}},
+        DEBUG=args.debug,
+        REDISBOARD_DECODER_CLASS=args.decoder,
+        SECRET_KEY=secret_key,
+        TEMPLATES=[
+            {
+                'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                'DIRS': [],
+                'APP_DIRS': True,
+                'OPTIONS': {
+                    'debug': args.debug,
+                    'string_if_invalid': '[MISSING VARIABLE: "%s"]' if args.debug else '',
+                    'context_processors': [
+                        'django.template.context_processors.debug',
+                        'django.template.context_processors.request',
+                        'django.contrib.auth.context_processors.auth',
+                        'django.contrib.messages.context_processors.messages',
+                    ],
+                },
+            }
+        ],
+        **DJANGO_SETTINGS,
     )
 
     django.setup()
 
     global urlpatterns
     urlpatterns = [
-        path('', admin.site.urls),
         path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('redisboard/favicon.ico'), permanent=True)),
+        path('', admin.site.urls),
     ]
 
     from django.contrib.auth.models import User
@@ -161,13 +185,13 @@ def main(args=None):
         print()
         print('=' * 80)
         print(
-            f'''
+            f"""
     Credentials:
 
         USERNAME: redisboard
         PASSWORD: {pwd if args.password is None else '<PROVIDED VIA --password OPTION>'}
 
-'''
+"""
         )
         print('=' * 80)
         print()
@@ -180,4 +204,7 @@ def main(args=None):
             user.set_password(args.password)
             user.save(update_fields=['password'])
 
-    execute_from_command_line(['django-admin', 'runserver', '--insecure', '--noreload', args.addrport])
+    if args.debug:
+        execute_from_command_line(['django-admin', 'runserver', '--insecure', args.addrport])
+    else:
+        execute_from_command_line(['django-admin', 'runserver', '--insecure', '--noreload', args.addrport])

@@ -4,7 +4,7 @@ from django.db import migrations
 
 
 def forwards_func(apps, schema_editor):
-    RedisServer = apps.get_model("redisboard", "RedisServer")
+    RedisServer = apps.get_model('redisboard', 'RedisServer')
     db_alias = schema_editor.connection.alias
     for obj in RedisServer.objects.using(db_alias).all():
         if obj.hostname.startswith('/'):
@@ -15,7 +15,7 @@ def forwards_func(apps, schema_editor):
 
 
 def reverse_func(apps, schema_editor):
-    RedisServer = apps.get_model("redisboard", "RedisServer")
+    RedisServer = apps.get_model('redisboard', 'RedisServer')
     db_alias = schema_editor.connection.alias
     for obj in RedisServer.objects.using(db_alias).all():
         kwargs = redis.connection.parse_url(obj.url)

@@ -1,0 +1,65 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_modify byte_filters %}
+
+{% block title %}Inspect {{ original }}{% endblock %}
+
+{% block extrahead %}{{ block.super }}
+  {% url 'admin:jsi18n' as jsi18nurl %}
+  <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+  {{ media }}
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  {% get_static_prefix as STATIC_PREFIX %}
+  {% get_media_prefix as MEDIA_PREFIX %}
+
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}">
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_PREFIX|default:MEDIA_PREFIX }}redisboard/admin.css"/>
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} inspect-form{% endblock %}
+
+{% if is_popup %}
+  {% block breadcrumbs %}
+    <div class="breadcrumbs">
+      <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+      &rsaquo; <a href="{% url 'admin:app_list' app_label='redisboard' %}">{{ 'redisboard'|capfirst|escape }}</a>
+      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_changelist' %}">{{ 'redisserver'|capfirst }}</a>
+      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_change' original.id %}">{{ original|truncatewords:"18" }}</a>
+      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}">{% trans 'Inspect' %}</a>
+      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id db.id %}">{% trans 'DB' %}: {{ db.id }}</a>
+      &rsaquo; {% trans 'Key' %}: {{ key|truncatechars:200 }}
+    </div>
+  {% endblock %}
+{% endif %}
+
+{% block content %}
+  {% spaceless %}
+    <div id="content-main" class="module">
+      <fieldset class="module aligned key-details">
+        <h2>{% trans "Stats" %}</h2>
+        {{ stats }}
+      </fieldset>
+      <fieldset class="module aligned key-data">
+        <h2>{% trans "Value" %}</h2>
+        {{ scan.data }}
+        {% if scan.cursor or db.cursor %}
+          <p class="paginator">
+            {% if db.cursor %}
+              <a
+                href="{% url 'admin:redisboard_redisserver_inspect' server_id=original.id db=db.id key=encoded_key %}">{% trans 'Reset' %}</a>
+            {% endif %}
+            <span class="this-page">at cursor: {{ db.cursor }}</span>
+            {% if scan.cursor %}
+              <a
+                href="{% url 'admin:redisboard_redisserver_inspect' server_id=original.id db=db.id key=encoded_key cursor=scan.cursor count=count %}">{% trans 'Next' %}</a>
+            {% endif %}
+          </p>
+        {% endif %}
+      </fieldset>
+    </div>
+  {% endspaceless %}
+{% endblock %}
