@@ -19,4 +19,4 @@ include CONTRIBUTING.rst
 include LICENSE
 include README.rst
 
-global-exclude *.py[cod] __pycache__/* *.so *.dylib
+global-exclude *.py[cod] __pycache__/* *.so *.dylib *.sqlite3
