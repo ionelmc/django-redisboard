@@ -63,7 +63,7 @@ REDISBOARD_DETAIL_CONVERTERS = {
     re.compile(name): converter
     for name, converter in getattr(
         settings,
-        'REDISBOARD_DETAIL_FILTERS',
+        'REDISBOARD_DETAIL_CONVERTERS',
         {
             '.*_seconds$': timedelta_fromseconds,
             'avg_ttl': timedelta_fromseconds,
