@@ -2,6 +2,11 @@
 Changelog
 =========
 
+8.0.1 (2022-05-15)
+------------------
+
+* Fixed incorrect settings loading of ``REDISBOARD_DETAIL_CONVERTERS``.
+
 8.0.0 (2022-05-15)
 ------------------
 
