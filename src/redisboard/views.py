@@ -34,7 +34,9 @@ def inspect_key(request, server: RedisServer, db: int, key: str, cursor: int = 0
                 'cursor': cursor,
             },
             'original': server,
-            'app_label': 'redisboard',
+            'site_header': None,
+            'opts': {'app_label': 'redisboard', 'object_name': 'redisserver'},
+            'media': '',
         },
     )
 
@@ -70,6 +72,8 @@ def inspect(request, server: RedisServer, db: Union[int, None] = None, cursor: U
             'stats': stats,
             'active': active,
             'filters': f'?{request.GET.urlencode()}' if request.GET else '',
-            'app_label': 'redisboard',
+            'site_header': None,
+            'opts': {'app_label': 'redisboard', 'object_name': 'redisserver'},
+            'media': '',
         },
     )
