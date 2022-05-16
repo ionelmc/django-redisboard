@@ -2,6 +2,14 @@
 Changelog
 =========
 
+8.1.0 (2022-05-16)
+------------------
+
+* Added ``--version`` CLI option.
+* Changed redisboard CLI admin header to show version and also fixed incorrect context that prevented AdminSite customizations overriding
+  said header. Probably view site link also fixed.
+
+
 8.0.1 (2022-05-15)
 ------------------
 

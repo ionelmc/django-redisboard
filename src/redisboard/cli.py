@@ -20,6 +20,11 @@ import os
 import random
 import string
 
+from django.contrib.admin import AdminSite
+from django.contrib.admin.apps import AdminConfig
+
+from . import __version__
+
 
 def parse_class(value):
     if '.' not in value:
@@ -52,6 +57,11 @@ parser.add_argument(
     help='Decoder class to use . (default: %(default)s)',
 )
 parser.add_argument(
+    '--version',
+    action='version',
+    version=f'redisboard {__version__}',
+)
+parser.add_argument(
     'addrport',
     nargs='?',
     default='0:8000',
@@ -68,12 +78,12 @@ DJANGO_SETTINGS = dict(
     },
     SESSION_ENGINE='django.contrib.sessions.backends.cached_db',
     INSTALLED_APPS=(
-        'django.contrib.admin',
         'django.contrib.auth',
         'django.contrib.contenttypes',
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+        'redisboard.cli.RedisboardAdminConfig',
         'redisboard',
     ),
     MIDDLEWARE=[
@@ -110,6 +120,14 @@ DJANGO_SETTINGS = dict(
         },
     },
 )
+
+
+class RedisboardAdminSite(AdminSite):
+    site_header = f'Redisboard v{__version__}'
+
+
+class RedisboardAdminConfig(AdminConfig):
+    default_site = 'redisboard.cli.RedisboardAdminSite'
 
 
 def get_random(length=50, chars='abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'):
