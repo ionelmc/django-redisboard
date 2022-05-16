@@ -26,8 +26,8 @@
   {% block breadcrumbs %}
     <div class="breadcrumbs">
       <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-      &rsaquo; <a href="{% url 'admin:app_list' app_label='redisboard' %}">{{ 'redisboard'|capfirst|escape }}</a>
-      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_changelist' %}">{{ 'redisserver'|capfirst }}</a>
+      &rsaquo; <a href="{% url 'admin:app_list' app_label='redisboard' %}">{% trans 'Redisboard' %}</a>
+      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_changelist' %}">{% trans 'Redis Servers' %}</a>
       &rsaquo; <a href="{% url 'admin:redisboard_redisserver_change' original.id %}">{{ original|truncatewords:"18" }}</a>
       &rsaquo; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}">{% trans 'Inspect' %}</a>
       &rsaquo; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id db.id %}">{% trans 'DB' %}: {{ db.id }}</a>
