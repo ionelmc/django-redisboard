@@ -25,13 +25,13 @@ logger = getLogger(__name__)
 def cleanup_changelist_response(response: TemplateResponse):
     obj: RedisServer
     for obj in response.context_data['cl'].queryset:
-        connection = obj.__dict__.get('connection')
-        if connection:
-            connection.close()
+        cleanup_connection(response, obj)
 
 
-def cleanup_connection(response: TemplateResponse, connection):
-    connection.close()
+def cleanup_connection(_, server: RedisServer):
+    connection = server.__dict__.get('connection')
+    if connection:
+        connection.close()
 
 
 class RedisServerAdmin(admin.ModelAdmin):
@@ -112,14 +112,13 @@ class RedisServerAdmin(admin.ModelAdmin):
             def wrapper(request, server_id, **kwargs):
                 server = get_object_or_404(RedisServer, id=server_id)
                 if self.has_view_permission(request, server) and request.user.has_perm('redisboard.can_inspect'):
-                    connection = server.connection
                     try:
                         response = view(request, server, **kwargs)
                         if isinstance(response, TemplateResponse):
-                            response.add_post_render_callback(partial(cleanup_connection, connection=connection.close))
+                            response.add_post_render_callback(partial(cleanup_connection, server=server))
                         return response
                     finally:
-                        connection.close()
+                        cleanup_connection(None, server)
                 else:
                     return HttpResponseForbidden("You can't inspect this server.")
 
