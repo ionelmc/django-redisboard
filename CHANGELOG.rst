@@ -2,6 +2,15 @@
 Changelog
 =========
 
+8.2.0 (2022-05-17)
+------------------
+
+* Added a full details page.
+* Added some headings in inspect pages.
+* Fixed model name in breadcrumbs.
+* Fixed empty media in inspect pages.
+* Fixed inspect page giving 500 error for unavailable servers.
+
 8.1.0 (2022-05-16)
 ------------------
 
