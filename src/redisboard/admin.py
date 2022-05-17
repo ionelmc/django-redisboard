@@ -181,7 +181,7 @@ class RedisServerAdmin(admin.ModelAdmin):
                 },
                 'original': server,
                 'opts': {'app_label': 'redisboard', 'object_name': 'redisserver'},
-                'media': '',
+                'media': self.media,
             },
         )
 
@@ -218,7 +218,7 @@ class RedisServerAdmin(admin.ModelAdmin):
                 'active': active,
                 'filters': f'?{request.GET.urlencode()}' if request.GET else '',
                 'opts': {'app_label': 'redisboard', 'object_name': 'redisserver'},
-                'media': '',
+                'media': self.media,
             },
         )
 
