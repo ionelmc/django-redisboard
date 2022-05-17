@@ -5,6 +5,7 @@ from typing import Union
 from urllib.parse import quote
 from urllib.parse import unquote_to_bytes
 
+import redis
 from django.contrib import admin
 from django.http import HttpResponseForbidden
 from django.http import HttpResponseNotFound
@@ -89,9 +90,11 @@ class RedisServerAdmin(admin.ModelAdmin):
 
     def tools(self, obj: RedisServer):
         return format_html(
-            '<a href="{}">{}</a>',
+            '<a href="{}">{}</a><br><a href="{}">{}</a>',
             resolve_url('admin:redisboard_redisserver_inspect', server_id=obj.id),
             _('Inspect'),
+            resolve_url('admin:redisboard_redisserver_details', server_id=obj.id),
+            _('Details'),
         )
 
     tools.short_description = _('Tools')
@@ -126,38 +129,43 @@ class RedisServerAdmin(admin.ModelAdmin):
 
         return [
             path(
+                '<int:server_id>/details/',
+                wrap(self.details_view),
+                name='redisboard_redisserver_details',
+            ),
+            path(
                 '<int:server_id>/inspect/',
-                wrap(self.inspect),
+                wrap(self.inspect_view),
                 name='redisboard_redisserver_inspect',
             ),
             path(
                 '<int:server_id>/inspect/<int:db>/',
-                wrap(self.inspect),
+                wrap(self.inspect_view),
                 name='redisboard_redisserver_inspect',
             ),
             path(
                 '<int:server_id>/inspect/<int:db>/key/<path:key>/',
-                wrap(self.inspect_key),
+                wrap(self.inspect_key_view),
                 name='redisboard_redisserver_inspect',
             ),
             path(
                 '<int:server_id>/inspect/<int:db>/<int:cursor>/',
-                wrap(self.inspect),
+                wrap(self.inspect_view),
                 name='redisboard_redisserver_inspect',
             ),
             path(
                 '<int:server_id>/inspect/<int:db>/<int:cursor>/key/<path:key>/',
-                wrap(self.inspect_key),
+                wrap(self.inspect_key_view),
                 name='redisboard_redisserver_inspect',
             ),
             path(
                 '<int:server_id>/inspect/<int:db>/<int:cursor>/<int:count>/key/<path:key>/',
-                wrap(self.inspect_key),
+                wrap(self.inspect_key_view),
                 name='redisboard_redisserver_inspect',
             ),
         ] + urlpatterns
 
-    def inspect_key(self, request, server: RedisServer, db: int, key: str, cursor: int = 0, count: int = 0):
+    def inspect_key_view(self, request, server: RedisServer, db: int, key: str, cursor: int = 0, count: int = 0):
         key: bytes = unquote_to_bytes(key)
         display = server.display
         if not server.connection.exists(key):
@@ -184,7 +192,7 @@ class RedisServerAdmin(admin.ModelAdmin):
             },
         )
 
-    def inspect(self, request, server: RedisServer, db: Union[int, None] = None, cursor: Union[int, None] = 0):
+    def inspect_view(self, request, server: RedisServer, db: Union[int, None] = None, cursor: Union[int, None] = 0):
         stats = server.stats
         active = None
         databases = []
@@ -216,6 +224,48 @@ class RedisServerAdmin(admin.ModelAdmin):
                 'stats': stats,
                 'active': active,
                 'filters': f'?{request.GET.urlencode()}' if request.GET else '',
+                'opts': {'app_label': 'redisboard', 'object_name': 'redisserver'},
+                'media': self.media,
+            },
+        )
+
+    def details_view(self, request, server: RedisServer):
+        sections = {}
+        try:
+            conn = server.connection
+            conn.ping()
+            status = 'UP'
+        except (redis.exceptions.ConnectionError, redis.exceptions.TimeoutError) as exc:
+            status = f'DOWN: {exc}'
+        except redis.exceptions.RedisError as exc:
+            status = f'ERROR: {exc!r}'
+        else:
+            for section in [
+                'server',
+                'clients',
+                'memory',
+                'persistence',
+                'stats',
+                'replication',
+                'cpu',
+                'commandstats',
+                'latencystats',
+                'cluster',
+                'modules',
+                'keyspace',
+                'modules',
+                'errorstats',
+            ]:
+                sections[section] = conn.info(section)
+
+        return render(
+            request,
+            'redisboard/details.html',
+            {
+                **self.admin_site.each_context(request),
+                'original': server,
+                'sections': sections,
+                'status': status,
                 'opts': {'app_label': 'redisboard', 'object_name': 'redisserver'},
                 'media': self.media,
             },

@@ -1,0 +1,68 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_modify byte_filters %}
+
+{% block title %}Inspect {{ original }}{% endblock %}
+
+{% block extrahead %}{{ block.super }}
+  {% url 'admin:jsi18n' as jsi18nurl %}
+  <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+  {{ media }}
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  {% get_static_prefix as STATIC_PREFIX %}
+  {% get_media_prefix as MEDIA_PREFIX %}
+
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}">
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_PREFIX|default:MEDIA_PREFIX }}redisboard/admin.css"/>
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} inspect-form{% endblock %}
+
+{% if is_popup %}
+  {% block breadcrumbs %}
+    <div class="breadcrumbs">
+      <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+      &rsaquo; <a href="{% url 'admin:app_list' app_label='redisboard' %}">{{ 'redisboard'|capfirst|escape }}</a>
+      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_changelist' %}">{{ 'redisserver'|capfirst }}</a>
+      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_change' original.id %}">{{ original|truncatewords:"18" }}</a>
+      &rsaquo; {% trans 'Details' %}
+    </div>
+  {% endblock %}
+{% endif %}
+
+{% block content %}
+  {% spaceless %}
+    <div id="content-main" class="module">
+      <h1>{% trans "Details" %}</h1>
+      {% for section, details in sections.items %}
+        <fieldset class="module aligned key-details">
+          <h2>{{ section|capfirst }}</h2>
+          <table>
+            <thead>
+            <tr>
+              <th>{% trans "Name" %}</th>
+              <th>{% trans "Value" %}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for key, value in details.items %}
+              <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </fieldset>
+      {% empty %}
+        <fieldset class="module aligned key-details">
+          <h2>{{ status }}</h2>
+        </fieldset>
+      {% endfor %}
+    </div>
+  {% endspaceless %}
+{% endblock %}
