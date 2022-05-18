@@ -2,6 +2,10 @@
 Changelog
 =========
 
+8.2.2 (2022-05-19)
+------------------
+
+* Fix broken missing key check for databases different than the default one (usually 0) and render a full page instead of a text/plain 404.
 
 8.2.1 (2022-05-18)
 ------------------

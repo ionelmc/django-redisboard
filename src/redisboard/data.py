@@ -219,11 +219,14 @@ class BaseDisplay(ABC):
     def value(self, db, key, **kwargs):
         conn = self.server.connection
         conn.select(db)
-        type_ = conn.type(key).decode()
-        total = getattr(self.length_query_class(conn), type_)(key)
-        cursor, value = getattr(self.value_query_class(conn), type_)(key, **kwargs)
-        decoded_value = getattr(self.decoder, type_)(key, value, **kwargs)
-        return ScanResult(cursor, len(value), total, decoded_value)
+        if conn.exists(key):
+            type_ = conn.type(key).decode()
+            total = getattr(self.length_query_class(conn), type_)(key)
+            cursor, value = getattr(self.value_query_class(conn), type_)(key, **kwargs)
+            decoded_value = getattr(self.decoder, type_)(key, value, **kwargs)
+            return ScanResult(cursor, len(value), total, decoded_value)
+        else:
+            return ScanResult(0, 0, 0, [(gettext('ERROR'), gettext('key not found'))])
 
 
 class TabularDisplay(BaseDisplay):

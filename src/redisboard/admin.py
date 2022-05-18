@@ -8,7 +8,6 @@ from urllib.parse import unquote_to_bytes
 import redis
 from django.contrib import admin
 from django.http import HttpResponseForbidden
-from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.shortcuts import resolve_url
@@ -168,8 +167,6 @@ class RedisServerAdmin(admin.ModelAdmin):
     def inspect_key_view(self, request, server: RedisServer, db: int, key: str, cursor: int = 0, count: int = 0):
         key: bytes = unquote_to_bytes(key)
         display = server.display
-        if not server.connection.exists(key):
-            return HttpResponseNotFound('Key is gone.')
         stats = display.keys(db, [key])
         scan = display.value(db, key, cursor=cursor, count=count)
         return render(
