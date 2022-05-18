@@ -2,6 +2,13 @@
 Changelog
 =========
 
+
+8.2.1 (2022-05-18)
+------------------
+
+* Fixed issue with key stats being empty for databases different than the default one (usually 0). Turns out pipelines open up a new
+  connection and need a select call.
+
 8.2.0 (2022-05-17)
 ------------------
 

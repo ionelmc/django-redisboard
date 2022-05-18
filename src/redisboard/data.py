@@ -184,14 +184,18 @@ class BaseDisplay(ABC):
         else:
             usage_field, usage_command = 'idletime', 'IDLETIME'
 
-        with conn.pipeline() as pipe:
+        pipe = conn.pipeline(transaction=False)
+        pipe.select(db)
+        pipe.execute()
+
+        with pipe:
             for key in keys:
                 pipe.type(key)
                 pipe.object('ENCODING', key)
             result = iter(map(ascii_if_not_none, pipe.execute()))
             values = list(zip(keys, result, result))
 
-        with conn.pipeline() as pipe:
+        with pipe:
             query = self.length_query_class(pipe)
             for key, type_, *_ in values:
                 pipe.ttl(key)
