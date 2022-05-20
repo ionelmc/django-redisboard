@@ -30,9 +30,10 @@ table {
     text-align: left;
 }
 
+table table tr:hover *,
 .key-details tr:hover td,
 .key-data tr:hover td {
-    background: #FFFF80;
+    background: var(--selected-row);
 }
 
 .key-data td:nth-child(2) {
@@ -54,8 +55,8 @@ td.error {
     color: #B22222;
 }
 
-table table tr:nth-child(2n) {
-    background: transparent;
+table table tr {
+    background: transparent !important;
 }
 
 table table th {
