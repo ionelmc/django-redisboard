@@ -34,8 +34,8 @@
     <div id="content-main" class="module">
       <h1>{% trans "Details" %}</h1>
       <ul class="object-tools">
-        <li><a href="{% url opts|admin_urlname:'inspect' original.id %}">{% translate "Inspect" %}</a></li>
-        <li><a href="{% url opts|admin_urlname:'change' original.id %}">{% translate "Change" %}</a></li>
+        <li><a href="{% url opts|admin_urlname:'inspect' original.id %}">{% trans "Inspect" %}</a></li>
+        <li><a href="{% url opts|admin_urlname:'change' original.id %}">{% trans "Change" %}</a></li>
       </ul>
 
       {% for section, details in sections.items %}

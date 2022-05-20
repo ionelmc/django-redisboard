@@ -38,8 +38,8 @@
     <div id="content-main" class="module">
       <h1>{% trans "Inspect" %}</h1>
       <ul class="object-tools">
-        <li><a href="{% url opts|admin_urlname:'details' original.id %}">{% translate "Details" %}</a></li>
-        <li><a href="{% url opts|admin_urlname:'change' original.id %}">{% translate "Change" %}</a></li>
+        <li><a href="{% url opts|admin_urlname:'details' original.id %}">{% trans "Details" %}</a></li>
+        <li><a href="{% url opts|admin_urlname:'change' original.id %}">{% trans "Change" %}</a></li>
       </ul>
 
       {% if not active %}
