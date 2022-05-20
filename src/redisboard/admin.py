@@ -105,7 +105,7 @@ class RedisServerAdmin(admin.ModelAdmin):
         return response
 
     def get_urls(self):
-        urlpatterns = super(RedisServerAdmin, self).get_urls()
+        urlpatterns = super().get_urls()
         from django.urls import path
 
         def wrap(view):
@@ -184,7 +184,7 @@ class RedisServerAdmin(admin.ModelAdmin):
                     'cursor': cursor,
                 },
                 'original': server,
-                'opts': {'app_label': 'redisboard', 'object_name': 'redisserver'},
+                'opts': RedisServer._meta,
                 'media': self.media,
             },
         )
@@ -221,7 +221,7 @@ class RedisServerAdmin(admin.ModelAdmin):
                 'stats': stats,
                 'active': active,
                 'filters': f'?{request.GET.urlencode()}' if request.GET else '',
-                'opts': {'app_label': 'redisboard', 'object_name': 'redisserver'},
+                'opts': RedisServer._meta,
                 'media': self.media,
             },
         )
@@ -263,7 +263,7 @@ class RedisServerAdmin(admin.ModelAdmin):
                 'original': server,
                 'sections': sections,
                 'status': status,
-                'opts': {'app_label': 'redisboard', 'object_name': 'redisserver'},
+                'opts': RedisServer._meta,
                 'media': self.media,
             },
         )

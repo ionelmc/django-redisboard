@@ -1,45 +1,44 @@
 {% extends "admin/base_site.html" %}
-{% load i18n static admin_modify byte_filters %}
+{% load i18n static admin_urls admin_modify %}
 
-{% block title %}Inspect {{ original }}{% endblock %}
+{% block title %}{% trans 'Inspect' %} {% trans 'Key' %}: {{ key|truncatechars:200 }} - {{ original }}{% endblock %}
 
-{% block extrahead %}{{ block.super }}
-  {% url 'admin:jsi18n' as jsi18nurl %}
-  <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+{% block extrahead %}
+  {{ block.super }}
+  <script src="{% url 'admin:jsi18n' %}"></script>
   {{ media }}
 {% endblock %}
 
-{% block extrastyle %}
-  {{ block.super }}
-  {% get_static_prefix as STATIC_PREFIX %}
-  {% get_media_prefix as MEDIA_PREFIX %}
-
+{% block extrastyle %}{{ block.super }}
   <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}">
-  <link rel="stylesheet" type="text/css" href="{{ STATIC_PREFIX|default:MEDIA_PREFIX }}redisboard/admin.css"/>
+  <link rel="stylesheet" type="text/css" href="{% static 'redisboard/admin.css' %}"/>
 {% endblock %}
 
-{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+{% block coltype %}colM{% endblock %}
 
-{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} inspect-form{% endblock %}
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} inspect-form{% endblock %}
 
-{% if is_popup %}
-  {% block breadcrumbs %}
-    <div class="breadcrumbs">
-      <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-      &rsaquo; <a href="{% url 'admin:app_list' app_label='redisboard' %}">{% trans 'Redisboard' %}</a>
-      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_changelist' %}">{% trans 'Redis Servers' %}</a>
-      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_change' original.id %}">{{ original|truncatewords:"18" }}</a>
-      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id %}">{% trans 'Inspect' %}</a>
-      &rsaquo; <a href="{% url 'admin:redisboard_redisserver_inspect' original.id db.id %}">{% trans 'DB' %}: {{ db.id }}</a>
-      &rsaquo; {% trans 'Key' %}: {{ key|truncatechars:200 }}
-    </div>
-  {% endblock %}
-{% endif %}
+{% block breadcrumbs %}
+  <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+    &rsaquo; <a href="{% url opts|admin_urlname:'change' original.id %}">{{ original|truncatewords:"18" }}</a>
+    &rsaquo; <a href="{% url opts|admin_urlname:'inspect' original.id %}">{% trans 'Inspect' %}</a>
+    &rsaquo; <a href="{% url opts|admin_urlname:'inspect' original.id db.id %}">{% trans 'DB' %}: {{ db.id }}</a>
+    &rsaquo; {% trans 'Key' %}: {{ key|truncatechars:200 }}
+  </div>
+{% endblock %}
 
 {% block content %}
   {% spaceless %}
     <div id="content-main" class="module">
       <h1>{% trans "Inspect Key" %}</h1>
+      <ul class="object-tools">
+        <li><a href="{% url opts|admin_urlname:'details' original.id %}">{% translate "Details" %}</a></li>
+        <li><a href="{% url opts|admin_urlname:'change' original.id %}">{% translate "Change" %}</a></li>
+      </ul>
+
       <fieldset class="module aligned key-details">
         <h2>{% trans "Stats" %}</h2>
         {{ stats }}

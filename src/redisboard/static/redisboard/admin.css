@@ -1,51 +1,51 @@
-.inspect-form #content-main {
+#content-main {
     min-width: 980px;
     margin: 0 auto;
     float: none;
 }
 
-.inspect-form table {
+table {
     width: 100%;
 }
 
-.inspect-form .key-details td:first-child {
+.key-details td:first-child {
     width: 60%;
     text-align: left;
 }
 
-.inspect-form .server-status td {
+.server-status td {
     text-align: center;
 }
 
-.inspect-form .key td:nth-child(n+2) {
+.key td:nth-child(n+2) {
     text-align: center;
 }
 
-.inspect-form .key-details th,
-.inspect-form .key-details td {
+.key-details th,
+.key-details td {
     text-align: center;
 }
 
-.inspect-form .key-data td {
+.key-data td {
     text-align: left;
 }
 
-.inspect-form .key-details tr:hover td,
-.inspect-form .key-data tr:hover td {
+.key-details tr:hover td,
+.key-data tr:hover td {
     background: #FFFF80;
 }
 
-.inspect-form .key-data td:nth-child(2) {
+.key-data td:nth-child(2) {
     font-family: monospace;
     width: 99%;
 }
 
-.inspect-form .details td {
+.details td {
     width: 50%;
     word-break: break-all;
 }
 
-.inspect-form .key-data td:nth-child(2) {
+.key-data td:nth-child(2) {
     word-break: break-all;
 }
 
