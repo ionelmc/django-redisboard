@@ -2,11 +2,11 @@
 Changelog
 =========
 
-
 8.3.0 (2022-05-20)
 ------------------
 
-* Added a bunch of links to Change/Inspect/Details in variuos pages and cleaned up code some more.
+* Added a bunch of links to Change/Inspect/Details in various pages and cleaned up code some more.
+* Improved simplified/styling a bit.
 
 8.2.2 (2022-05-19)
 ------------------
