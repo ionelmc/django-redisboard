@@ -68,8 +68,8 @@ setup(
     keywords=['django', 'redis', 'monitoring', 'inspector', 'statistics'],
     python_requires='>=3.7',
     install_requires=[
-        'redis>=3.5',
-        'Django>=2.2',
+        'redis>=4.1',
+        'django>=2.2',
     ],
     extras_require={
         # eg:
