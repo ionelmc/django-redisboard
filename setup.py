@@ -70,6 +70,7 @@ setup(
     install_requires=[
         'redis>=4.1',
         'django>=2.2',
+        'attrs>=20.1.0',
     ],
     extras_require={
         # eg:
