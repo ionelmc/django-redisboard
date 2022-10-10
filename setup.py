@@ -20,7 +20,7 @@ def read(*names, **kwargs):
 
 setup(
     name='django-redisboard',
-    version='8.3.0',
+    version='8.3.1',
     license='BSD-2-Clause',
     description='Redis monitoring and inspection drop-in application using django admin.',
     long_description='{}\n{}'.format(
