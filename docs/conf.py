@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-
 import sphinx_py3doc_enhanced_theme
 
 extensions = [

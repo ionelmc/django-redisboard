@@ -22,7 +22,6 @@ default_context:
     github_actions: 'yes'
     github_actions_osx: 'no'
     github_actions_windows: 'no'
-    legacy_python: 'no'
     license: BSD 2-Clause License
     linter: flake8
     package_name: redisboard
@@ -32,7 +31,7 @@ default_context:
     project_short_description: Redis monitoring and inspection drop-in application using django admin.
     pypi_badge: 'yes'
     pypi_disable_upload: 'no'
-    release_date: '2022-01-27'
+    release_date: '2022-10-10'
     repo_hosting: github.com
     repo_hosting_domain: github.com
     repo_main_branch: master
@@ -50,7 +49,7 @@ default_context:
     test_matrix_separate_coverage: 'no'
     travis: 'no'
     travis_osx: 'no'
-    version: 8.3.0
+    version: 8.3.1
     version_manager: bump2version
     website: http://blog.ionelmc.ro
     year_from: '2011'
