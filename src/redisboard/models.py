@@ -49,10 +49,7 @@ REDISBOARD_DETAIL_FILTERS = [
         (
             '.*_version',
             '.*_api',
-            '.*_human',
             '.*_policy',
-            'expired_keys',
-            'evicted_keys',
             'redis_version',
             'redis_mode',
             'os',

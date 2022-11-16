@@ -30,6 +30,22 @@ REDISBOARD_SCAN_COUNT: int = getattr(settings, 'REDISBOARD_SCAN_COUNT', 1000)
 REDISBOARD_STRING_PAGINATION: int = getattr(settings, 'REDISBOARD_STRING_PAGINATION', 10000)
 
 
+def bytes_to_human(n):
+    try:
+        n = int(n)
+    except ValueError:
+        return n
+
+    if n < 1024:
+        return f'{n}B'
+    elif n < 1048576:
+        return f'{n/1024:.2f}K'
+    elif n < 1073741824:
+        return f'{n/1048576:.2f}M'
+    elif n < 1099511627776:
+        return f'{n/1073741824:.2f}G'
+
+
 class BaseDecoder(ABC):
     def __init__(self, server):
         pass
@@ -251,11 +267,64 @@ class TabularDisplay(BaseDisplay):
 
     def details(self):
         stats = self.server.stats
-        details = stats.details
-        output = [f'<tr><th>{k.replace("_", " ")}</th><td>{v}</td></tr>' for k, v in details.items()]
-        for db, details in stats.databases.items():
+        info = stats.info
+        output = [f'<tr><th>{k.replace("_", " ")}</th><td>{v}</td></tr>' for k, v in stats.details.items()]
+        details = {
+            'keys': {
+                'expired': info.get('expired_keys', '?'),
+                'evicted': info.get('evicted_keys', '?'),
+                'hits': info.get('keyspace_hits', '?'),
+                'misses': info.get('keyspace_misses', '?'),
+            },
+            'memory': {
+                'lua': info.get('used_memory_lua_human', '?'),
+                'vm': info.get('used_memory_vm_total_human', '?'),
+                'scripts': info.get('used_memory_scripts_human', '?'),
+                'used': info.get('used_memory_human', '?'),
+                'peak': info.get('used_memory_peak_human', '?'),
+                'max': info.get('maxmemory_human', '?'),
+                'rss': info.get('used_memory_rss_human', '?'),
+                'system': info.get('total_system_memory_human', '?'),
+            },
+            'commands': {
+                'per<br>second': info.get('instantaneous_ops_per_sec', '?'),
+                'errors': info.get('total_error_replies', '?'),
+                'denied<br>cmd/key/chan': (
+                    f'{info.get("acl_access_denied_cmd", "?")}/'
+                    f'{info.get("acl_access_denied_key", "?")}/'
+                    f'{info.get("acl_access_denied_channel", "?")}'
+                ),
+                'total': info.get('total_commands_processed', '?'),
+            },
+            'input': {
+                'current': bytes_to_human(info.get('instantaneous_input_kbps', '?')),
+                'total': bytes_to_human(info.get('total_net_input_bytes', '?')),
+                'repl': bytes_to_human(info.get('instantaneous_input_repl_kbps', '?')),
+                'repl total': bytes_to_human(info.get('total_net_repl_input_bytes', '?')),
+            },
+            'output': {
+                'current': bytes_to_human(info.get('instantaneous_output_kbps', '?')),
+                'total': bytes_to_human(info.get('total_net_output_bytes', '?')),
+                'repl': bytes_to_human(info.get('total_net_repl_output_bytes', '?')),
+                'repl total': bytes_to_human(info.get('instantaneous_output_repl_kbps', '?')),
+            },
+            'clients': {
+                'current': info.get('connected_clients', '?'),
+                'rejected': info.get('rejected_connections', '?'),
+                'evicted': info.get('rejected_connections', '?'),
+                'timeout': info.get('clients_in_timeout_table', '?'),
+                'blocked': info.get('blocked_clients', '?'),
+                'tracked': info.get('tracking_clients', '?'),
+                'max': info.get('maxclients', '?'),
+                'total': info.get('total_connections_received', '?'),
+            },
+        }
+        for db, db_details in stats.databases.items():
+            details[f'db{db}'] = db_details
+
+        for db, details in details.items():
             keys = details.keys()
-            output.append(f'<tr><td colspan="2"><table><tr><th>db{db}</th>')
+            output.append(f'<tr><td colspan="2"><table><tr><th>{db}</th>')
             output.extend(f'<th>{k}</th>' for k in keys)
             output.append('</tr><tr><td></td>')
             output.extend(f'<td>{details[k]}</td>' for k in keys)
@@ -275,10 +344,10 @@ class TabularDisplay(BaseDisplay):
             'used_cpu_user',
             'used_cpu_user_children',
         )
-        data = dict((k, stats.info[k]) for k in data)
+        data = dict((k[9:], stats.info[k]) for k in data)
         total_cpu = sum(data.values())
         uptime = stats.info['uptime_in_seconds']
-        data['cpu_utilization'] = f'{total_cpu / uptime if uptime else 0:.3f}%%'
+        data['utilization'] = f'{total_cpu / uptime if uptime else 0:.3f}%'
 
         data = sorted(data.items())
 

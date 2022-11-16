@@ -2,6 +2,12 @@
 Changelog
 =========
 
+8.4.0 (2022-11-16)
+------------------
+
+* Added more details in the changelist table (in addition to what is configured in ``REDISBOARD_DETAIL_FILTERS``).
+* Made some of the details in the changelist table more compact.
+
 8.3.1 (2022-10-10)
 ------------------
 
