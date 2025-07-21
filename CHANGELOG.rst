@@ -2,6 +2,15 @@
 Changelog
 =========
 
+9.0.0 (2025-07-22)
+------------------
+
+* Dropped support for Django 4.1 or older.
+* Dropped support for Python 3.8 or older.
+* Updated CI to run with Python 3.9 - 3.11 and Django 4.2/5.2.
+* Modernized some packaging (metadata in pyproject.toml etc).
+* Fixed bug with INFO response processing there there are keys prefixed with "db" but do not have db number.
+
 8.4.0 (2022-11-16)
 ------------------
 
