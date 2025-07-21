@@ -3,8 +3,6 @@ from datetime import datetime
 from itertools import starmap
 from logging import getLogger
 from typing import TYPE_CHECKING
-from typing import Dict
-from typing import Type
 
 import redis
 from attr import Factory
@@ -28,16 +26,16 @@ if TYPE_CHECKING:
 
 logger = getLogger(__name__)
 
-REDISBOARD_DECODER_CLASS: 'Type[BaseDecoder]' = import_string(
+REDISBOARD_DECODER_CLASS: 'type[BaseDecoder]' = import_string(
     getattr(settings, 'REDISBOARD_DECODER_CLASS', 'redisboard.data.UTF8BackslashReplaceDecoder'),
 )
-REDISBOARD_DISPLAY_CLASS: 'Type[BaseDisplay]' = import_string(
+REDISBOARD_DISPLAY_CLASS: 'type[BaseDisplay]' = import_string(
     getattr(settings, 'REDISBOARD_DISPLAY_CLASS', 'redisboard.data.TabularDisplay'),
 )
-REDISBOARD_VALUE_QUERY_CLASS: 'Type[ValueQuery]' = import_string(
+REDISBOARD_VALUE_QUERY_CLASS: 'type[ValueQuery]' = import_string(
     getattr(settings, 'REDISBOARD_VALUE_QUERY_CLASS', 'redisboard.data.ValueQuery'),
 )
-REDISBOARD_LENGTH_QUERY_CLASS: 'Type[LengthQuery]' = import_string(
+REDISBOARD_LENGTH_QUERY_CLASS: 'type[LengthQuery]' = import_string(
     getattr(settings, 'REDISBOARD_LENGTH_QUERY_CLASS', 'redisboard.data.LengthQuery'),
 )
 
@@ -88,7 +86,7 @@ def validate_url(value):
     try:
         redis.connection.parse_url(value)
     except Exception as exc:
-        raise ValidationError(str(exc))
+        raise ValidationError(str(exc)) from exc
 
 
 @define(slots=False)
@@ -113,7 +111,7 @@ class RedisServerStats:
         return self.info.get('connected_clients', 'n/a')
 
     @cached_property
-    def databases(self) -> Dict[int, dict]:
+    def databases(self) -> dict[int, dict]:
         return {int(name[2:]): dict(starmap(coerce_detail, data.items())) for name, data in self.info.items() if name.startswith('db')}
 
     def __bool__(self):

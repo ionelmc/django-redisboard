@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.shortcuts import resolve_url
 from django.template.response import TemplateResponse
+from django.urls import path
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
@@ -106,7 +107,6 @@ class RedisServerAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         urlpatterns = super().get_urls()
-        from django.urls import path
 
         def wrap(view):
             @wraps(view)
@@ -162,7 +162,8 @@ class RedisServerAdmin(admin.ModelAdmin):
                 wrap(self.inspect_key_view),
                 name='redisboard_redisserver_inspect',
             ),
-        ] + urlpatterns
+            *urlpatterns,
+        ]
 
     def inspect_key_view(self, request, server: RedisServer, db: int, key: str, cursor: int = 0, count: int = 0):
         key: bytes = unquote_to_bytes(key)

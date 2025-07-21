@@ -10,31 +10,24 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - | |github-actions| |requires|
-        | |coveralls| |codecov|
+      - |github-actions| |coveralls| |codecov|
     * - package
-      - | |version| |wheel| |supported-versions| |supported-implementations|
-        | |commits-since|
-
+      - |version| |wheel| |supported-versions| |supported-implementations| |commits-since|
 .. |docs| image:: https://readthedocs.org/projects/django-redisboard/badge/?style=flat
-    :target: https://django-redisboard.readthedocs.io/
+    :target: https://readthedocs.org/projects/django-redisboard/
     :alt: Documentation Status
 
 .. |github-actions| image:: https://github.com/ionelmc/django-redisboard/actions/workflows/github-actions.yml/badge.svg
     :alt: GitHub Actions Build Status
     :target: https://github.com/ionelmc/django-redisboard/actions
 
-.. |requires| image:: https://requires.io/github/ionelmc/django-redisboard/requirements.svg?branch=master
-    :alt: Requirements Status
-    :target: https://requires.io/github/ionelmc/django-redisboard/requirements/?branch=master
-
-.. |coveralls| image:: https://coveralls.io/repos/ionelmc/django-redisboard/badge.svg?branch=master&service=github
+.. |coveralls| image:: https://coveralls.io/repos/github/ionelmc/django-redisboard/badge.svg?branch=master
     :alt: Coverage Status
-    :target: https://coveralls.io/r/ionelmc/django-redisboard
+    :target: https://coveralls.io/github/ionelmc/django-redisboard?branch=master
 
 .. |codecov| image:: https://codecov.io/gh/ionelmc/django-redisboard/branch/master/graphs/badge.svg?branch=master
     :alt: Coverage Status
-    :target: https://codecov.io/github/ionelmc/django-redisboard
+    :target: https://app.codecov.io/github/ionelmc/django-redisboard
 
 .. |version| image:: https://img.shields.io/pypi/v/django-redisboard.svg
     :alt: PyPI Package latest release

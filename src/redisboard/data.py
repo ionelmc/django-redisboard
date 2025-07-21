@@ -1,3 +1,4 @@
+import builtins
 import html
 import pickle
 from abc import ABC
@@ -5,10 +6,6 @@ from abc import abstractmethod
 from functools import partial
 from itertools import chain
 from typing import TYPE_CHECKING
-from typing import Dict
-from typing import List
-from typing import Tuple
-from typing import Type
 from urllib.parse import quote
 
 from django.conf import settings
@@ -39,14 +36,14 @@ def bytes_to_human(n):
     if n < 1024:
         return f'{n}B'
     elif n < 1048576:
-        return f'{n/1024:.2f}K'
+        return f'{n / 1024:.2f}K'
     elif n < 1073741824:
-        return f'{n/1048576:.2f}M'
+        return f'{n / 1048576:.2f}M'
     elif n < 1099511627776:
-        return f'{n/1073741824:.2f}G'
+        return f'{n / 1073741824:.2f}G'
 
 
-class BaseDecoder(ABC):
+class BaseDecoder:
     def __init__(self, server):
         pass
 
@@ -59,16 +56,16 @@ class BaseDecoder(ABC):
     def string(self, key: str, value: bytes, **kwargs):
         return [(len(value), self.bytes(key, value))]
 
-    def hash(self, key: str, hash_value: Dict[bytes, bytes], **kwargs):
+    def hash(self, key: str, hash_value: dict[bytes, bytes], **kwargs):
         return sorted((self.hash_field(key, k), self.bytes(key, v)) for k, v in hash_value.items())
 
     def hash_field(self, key: str, field: bytes):
         return self.key(field)
 
-    def list(self, key: str, value: List[bytes], count=int, **kwargs):
+    def list(self, key: str, value: list[bytes], count=int, **kwargs):
         return list(enumerate((self.bytes(key, v) for v in value), start=count))
 
-    def set(self, key: str, value: List[bytes], count: int, **kwargs):
+    def set(self, key: str, value: builtins.list[bytes], count: int, **kwargs):
         return list(enumerate(sorted(self.bytes(key, v) for v in value), start=count))
 
     def zset(self, key: str, value: bytes, **kwargs):
@@ -100,10 +97,10 @@ class ValueQuery:
     def __init__(self, connection: StrictRedis):
         self.connection = connection
 
-    def hash(self, key, *, cursor=0, **kwargs) -> Tuple[int, list]:
+    def hash(self, key, *, cursor=0, **kwargs) -> tuple[int, list]:
         return self.connection.hscan(key, cursor=cursor, count=REDISBOARD_SCAN_COUNT)
 
-    def list(self, key, *, cursor=0, **kwargs) -> Tuple[int, list]:
+    def list(self, key, *, cursor=0, **kwargs) -> tuple[int, list]:
         end = cursor + REDISBOARD_SCAN_COUNT
         value = self.connection.lrange(key, cursor, end - 1)
         if len(value) < end:
@@ -111,10 +108,10 @@ class ValueQuery:
         else:
             return end, value
 
-    def set(self, key, *, cursor=0, **kwargs) -> Tuple[int, list]:
+    def set(self, key, *, cursor=0, **kwargs) -> tuple[int, list]:
         return self.connection.sscan(key, cursor=cursor, count=REDISBOARD_SCAN_COUNT)
 
-    def string(self, key, *, cursor=0, count=0, **kwargs) -> Tuple[int, list]:
+    def string(self, key, *, cursor=0, count=0, **kwargs) -> tuple[int, list]:
         start = cursor
         end = count + REDISBOARD_STRING_PAGINATION
         value = self.connection.getrange(key, start, end - 1)
@@ -123,7 +120,7 @@ class ValueQuery:
         else:
             return 0, value
 
-    def zset(self, key, *, cursor=0, **kwargs) -> Tuple[int, list]:
+    def zset(self, key, *, cursor=0, **kwargs) -> tuple[int, list]:
         return self.connection.zscan(key, cursor=cursor, count=REDISBOARD_SCAN_COUNT)
 
     def unsupported(self, key, *, cursor=0, type_, **kwargs):
@@ -163,15 +160,15 @@ class LengthQuery:
 
 class BaseDisplay(ABC):
     decoder: BaseDecoder
-    value_query_class: Type[ValueQuery]
-    length_query_class: Type[LengthQuery]
+    value_query_class: type[ValueQuery]
+    length_query_class: type[LengthQuery]
     server: 'RedisServer'
 
     def __init__(
         self,
-        decoder_class: Type[BaseDecoder],
-        value_query_class: Type[ValueQuery],
-        length_query_class: Type[LengthQuery],
+        decoder_class: type[BaseDecoder],
+        value_query_class: type[ValueQuery],
+        length_query_class: type[LengthQuery],
         server: 'RedisServer',
     ):
         self.decoder = decoder_class(server)
@@ -322,12 +319,12 @@ class TabularDisplay(BaseDisplay):
         for db, db_details in stats.databases.items():
             details[f'db{db}'] = db_details
 
-        for db, details in details.items():
-            keys = details.keys()
+        for db, db_details in details.items():
+            keys = db_details.keys()
             output.append(f'<tr><td colspan="2"><table><tr><th>{db}</th>')
             output.extend(f'<th>{k}</th>' for k in keys)
             output.append('</tr><tr><td></td>')
-            output.extend(f'<td>{details[k]}</td>' for k in keys)
+            output.extend(f'<td>{db_details[k]}</td>' for k in keys)
             output.append('</tr></table></td></tr>')
         if output:
             return mark_safe(f'<table>{"".join(output)}</table>')
@@ -344,7 +341,7 @@ class TabularDisplay(BaseDisplay):
             'used_cpu_user',
             'used_cpu_user_children',
         )
-        data = dict((k[9:], stats.info[k]) for k in data)
+        data = {k[9:]: stats.info[k] for k in data}
         total_cpu = sum(data.values())
         uptime = stats.info['uptime_in_seconds']
         data['utilization'] = f'{total_cpu / uptime if uptime else 0:.3f}%'

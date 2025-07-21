@@ -7,7 +7,6 @@ import redisboard.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('redisboard', '0001_initial'),
     ]

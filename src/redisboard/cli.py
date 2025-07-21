@@ -16,9 +16,9 @@ Why does this file exist, and why not put this in __main__?
 """
 
 import argparse
-import os
 import random
 import string
+from pathlib import Path
 
 from django.contrib.admin import AdminSite
 from django.contrib.admin.apps import AdminConfig
@@ -46,7 +46,8 @@ parser.add_argument(
 parser.add_argument(
     '--storage',
     '-s',
-    default=os.path.expanduser('~/.redisboard'),
+    default=Path('~/.redisboard').expanduser(),
+    type=Path,
     help='Where to save the SECRET_KEY and sqlite database. (default: %(default)s)',
 )
 parser.add_argument(
@@ -68,16 +69,16 @@ parser.add_argument(
     help='Optional port number, or ipaddr:port (default: %(default)s)',
 )
 
-DJANGO_SETTINGS = dict(
-    REDISBOARD_SOCKET_CONNECT_TIMEOUT=5,
-    REDISBOARD_SOCKET_TIMEOUT=5,
-    CACHES={
+DJANGO_SETTINGS = {
+    'REDISBOARD_SOCKET_CONNECT_TIMEOUT': 5,
+    'REDISBOARD_SOCKET_TIMEOUT': 5,
+    'CACHES': {
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         },
     },
-    SESSION_ENGINE='django.contrib.sessions.backends.cached_db',
-    INSTALLED_APPS=(
+    'SESSION_ENGINE': 'django.contrib.sessions.backends.cached_db',
+    'INSTALLED_APPS': (
         'django.contrib.auth',
         'django.contrib.contenttypes',
         'django.contrib.sessions',
@@ -86,7 +87,7 @@ DJANGO_SETTINGS = dict(
         'redisboard.cli.RedisboardAdminConfig',
         'redisboard',
     ),
-    MIDDLEWARE=[
+    'MIDDLEWARE': [
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
@@ -95,10 +96,10 @@ DJANGO_SETTINGS = dict(
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     ],
-    ROOT_URLCONF=__name__,
-    STATIC_URL='/static/',
-    ALLOWED_HOSTS=['*'],
-    LOGGING={
+    'ROOT_URLCONF': __name__,
+    'STATIC_URL': '/static/',
+    'ALLOWED_HOSTS': ['*'],
+    'LOGGING': {
         'version': 1,
         'disable_existing_loggers': False,
         'formatters': {
@@ -119,7 +120,7 @@ DJANGO_SETTINGS = dict(
             '': {'handlers': ['console'], 'level': 'INFO', 'propagate': False},
         },
     },
-)
+}
 
 
 class RedisboardAdminSite(AdminSite):
@@ -136,25 +137,24 @@ def get_random(length=50, chars='abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_
 
 def main(args=None):
     args = parser.parse_args(args=args)
-    if not os.path.exists(args.storage):
-        os.mkdir(args.storage)
-    secret_key_path = os.path.join(args.storage, 'SECRET_KEY')
-    if os.path.exists(secret_key_path):
-        with open(secret_key_path) as fh:
+    args.storage.mkdir(exist_ok=True)
+    secret_key_path = args.storage.joinpath('SECRET_KEY')
+    if secret_key_path.exists():
+        with secret_key_path.open() as fh:
             secret_key = fh.read()
     else:
         secret_key = get_random()
-        with open(secret_key_path, 'w') as fh:
+        with secret_key_path.open('w') as fh:
             fh.write(secret_key)
-    database_path = os.path.join(args.storage, 'db.sqlite')
+    database_path = args.storage.joinpath('db.sqlite')
 
-    import django
-    from django.conf import settings
-    from django.contrib import admin
-    from django.contrib.staticfiles.storage import staticfiles_storage
-    from django.core.management import execute_from_command_line
-    from django.urls import path
-    from django.views.generic.base import RedirectView
+    import django  # noqa:PLC0415
+    from django.conf import settings  # noqa:PLC0415
+    from django.contrib import admin  # noqa:PLC0415
+    from django.contrib.staticfiles.storage import staticfiles_storage  # noqa:PLC0415
+    from django.core.management import execute_from_command_line  # noqa:PLC0415
+    from django.urls import path  # noqa:PLC0415
+    from django.views.generic.base import RedirectView  # noqa:PLC0415
 
     settings.configure(
         DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': database_path}},
@@ -189,11 +189,11 @@ def main(args=None):
         path('', admin.site.urls),
     ]
 
-    from django.contrib.auth.models import User
+    from django.contrib.auth.models import User  # noqa:PLC0415
 
-    from redisboard.models import RedisServer
+    from redisboard.models import RedisServer  # noqa:PLC0415
 
-    create_user = not os.path.exists(database_path)
+    create_user = not database_path.exists()
     execute_from_command_line(['django-admin', 'migrate', '--noinput'])
     if create_user:
         user = User(username='redisboard', is_superuser=True, is_staff=True, is_active=True)

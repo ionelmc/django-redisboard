@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
-
 import django.core.validators
 from django.db import migrations
 from django.db import models
 
 
 class Migration(migrations.Migration):
-
     dependencies = []
 
     operations = [
@@ -60,6 +56,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='redisserver',
-            unique_together=set([('hostname', 'port')]),
+            unique_together={('hostname', 'port')},
         ),
     ]

@@ -1,6 +1,5 @@
 from datetime import datetime
 from datetime import timedelta
-from typing import Dict
 from typing import NamedTuple
 from typing import Union
 
@@ -37,7 +36,7 @@ def timedelta_fromseconds_if_positive(sec):
 
 
 def datetime_fromtimestamp_usec(time_usec):
-    return datetime.fromtimestamp(time_usec / 1000_000_000)
+    return datetime.fromtimestamp(time_usec / 1000_000_000)  # noqa:DTZ006
 
 
 @define
@@ -61,6 +60,6 @@ class ScanResult(NamedTuple):
 @define
 class DBInfo:
     id: int
-    stats: Dict[str, Union[str, int]]
+    stats: dict[str, Union[str, int]]
     cursor: int = None  # current cursor
     scan: Union[bool, ScanResult] = False

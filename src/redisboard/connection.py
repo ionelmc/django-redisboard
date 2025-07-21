@@ -32,6 +32,7 @@ class ClosableStrictRedis(StrictRedis):
                 f'Created from:\n{self.created_from}\n'
                 f'Current stack:\n{"".join(format_stack(limit=25))}',
                 ResourceWarning,
+                stacklevel=2,
                 source=self,
             )
         self.close()

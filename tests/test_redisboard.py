@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 from typing import Union
 
-import psutil as psutil
+import psutil
 import pytest
 import requests
 from process_tests import TestProcess
@@ -84,12 +84,12 @@ def test_changelist(admin_client, redis_model):
     content = response.content.decode('utf-8')
     assert '>UP</' in content
     assert '>redis version</' in content
-    assert '<a href="/redisboard/redisserver/{:d}/inspect/">Inspect</a>'.format(redis_model.pk) in content
+    assert f'<a href="/redisboard/redisserver/{redis_model.pk:d}/inspect/">Inspect</a>' in content
 
 
 @pytest.mark.django_db
 def test_inspect(admin_client, redis_model):
-    response = admin_client.get('/redisboard/redisserver/{:d}/inspect/'.format(redis_model.pk))
+    response = admin_client.get(f'/redisboard/redisserver/{redis_model.pk:d}/inspect/')
     content = response.content.decode('utf-8')
     assert 'Database 0:' in content
     assert '13 keys' in content
@@ -179,16 +179,16 @@ def test_cli(entrypoint, tmpdir):
             t = time.time()
             port = None
             while time.time() - t < TIMEOUT and port is None:
-                for conn in psutil.Process(process.proc.pid).connections('all'):
+                for conn in psutil.Process(process.proc.pid).net_connections('all'):
                     if conn.status == psutil.CONN_LISTEN and conn.laddr[0] == '127.0.0.1':
                         port = conn.laddr[1]
                         break
             assert port
             with requests.Session() as session:
-                resp = session.get('http://127.0.0.1:%s/' % port)
+                resp = session.get(f'http://127.0.0.1:{port}/')
                 (csrftoken,) = re.findall('name=[\'"]csrfmiddlewaretoken[\'"] value=[\'"](.*?)[\'"]', resp.text)
                 resp = session.post(
-                    'http://127.0.0.1:%s/login/?next=/redisboard/redisserver/' % port,
+                    f'http://127.0.0.1:{port}/login/?next=/redisboard/redisserver/',
                     data={
                         'csrfmiddlewaretoken': csrftoken,
                         'username': 'redisboard',
