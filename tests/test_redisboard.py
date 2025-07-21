@@ -158,7 +158,7 @@ def test_key_details(admin_client, redis_model, key: str, request):
     content = response.content.replace(b'\r', b'').replace(b'\n', b'')
     expected_path: Path = TEST_DATA_PATH.joinpath(f'{key.replace("%", ""):.16}.html')
     if expected_path.exists():
-        expected = expected_path.read_bytes()
+        expected = expected_path.read_bytes().strip()
     else:
         expected = b'failfailfail'
     try:

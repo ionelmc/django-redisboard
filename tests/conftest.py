@@ -1,5 +1,6 @@
 import pytest
 from process_tests import TestProcess
+from process_tests import dump_on_error
 from process_tests import wait_for_strings
 from redis.client import StrictRedis
 
@@ -10,9 +11,10 @@ def redis_server(tmp_path):
     with TestProcess(
         'redis-server', '--port', '0', '--save', '', '--appendonly', 'yes', '--dir', tmp_path, '--unixsocket', redis_socket
     ) as redis_server:
-        wait_for_strings(redis_server.read, 2, 'ready to accept connections')
-        yield redis_socket
-        print(redis_server.read())
+        with dump_on_error(redis_server.read):
+            wait_for_strings(redis_server.read, 2, 'eady to accept connections')
+            yield redis_socket
+            print(redis_server.read())
 
 
 @pytest.fixture
