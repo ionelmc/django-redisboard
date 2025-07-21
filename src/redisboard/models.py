@@ -112,7 +112,13 @@ class RedisServerStats:
 
     @cached_property
     def databases(self) -> dict[int, dict]:
-        return {int(name[2:]): dict(starmap(coerce_detail, data.items())) for name, data in self.info.items() if name.startswith('db')}
+        return {
+            int(db): dict(starmap(coerce_detail, data.items()))
+            for name, data in self.info.items()
+            if name.startswith('db')
+            for db in (name[2:])
+            if db.isnumeric()
+        }
 
     def __bool__(self):
         return self.status == 'UP'
