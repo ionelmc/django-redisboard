@@ -23,7 +23,7 @@ class ClosableStrictRedis(StrictRedis):
                 **REDISBOARD_CONNECTION_POOL_OPTIONS,
             ),
         )
-        self.created_from = ''.join(format_stack(limit=50))
+        self.created_from = ''.join(format_stack(limit=150))
 
     def __del__(self):
         if getattr(self, 'connection', None) is not None and settings.DEBUG:

@@ -25,7 +25,7 @@ logger = getLogger(__name__)
 
 def cleanup_changelist_response(response: TemplateResponse):
     obj: RedisServer
-    for obj in response.context_data['cl'].queryset:
+    for obj in response.context_data['cl'].result_list:
         cleanup_connection(response, obj)
 
 
