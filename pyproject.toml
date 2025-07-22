@@ -9,7 +9,7 @@ dynamic = [
     "readme",
 ]
 name = "django-redisboard"
-version = "8.4.0"
+version = "9.0.0"
 license = "BSD-2-Clause"
 license-files = ["LICENSE"]
 description = "Redis monitoring and inspection drop-in application using django admin."
